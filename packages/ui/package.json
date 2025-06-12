@@ -5,6 +5,9 @@
   "exports": {
     "./*": "./src/*.tsx"
   },
+  "imports": {
+    "#*": "./src/*"
+  },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "generate:component": "turbo gen react-component",
@@ -13,6 +16,8 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@storybook/react": "^9.0.8",
+    "@storybook/react-vite": "^9.0.8",
     "@turbo/gen": "^2.5.0",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",

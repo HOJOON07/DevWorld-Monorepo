@@ -1,5 +1,5 @@
 {
-  "name": "DW_Monorepo",
+  "name": "devworld-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo run build",
