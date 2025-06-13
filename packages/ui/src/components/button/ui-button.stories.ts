@@ -6,7 +6,6 @@ const meta: Meta<ButtonProps> = {
   component: Button,
   tags: ["autodocs"],
   args: {
-    appName: "DW_UI",
     children: "Button",
   },
 };
@@ -16,7 +15,6 @@ type Story = StoryObj<ButtonProps>;
 
 export const Primary: Story = {
   args: {
-    appName: "Button",
     children: "I am a primary button.",
     className: "primary-btn", // 필요시 커스텀 클래스
   },
@@ -24,7 +22,6 @@ export const Primary: Story = {
 
 export const WithCustomClass: Story = {
   args: {
-    appName: "Button",
     children: "Custom Class Button",
     className: "my-custom-class",
   },
