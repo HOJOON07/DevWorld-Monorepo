@@ -12,7 +12,14 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "tab",
-    "lineWidth": 100
+    "lineWidth": 100,
+    "ignore": [
+      "node_modules/*",
+      "*.config.*",
+      "*.json",
+      "tsconfig.json",
+      ".turbo"
+    ]
   },
   "organizeImports": {
     "enabled": true
@@ -21,9 +28,15 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "complexity": {
+        "noForEach": "off",
+        "noUselessFragments": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
       "suspicious": {
-        "noDebugger": "warn",
-        "noConsoleLog": "info"
+        "noExplicitAny": "off"
       }
     }
   },
