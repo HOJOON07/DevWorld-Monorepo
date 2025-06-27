@@ -1,7 +1,7 @@
-import { createRoot } from "react-dom/client";
-import { RouterProvider, type RouteObject } from "react-router-dom";
-import { createRouter } from "./router";
-import type { RouterType } from "./types";
+import { createRoot } from 'react-dom/client';
+import { RouterProvider, type RouteObject } from 'react-router-dom';
+import { createRouter } from './router';
+import type { RouterType } from './types';
 
 function injectFactory({ routes }: { routes: RouteObject[] }) {
   return ({

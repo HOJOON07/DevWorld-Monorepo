@@ -7,13 +7,16 @@
     "dev": "turbo run start",
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@devworld/shell-router --filter=@devworld/ui",
-    "serve": "turbo run build:start"
+    "serve": "turbo run build:start",
+    "format-and-lint": "biome check .",
+    "format-and-lint:fix": "biome check . --write"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
+    "@biomejs/biome": "2.0.6",
     "turbo": "^2.5.4"
   }
 }

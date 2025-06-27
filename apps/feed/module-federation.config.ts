@@ -1,27 +1,27 @@
 // @ts-ignore
-const deps = require("./package.json").dependencies;
+const deps = require('./package.json').dependencies;
 
 export const mfConfig = {
-  name: "feed",
-  filename: "remoteEntry.js",
+  name: 'feed',
+  filename: 'remoteEntry.js',
   remotes: {},
   exposes: {
-    "./injector": "./src/injector.tsx",
+    './injector': './src/injector.tsx',
   },
   shared: {
     ...deps,
     react: {
       singleton: true,
-      requiredVersion: deps["react"],
+      requiredVersion: deps['react'],
     },
-    "react-dom": {
+    'react-dom': {
       singleton: true,
-      requiredVersion: deps["react-dom"],
+      requiredVersion: deps['react-dom'],
     },
-    "@devworld/ui": {
+    '@devworld/ui': {
       singleton: true,
     },
-    "@devworld/shell-router": {
+    '@devworld/shell-router': {
       singleton: true,
     },
   },

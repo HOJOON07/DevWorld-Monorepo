@@ -1,5 +1,5 @@
-import { Link, Outlet } from "react-router-dom";
-import { appFeedBasename } from "../constants/prefix";
+import { Link, Outlet } from 'react-router-dom';
+import { appFeedBasename } from '../constants/prefix';
 
 const Layout = () => {
   return (

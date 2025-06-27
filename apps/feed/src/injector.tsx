@@ -1,5 +1,5 @@
-import { injectFactory } from "@devworld/shell-router";
-import { routes } from "./routes";
+import { injectFactory } from '@devworld/shell-router';
+import { routes } from './routes';
 
 const inject = injectFactory({
   routes,

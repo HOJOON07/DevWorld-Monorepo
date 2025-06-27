@@ -1,6 +1,6 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import useAppEvent from "../hooks/use-app-event";
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import useAppEvent from '../hooks/use-app-event';
 
 interface AppRoutingManagerProps {
   type: string;

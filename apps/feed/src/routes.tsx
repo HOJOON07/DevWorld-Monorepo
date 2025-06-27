@@ -1,9 +1,9 @@
-import { AppRoutingManager } from "@devworld/shell-router";
-import { RouteObject } from "react-router-dom";
+import { AppRoutingManager } from '@devworld/shell-router';
+import { RouteObject } from 'react-router-dom';
 
 export const routes: RouteObject[] = [
   {
-    path: "/",
+    path: '/',
     element: <AppRoutingManager type="feed" />,
     children: [
       {
@@ -11,7 +11,7 @@ export const routes: RouteObject[] = [
         element: <div>Feed Root</div>,
       },
       {
-        path: "1",
+        path: '1',
         element: <div>Feed 1</div>,
       },
     ],

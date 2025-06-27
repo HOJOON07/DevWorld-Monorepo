@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const navigate = useNavigate();

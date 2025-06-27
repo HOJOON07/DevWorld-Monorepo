@@ -1,6 +1,6 @@
-import inject from "./injector";
+import inject from './injector';
 
 inject({
-  routerType: "browser",
-  rootElement: document.getElementById("app-feed")!,
+  routerType: 'browser',
+  rootElement: document.getElementById('app-feed')!,
 });
