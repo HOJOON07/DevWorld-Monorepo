@@ -6,7 +6,8 @@
     "useIgnoreFile": false
   },
   "files": {
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "includes": ["**", "!**/dist/**", "!**/node_modules"]
   },
   "formatter": {
     "enabled": true,
@@ -20,10 +21,16 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "recommended": false,
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "error"
+        "noUnusedVariables": {
+          "options": {
+            "ignoreRestSiblings": false
+          },
+          "level": "error",
+          "fix": "none"
+        }
       },
       "complexity": {
         "noVoid": "error"
