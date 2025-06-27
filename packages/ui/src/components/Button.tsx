@@ -1,5 +1,5 @@
 const Button: React.FC = () => {
-  return <button>Click me!</button>;
+  return <button type="submit">Click me!</button>;
 };
 
 export default Button;
