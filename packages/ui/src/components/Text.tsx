@@ -1,4 +1,2 @@
-const _test = "ununsed vars";
-console.log("test");
-
-
+const _test = 'ununsed vars';
+console.log('test');

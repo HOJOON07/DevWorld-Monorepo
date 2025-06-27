@@ -1,5 +1,5 @@
 import { AppRoutingManager } from '@devworld/shell-router';
-import { RouteObject } from 'react-router-dom';
+import type { RouteObject } from 'react-router-dom';
 
 export const routes: RouteObject[] = [
   {

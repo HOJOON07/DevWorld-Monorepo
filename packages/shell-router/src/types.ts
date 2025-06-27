@@ -1,5 +1,5 @@
 import type { RouteObject } from 'react-router-dom';
-import { injectFactory } from './injector';
+import type { injectFactory } from './injector';
 
 export type RouterType = 'browser' | 'memory';
 
