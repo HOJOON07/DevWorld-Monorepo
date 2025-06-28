@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { RouterProvider, type RouteObject } from 'react-router-dom';
+import { type RouteObject, RouterProvider } from 'react-router-dom';
 import { createRouter } from './router';
 import type { RouterType } from './types';
 

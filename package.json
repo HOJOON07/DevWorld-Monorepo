@@ -8,8 +8,8 @@
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=@devworld/shell-router --filter=@devworld/ui",
     "serve": "turbo run build:start",
-    "format-and-lint": "biome check .",
-    "format-and-lint:fix": "biome check . --write"
+    "lint:check": "biome check .",
+    "lint:fix": "biome check . --write --unsafe"
   },
   "keywords": [],
   "author": "",

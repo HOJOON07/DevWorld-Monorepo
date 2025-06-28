@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
-import { appFeedBasename } from './constants/prefix';
-import Layout from './components/layout';
 import AppFeed from './components/app-feed';
+import Layout from './components/layout';
+import { appFeedBasename } from './constants/prefix';
 
 const browserRouter = createBrowserRouter([
   {

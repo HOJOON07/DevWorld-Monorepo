@@ -1,8 +1,8 @@
-import { use, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import { type injectFunctionType, useShellEvent } from '@devworld/shell-router';
-import { appFeedBasename } from '../constants/prefix';
 import { importRemote } from '@module-federation/utilities';
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { appFeedBasename } from '../constants/prefix';
 
 export default function AppFeed() {
   const wrapperRef = useRef<HTMLDivElement>(null);

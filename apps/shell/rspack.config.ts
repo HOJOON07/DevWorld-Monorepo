@@ -1,8 +1,8 @@
 import * as path from 'node:path';
-import { defineConfig } from '@rspack/cli';
-import { EnvironmentPlugin, rspack } from '@rspack/core';
-import * as RefreshPlugin from '@rspack/plugin-react-refresh';
 import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack';
+import { defineConfig } from '@rspack/cli';
+import { rspack } from '@rspack/core';
+import * as RefreshPlugin from '@rspack/plugin-react-refresh';
 import * as Dotenv from 'dotenv-webpack';
 
 import { mfConfig } from './module-federation.config';
