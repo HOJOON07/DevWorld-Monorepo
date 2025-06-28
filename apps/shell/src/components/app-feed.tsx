@@ -43,5 +43,5 @@ export default function AppFeed() {
     };
   }, []);
 
-  return <div ref={wrapperRef} id="app-feed" />;
+  return <div ref={wrapperRef} id='app-feed' />;
 }

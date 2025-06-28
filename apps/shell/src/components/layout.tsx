@@ -6,7 +6,7 @@ const Layout = () => {
     <div>
       <header>
         <div>
-          <Link to="/">Dev World</Link>
+          <Link to='/'>Dev World</Link>
           <nav>
             <ul>
               <li>
@@ -19,7 +19,7 @@ const Layout = () => {
           </nav>
         </div>
       </header>
-      <div className="container">
+      <div className='container'>
         <Outlet />
       </div>
     </div>
