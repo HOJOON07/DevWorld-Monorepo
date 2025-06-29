@@ -8,7 +8,9 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.umd.cjs",
       "import": "./dist/index.js"
-    }
+    },
+    "./styles.css": "./dist/index.css",
+    "./*": "./dist/*.js"
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.umd.cjs",
@@ -17,26 +19,41 @@
     "build:watch": "pnpm build --watch",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:styles": "tailwindcss -i ./src/styles/globals.css -o ./dist/index.css",
+    "build:components": "tsc",
+    "dev:styles": "tailwindcss -i ./src/styles/globals.css -o ./dist/index.css --watch",
+    "dev:components": "tsc --watch"
   },
   "peerDependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/node": "^24.0.7",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.10.2",
     "globals": "^16.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "tw-animate-css": "^1.3.4",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
+    "@devworld/tailwind-config": "workspace:*",
+    "@tailwindcss/cli": "^4.1.5",
+    "@tailwindcss/postcss": "^4.1.5",
+    "autoprefixer": "^10.4.20",
+    "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/vite": "^4.1.11",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.525.0",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11"
   }
 }

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import viteLogo from '/vite.svg';
 import reactLogo from './assets/react.svg';
-import './App.css';
-import Button from './components/Button';
+import { Button } from './components/ui/button';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -24,8 +23,10 @@ function App() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
+      <Button variant='default' size='lg'>
+        shadcn ui button
+      </Button>
       <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
-      <Button />
     </>
   );
 }
