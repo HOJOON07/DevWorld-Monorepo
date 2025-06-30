@@ -16,7 +16,7 @@ const Layout = () => {
               <li>
                 <Link to={`${appFeedBasename}/1`}>피드 홈</Link>
               </li>
-              <Button variant='ghost'>UI</Button>
+              <Button variant='default'>UI</Button>
             </ul>
           </nav>
         </div>
