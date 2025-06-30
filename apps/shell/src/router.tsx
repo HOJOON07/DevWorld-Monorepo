@@ -1,23 +1,25 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import AppAuth from './components/app-auth';
 import AppFeed from './components/app-feed';
 import Layout from './components/layout';
-import { appFeedBasename } from './constants/prefix';
+import { appAuthBaseName, appFeedBaseName } from './constants/prefix';
 
 const browserRouter = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
+      // {
+      //   index: true,
+      //   element: <Navigate to={appFeedBasename} />,
+      // },
       {
-        index: true,
-        element: <Navigate to={appFeedBasename} />,
-      },
-      {
-        path: `${appFeedBasename}/*`,
+        path: `${appFeedBaseName}/*`,
         element: <AppFeed />,
       },
     ],
   },
+  { path: `${appAuthBaseName}/*`, element: <AppAuth /> },
 ]);
 
 export default function Router() {

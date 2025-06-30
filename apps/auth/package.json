@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@devworld/shell-router": "workspace:*",
+    "@devworld/tailwind-config": "workspace:*",
     "@devworld/ui": "workspace:*",
     "@module-federation/enhanced": "^0.8.9",
     "react": "^19.0.0",

@@ -1,5 +1,6 @@
 import { AppRoutingManager } from '@devworld/shell-router';
 import type { RouteObject } from 'react-router-dom';
+import { SignInPage } from '../../pages';
 
 export const routes: RouteObject[] = [
   {
@@ -8,7 +9,7 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <div>Auth Root</div>,
+        element: <SignInPage />,
       },
     ],
   },

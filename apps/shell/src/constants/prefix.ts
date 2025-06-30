@@ -1,2 +1,5 @@
 export const appFeedPrefix = 'feed';
-export const appFeedBasename = `/${appFeedPrefix}`;
+export const appFeedBaseName = `/${appFeedPrefix}`;
+
+export const appAuthPrefix = 'auth';
+export const appAuthBaseName = `/${appAuthPrefix}`;

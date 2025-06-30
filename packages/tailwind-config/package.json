@@ -5,8 +5,7 @@
   "private": true,
   "exports": {
     "./styles": "./shadcn-ui-theme.css",
-    ".": "./postcss.config.mjs",
-    "./config": "./tailwind.config.js"
+    ".": "./postcss.config.mjs"
   },
   "devDependencies": {
     "postcss": "^8.5.3",

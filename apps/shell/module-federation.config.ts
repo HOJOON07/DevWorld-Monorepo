@@ -10,6 +10,8 @@ export const mfConfig = {
     // feed: "feed@http://localhost:3001/remoteEntry.js",
   },
   exposes: {},
+  // Disable auto type generation in development to prevent infinite recompilation
+  dts: process.env.NODE_ENV === 'production',
   shared: {
     ...deps,
     react: {

@@ -13,7 +13,8 @@
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true,
     "paths": {
-      "*": ["./@mf-types/*"]
+      "*": ["./@mf-types/*"],
+      "auth/injector": ["../auth/src/app/injector/injector.tsx"]
     }
   },
   "include": ["src"],

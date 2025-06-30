@@ -8,6 +8,8 @@ export const mfConfig = {
   exposes: {
     './injector': './src/injector.tsx',
   },
+  // Disable auto type generation in development to prevent infinite recompilation
+  dts: process.env.NODE_ENV === 'production',
   shared: {
     ...deps,
     react: {

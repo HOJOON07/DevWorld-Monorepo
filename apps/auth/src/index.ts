@@ -1,1 +1,1 @@
-import('./App');
+import('./app/injector/bootstrap');
