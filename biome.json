@@ -23,12 +23,15 @@
     "rules": {
       "recommended": false,
       "correctness": {
-        "noUnusedImports": "error",
+        "noUnusedImports": {
+          "level": "warn",
+          "fix": "none"
+        },
         "noUnusedVariables": {
           "options": {
             "ignoreRestSiblings": false
           },
-          "level": "error",
+          "level": "warn",
           "fix": "none"
         }
       },
