@@ -43,6 +43,11 @@ export default defineConfig({
         type: 'asset',
       },
       {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      },
+      {
         test: /\.css$/,
         use: ['postcss-loader'],
         type: 'css',

@@ -11,39 +11,23 @@ import {
   Post,
   Query,
   Request,
-  UseGuards,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { QueryRunner as QR } from 'typeorm';
+import { RolesEnum } from './const/roles.const';
+import { Roles } from './decorator/roles.decorator';
 import { User } from './decorator/user.decorator';
 import { DuplicateDevNameDto } from './dto/duplicate-devname.dto';
 import { UserProfileEditDto } from './dto/user-profiles-edit.dto';
-import { Roles } from './decorator/roles.decorator';
-import { RolesEnum } from './const/roles.const';
 import { UserModel } from './entities/users.entity';
-import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
-import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { QueryRunner as QR } from 'typeorm';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  // @Post()
-  // postCreateUser(
-  //   @Body('email') email: string,
-  //   @Body('password') password: string,
-  //   @Body('devName') devName: string,
-  // ) {
-  //   return this.usersService.createUser(email, password, devName);
-  // }
-
-  /**
-   * serialization => 직렬화 : 현재 시스템에서 사용되는 (NestJS) 데이터의 구조를 다른 시스템에서도 쉽게 사용 할 수 있는 포맷으로 변환
-   * deseialization => 역직렬화
-   */
 
   @Get()
   @Roles(RolesEnum.ADMIN)
@@ -68,18 +52,12 @@ export class UsersController {
   }
 
   @Post('duplicate')
-  postDuplicateDevName(
-    @User('id') id: number,
-    @Body() duplicateDevNameDto: DuplicateDevNameDto,
-  ) {
+  postDuplicateDevName(@User('id') id: number, @Body() duplicateDevNameDto: DuplicateDevNameDto) {
     return this.usersService.duplicateGetDevName(id, duplicateDevNameDto);
   }
 
   @Patch('edit/:userId')
-  patchtUserProfilesEdit(
-    @User('id') id: number,
-    @Body() userProfileEditDto: UserProfileEditDto,
-  ) {
+  patchtUserProfilesEdit(@User('id') id: number, @Body() userProfileEditDto: UserProfileEditDto) {
     return this.usersService.userProfileEdit(id, userProfileEditDto);
   }
 
@@ -95,10 +73,7 @@ export class UsersController {
   }
 
   @Post('follow/:id')
-  async postFollowUser(
-    @User() user: UserModel,
-    @Param('id', ParseIntPipe) followeeId: number,
-  ) {
+  async postFollowUser(@User() user: UserModel, @Param('id', ParseIntPipe) followeeId: number) {
     await this.usersService.followUser(user.id, followeeId);
   }
 
@@ -120,19 +95,9 @@ export class UsersController {
   ) {
     this.usersService.confirmFollow(followerId, user.id, qr);
 
-    await this.usersService.incrementFollowerCount(
-      user.id,
-      'followerCount',
-      1,
-      qr,
-    );
+    await this.usersService.incrementFollowerCount(user.id, 'followerCount', 1, qr);
 
-    await this.usersService.incrementFollowerCount(
-      followerId,
-      'followeeCount',
-      1,
-      qr,
-    );
+    await this.usersService.incrementFollowerCount(followerId, 'followeeCount', 1, qr);
     return true;
   }
 
@@ -144,25 +109,8 @@ export class UsersController {
     @QueryRunner() qr: QR,
   ) {
     await this.usersService.deleteFollow(user.id, followeeId, qr);
-    await this.usersService.decrementFollowerCount(
-      user.id,
-      'followerCount',
-      1,
-      qr,
-    );
-    await this.usersService.decrementFollowerCount(
-      followeeId,
-      'followeeCount',
-      1,
-      qr,
-    );
+    await this.usersService.decrementFollowerCount(user.id, 'followerCount', 1, qr);
+    await this.usersService.decrementFollowerCount(followeeId, 'followeeCount', 1, qr);
     return true;
   }
-
-  // @Post("edit")
-  // @UseGuards(AccessTokenGuard)
-  // // eidt dtd짜야되고
-  // postUserProfilesEdit(@Body()){
-
-  // }
 }

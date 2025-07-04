@@ -13,24 +13,24 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ArticlesService } from './articles.service';
-import { User } from 'src/users/decorator/user.decorator';
-import { CreateArticleDto } from './dto/create-article-dto';
-import { UpdateArticleDto } from './dto/update-article-dto';
-import { PaginateArticleDto } from './dto/paginate-article.dto';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { ImageModelType } from 'src/common/entities/image.entity';
-import { DataSource, QueryRunner as QR } from 'typeorm';
-import { ArticlesThumbnailService } from './thumbnail/dto/thumbnail.service';
+import { HttpExceptionFilter } from 'src/common/exception-filter/http-exception-filter';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
-import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { HttpExceptionFilter } from 'src/common/exception-filter/http-exception-filter';
-import { Roles } from 'src/users/decorator/roles.decorator';
 import { RolesEnum } from 'src/users/const/roles.const';
-import { IsPublic } from 'src/common/decorator/is-public.decorator';
-import { IsArticleMineOrAdminGuard } from './guard/is-article-mine-or-admin.guard';
-import { PaginateWorkspaceArticleDto } from './dto/paginate-workspace-articles-dto';
+import { Roles } from 'src/users/decorator/roles.decorator';
+import { User } from 'src/users/decorator/user.decorator';
+import { DataSource, QueryRunner as QR } from 'typeorm';
+import { ArticlesService } from './articles.service';
+import { CreateArticleDto } from './dto/create-article-dto';
+import { PaginateArticleDto } from './dto/paginate-article.dto';
 import { PaginateUserPublicArticleDto } from './dto/paginate-user-public-article-dto';
+import { PaginateWorkspaceArticleDto } from './dto/paginate-workspace-articles-dto';
+import { UpdateArticleDto } from './dto/update-article-dto';
+import { IsArticleMineOrAdminGuard } from './guard/is-article-mine-or-admin.guard';
+import { ArticlesThumbnailService } from './thumbnail/dto/thumbnail.service';
 
 @Controller('articles')
 export class ArticlesController {
@@ -61,10 +61,7 @@ export class ArticlesController {
 
   @Get('workspace')
   @UseInterceptors(LogInterceptor)
-  getWorkspaceArticles(
-    @Query() query: PaginateWorkspaceArticleDto,
-    @User('id') userId: number,
-  ) {
+  getWorkspaceArticles(@Query() query: PaginateWorkspaceArticleDto, @User('id') userId: number) {
     return this.articlesService.paginateWorkspaceArticles(query, userId);
   }
 

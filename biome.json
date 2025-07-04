@@ -44,6 +44,9 @@
     "formatter": {
       "jsxQuoteStyle": "single",
       "quoteStyle": "single"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "assist": {

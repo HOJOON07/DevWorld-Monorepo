@@ -1,25 +1,19 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { RolesEnum } from '../const/roles.const';
+import { Exclude } from 'class-transformer';
+import { IsEmail, IsString, Length } from 'class-validator';
+import { CommentsModel } from 'src/articles/comments/entities/comment.entity';
 import { ArticlesModel } from 'src/articles/entities/articles.entity';
-import { BaseModel } from 'src/common/entities/base.entity';
-import {
-  IsEmail,
-  IsString,
-  Length,
-  ValidationArguments,
-} from 'class-validator';
-import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
-import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
-import { EmailValidationMessage } from 'src/common/validation-message/email-validation.message';
-import { Exclude, Expose } from 'class-transformer';
 import { ChatsModel } from 'src/chats/entities/chats.entity';
 import { MessagesModel } from 'src/chats/messages/entities/messages.entity';
-import { CommentsModel } from 'src/articles/comments/entities/comment.entity';
+import { BaseModel } from 'src/common/entities/base.entity';
+import { EmailValidationMessage } from 'src/common/validation-message/email-validation.message';
+import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
+import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { RolesEnum } from '../const/roles.const';
 import { UserFollowersModel } from './user-followers.entity';
 
 @Entity()
 export class UserModel extends BaseModel {
-  //이메일은 유니크한 값이어야 한다.
   @Column({
     unique: true,
   })
@@ -31,19 +25,6 @@ export class UserModel extends BaseModel {
   @Length(8, 16, {
     message: lengthValidationMessage,
   })
-  /**
-   * 요청이 올 때.
-   * front -> back => json데이터를 받아서 back에서 class instance를 찾아서 dto로 변환
-   *
-   * 응답이 올 때.
-   * back -> front => class instance(dto)를 json으로 응답을 보내줌
-   *
-   * toClassOnly -> class instance로 변환될때만
-   *
-   * toPlainOnly -> plain object로 변환될때만
-   *
-   * 즉 비밀번호 같은 경우에는 요청은 받아야 되고, 응답이 나 갈때는 제외시켜주는 옵션이 필요함.
-   */
   @Exclude({
     toPlainOnly: true,
   })
@@ -65,7 +46,10 @@ export class UserModel extends BaseModel {
   })
   role: RolesEnum;
 
-  @OneToMany(() => ArticlesModel, (articles) => articles.author)
+  @OneToMany(
+    () => ArticlesModel,
+    (articles) => articles.author,
+  )
   articles: ArticlesModel[];
 
   @Column({
@@ -119,22 +103,37 @@ export class UserModel extends BaseModel {
   // get devNameAndEmail() {
   //   return this.devName + '/' + this.email;
   // }
-  @ManyToMany(() => ChatsModel, (chat) => chat.users)
+  @ManyToMany(
+    () => ChatsModel,
+    (chat) => chat.users,
+  )
   @JoinTable()
   chats: ChatsModel[];
 
-  @OneToMany(() => MessagesModel, (message) => message.author)
+  @OneToMany(
+    () => MessagesModel,
+    (message) => message.author,
+  )
   messages: MessagesModel;
 
-  @OneToMany(() => CommentsModel, (comments) => comments.author)
+  @OneToMany(
+    () => CommentsModel,
+    (comments) => comments.author,
+  )
   articlesComments: CommentsModel[];
   // 내가 팔로우 하는 사람
-  @OneToMany(() => UserFollowersModel, (ufm) => ufm.follower)
+  @OneToMany(
+    () => UserFollowersModel,
+    (ufm) => ufm.follower,
+  )
   @JoinTable()
   followers: UserFollowersModel[];
 
   // 나를 팔로우 하는 사람
-  @OneToMany(() => UserFollowersModel, (ufm) => ufm.followee)
+  @OneToMany(
+    () => UserFollowersModel,
+    (ufm) => ufm.followee,
+  )
   followees: UserFollowersModel[];
 
   @Column({

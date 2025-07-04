@@ -6,13 +6,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserModel } from './entities/users.entity';
-import { QueryRunner, Repository } from 'typeorm';
 import { GithubBasicInfoUserDto } from 'src/auth/dto/register-github.dto';
 import { RegisterGithubUserDto } from 'src/auth/dto/register-user.dto';
+import { QueryRunner, Repository } from 'typeorm';
 import { DuplicateDevNameDto } from './dto/duplicate-devname.dto';
 import { UserProfileEditDto } from './dto/user-profiles-edit.dto';
 import { UserFollowersModel } from './entities/user-followers.entity';
+import { UserModel } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -24,9 +24,7 @@ export class UsersService {
   ) {}
 
   getUsersRepository(qr?: QueryRunner) {
-    return qr
-      ? qr.manager.getRepository<UserModel>(UserModel)
-      : this.userRepository;
+    return qr ? qr.manager.getRepository<UserModel>(UserModel) : this.userRepository;
   }
 
   getUserFollowRepository(qr?: QueryRunner) {
@@ -36,9 +34,6 @@ export class UsersService {
   }
 
   async createUser(email: string, password: string, devName: string) {
-    // name 중복을 찾아야 함.
-    // exist() => 만약에 조건에 해당하는 값이 있으면 true반환
-
     const existingProfileName = await this.userRepository.exists({
       where: {
         devName,
@@ -108,17 +103,7 @@ export class UsersService {
 
   async createGithubUser(user: RegisterGithubUserDto) {
     const { email, devName } = user;
-    // 주석 처리 이유. 이미 누군가 일반유저로 회원가입을 했고 사용하는 이름이 깃허브에서 가져온 이름과 같다면? 에러를 뱉는다.
 
-    // const existingProfileName = await this.userRepository.exists({
-    //   where: {
-    //     devName: user.devName,
-    //   },
-    // });
-
-    // if (existingProfileName) {
-    //   throw new BadGatewayException('이미 존재하는 데브월드 이름입니다.');
-    // }
     const existingEmail = await this.userRepository.exists({
       where: {
         email: user.email,
@@ -131,7 +116,6 @@ export class UsersService {
 
     const newUser = this.userRepository.create({
       email,
-      // 여기서 devName 생성해줘야 된다.
       devName,
     });
 
@@ -221,17 +205,8 @@ export class UsersService {
       throw new NotFoundException('사용자 정보가 존재하지 않습니다.');
     }
 
-    const {
-      devName,
-      bio,
-      position,
-      github,
-      linkedin,
-      instagram,
-      socialEtc,
-      email,
-      location,
-    } = userProfileEditDto;
+    const { devName, bio, position, github, linkedin, instagram, socialEtc, email, location } =
+      userProfileEditDto;
 
     Object.assign(userProfileData, {
       devName,
@@ -279,8 +254,7 @@ export class UsersService {
     }
     userProfileData.readme = readme;
 
-    const newReadmeProfileData =
-      await this.userRepository.save(userProfileData);
+    const newReadmeProfileData = await this.userRepository.save(userProfileData);
 
     return newReadmeProfileData;
   }
@@ -348,11 +322,7 @@ export class UsersService {
     }));
   }
 
-  async confirmFollow(
-    followerId: number,
-    followeeId: number,
-    qr?: QueryRunner,
-  ) {
+  async confirmFollow(followerId: number, followeeId: number, qr?: QueryRunner) {
     const userFollowersRepository = this.getUserFollowRepository(qr);
     const existingFollowRequest = await userFollowersRepository.findOne({
       where: {

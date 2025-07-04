@@ -1,9 +1,4 @@
-import {
-  IsEmail,
-  IsString,
-  Length,
-  ValidationArguments,
-} from 'class-validator';
+import { IsString, Length } from 'class-validator';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
 
 export class PasswordConfirmDto {
