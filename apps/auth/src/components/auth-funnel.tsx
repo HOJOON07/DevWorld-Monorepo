@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext, useRef } from 'react';
 import { useStore } from 'zustand';
 import { createAuthFunnelStore } from '../stores/funnel-store';
 
@@ -17,9 +17,13 @@ interface AuthFunnelProps {
 }
 
 function AuthFunnelRoot({ children }: AuthFunnelProps) {
-  const store = createAuthFunnelStore();
+  const authFunnelStore = useRef(createAuthFunnelStore());
 
-  return <AuthFunnelContext.Provider value={store}>{children}</AuthFunnelContext.Provider>;
+  return (
+    <AuthFunnelContext.Provider value={authFunnelStore.current}>
+      {children}
+    </AuthFunnelContext.Provider>
+  );
 }
 
 interface StepProps {
