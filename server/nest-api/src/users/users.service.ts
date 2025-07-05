@@ -3,10 +3,9 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GithubBasicInfoUserDto } from 'src/auth/dto/register-github.dto';
+import { OAuthUserInfoDto } from 'src/auth/dto/oauth.dto';
 import { RegisterGithubUserDto } from 'src/auth/dto/register-user.dto';
 import { QueryRunner, Repository } from 'typeorm';
 import { DuplicateDevNameDto } from './dto/duplicate-devname.dto';
@@ -101,12 +100,12 @@ export class UsersService {
     return result;
   }
 
-  async createGithubUser(user: RegisterGithubUserDto) {
-    const { email, devName } = user;
+  async createOAuthUser(userInfo: OAuthUserInfoDto) {
+    const { email, devName, github, location, bio, company, socialEtc } = userInfo;
 
     const existingEmail = await this.userRepository.exists({
       where: {
-        email: user.email,
+        email,
       },
     });
 
@@ -117,6 +116,11 @@ export class UsersService {
     const newUser = this.userRepository.create({
       email,
       devName,
+      github,
+      location,
+      bio,
+      company,
+      socialEtc,
     });
 
     return await this.userRepository.save(newUser);

@@ -18,48 +18,13 @@ import {
   ENV_JWT_SECRET,
 } from './../common/const/env-keys.const';
 import { JWT_Expires_Time } from './const/auth.const';
+import { OAuthUserInfoDto } from './dto/oauth.dto';
 import { GithubBasicInfoUserDto, GithubCodeDto } from './dto/register-github.dto';
-import { RegisterGithubUserDto, RegisterUserDto } from './dto/register-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class AuthService {
-  /**
-   * 토큰을 사용하게 되는 방식
-   *
-   * 1) 사용자가 로그인 또는 회원가입을 진행하면
-   *    accessToken과 refreshToken을 발급받는다.
-   *
-   * 2) 로그인 할때는 Basic 토큰과 함꼐 요청을 보낸다.
-   *    Basic 토큰은 '이메일:비밀번호'를 Base64로 인코딩한 형태이다.
-   *    예) {authorization: "Basic {token}"}
-   *
-   * 3) 아무나 접근 할 수 없는 정보를 접근 할때는 accessToken을 헤더에 추가해서 요청과 함께 보낸다.
-   *    예) {authorization: "bearer {token}"} 이렇게 보낼꺼임.
-   *
-   * 4) 토큰과 요청을 함께 받은 서버는 토큰 검증을 통해 현재 요청을 보냄
-   *    사용자가 누구인지 알 수 있다.
-   *    예를 들어서 현재 로그인한 사용자가 작성한 포스트만 가져오려면 토큰의 sub 값에 입력돼있는 사용자의 포스트만 따로 필터링 할 수 있다.
-   *    특정 사용자의 토큰이 없다면 다른 사용자의 데이터를 접근 못한다.
-   *
-   * 5) 모든 토큰은 만료 기간이 있다. 만료기간이 지나면 새로 토큰을 발급받아야한다.
-   *    그렇지 않으면 jwtService.verify()에서 인증을 통과 할 수 없을 것이다.
-   *    그러니 access토큰과 refresh토큰을 새로 발급받는 api가 필요하다
-   *
-   * 6) 토큰이 만료되면 각각의 토큰을 새로 발급 받을 수 있는 엔드포인트에 요청을 해서
-   *    새로운 토큰을 발급받고 새로운 토큰을 사용해서 private route에 접근한다.
-   *
-   */
-
-  /**
-   *
-   * 헤더로 부터 토큰을 받을 때
-   * {authorization: "Basic {token}"}
-   * {authorization: "Bearer {token}"}
-   *
-   */
-
   extractTokenFromHeader(header: string, isBearer: boolean) {
-    // [Basic, {token}]  [Bearer, {token}]
     const splitToken = header.split(' ');
 
     const prefix = isBearer ? 'Bearer' : 'Basic';
@@ -72,12 +37,6 @@ export class AuthService {
 
     return token;
   }
-  /**
-   * Basic
-   * 1) asdksahdlas => email:password
-   * 2) email:pasword => [email,password]
-   * 3) {email:email, password:password}
-   */
 
   decodeBasicToken(base64string: string) {
     const decoded = Buffer.from(base64string, 'base64').toString('utf-8');
@@ -96,22 +55,20 @@ export class AuthService {
       password,
     };
   }
-  // 토큰 검증
   verifyToken(token: string) {
     try {
       return this.jwtService.verify(token, {
         secret: this.configService.get<string>(ENV_JWT_SECRET),
       });
     } catch (e) {
-      throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰입니다.');
+      throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰입니다.', e);
     }
   }
-  // 새로 발급
   rotateToken(token: string, isRefreshToken: boolean) {
     const decoded = this.jwtService.verify(token, {
       secret: this.configService.get<string>(ENV_JWT_SECRET),
     });
-    // payload에는 현재 sub-> id, email, type
+
     if (decoded.type !== 'refresh') {
       throw new UnauthorizedException('토큰 재발급은 Refresh 토큰으로만 가능합니다.!');
     }
@@ -124,41 +81,12 @@ export class AuthService {
     );
   }
 
-  /*
-  ** 만드려는 기능 **
-
-  1. registerWithEmail
-    - email, name, password를 입력 받고 사용자를 생성한다.
-    - 생성이 완료되면 accessToken과 refreshToken을 반환한다. 
-    => 회원가입을 하고 바로 로그인을 하게 해주기 위해 즉, 회원가입 후 로그인을 해주세요와 같은 쓸데없는 과정을 방지하게 위해서
-
-
-  2. loginWithEmail 
-    - email, password를 입력하면 사용자 검증을 진행한다.
-    - 검증이 완료되면 accessToken과 refreshToken을 반환한다.
-    
-  3. loginUser
-    - 1,2에서 필요한 accessToken과 refreshToken을 반환하는 로직
-  
-  4. signToken 
-    - 3에서 필요한 기능. accessToken과 refreshToken을 sign하는 로직
-  
-  5. authenticateWithEmailAndPassword
-    - 2에서 로그인을 진행할 때 필요한 기본적인 검증 진행
-    1) 사용자가 존재하는지.
-    2) 비밀번호가 맞는지 확인
-    3) 모두 통과되면 차은 사용자 정보 반환
-    4) loginWithEmail에서 반환된 데이터를 기반으로 토큰 생성
-  */
-
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UsersService,
     private readonly configService: ConfigService,
   ) {}
 
-  // signToken에 들어갈 정보
-  // 1) devName 2) sub -> 사용자의 id 3) type:"access | refresh"
   signToken(user: Pick<UserModel, 'id' | 'devName' | 'email'>, isRefreshToken: boolean) {
     const payload = {
       sub: user.id,
@@ -169,7 +97,6 @@ export class AuthService {
 
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>(ENV_JWT_SECRET),
-      // seconds
       expiresIn: isRefreshToken ? JWT_Expires_Time.refresh : JWT_Expires_Time.access,
     });
   }
@@ -181,15 +108,11 @@ export class AuthService {
     };
   }
 
-  // OAuthLoginUser(user:Pick<GithubBasicInfoUserDto,"">)
-
-  async authenticateWithEmailForGithubOAuth(user: RegisterGithubUserDto) {
-    const existingUser = await this.userService.getUserByEmail(user.email);
+  async authenticateWithEmailForOAuth(userInfo: OAuthUserInfoDto) {
+    const existingUser = await this.userService.getUserByEmail(userInfo.email);
 
     if (!existingUser) {
-      //없으면 회원가입
-
-      const newUser = await this.userService.createGithubUser(user);
+      const newUser = await this.userService.createOAuthUser(userInfo);
       return newUser;
     }
 
@@ -203,61 +126,25 @@ export class AuthService {
       throw new UnauthorizedException('존재하지 않는 사용자입니다.');
     }
 
-    const passwordOK = await bcrypt.compare(
-      user.password,
-      // ->  qwer1234
-      existingUser.password,
-      // -> $2b$10$n7ri65iRy7fHr.KHpiL8suk7hyxydGltXV6Hjj1rf7DJ2VTBmFBOO
-    );
+    const passwordOK = await bcrypt.compare(user.password, existingUser.password);
 
     if (!passwordOK) {
       throw new UnauthorizedException('입력하신 사용자 정보를 찾을 수 없습니다.');
     }
 
     return existingUser;
-
-    /**
-    * UserModel {
-    id: 3,
-    createdAt: 2024-06-27T18:50:26.597Z,
-    updatedAt: 2024-06-27T18:50:26.597Z,
-    email: 'ghwns107@naver.com',
-    password: '$2b$10$n7ri65iRy7fHr.KHpiL8suk7hyxydGltXV6Hjj1rf7DJ2VTBmFBOO',
-    devName: 'qwer1234',
-    role: 'user',
-    position: null,
-    bio: null,
-    address: null,
-    github: null,
-    linkedin: null,
-    instagram: null,
-    socialEtc: null
-    }
-     */
   }
-
-  /**
-   *
-   * 깃허브로 소셜로그인할 때 유저의 플로우
-   * 1. 프론트엔드에서 깃허브 로그인 버튼을 누름
-   * 2. 백엔드에서는 유저의 정보를 돌려줌
-   * 3. 돌려받은 유저의 정보를 가지고 유저를 찾아야 한다. (가입이 되어있는지 없는지)
-   * 4. 가입되어있다면 로그인
-   * 5. 가입이 안되어있다면 회원가입 후 로그인
-   */
 
   async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
     const existingUser = await this.authenticateWithEmailAndPassword(user);
 
     return this.loginUser(existingUser);
   }
-  //
-  async loginWithGithubOAuth(user: RegisterGithubUserDto) {
-    const existingUser = await this.authenticateWithEmailForGithubOAuth(user);
-
+  async loginWithOAuth(userInfo: OAuthUserInfoDto) {
+    const existingUser = await this.authenticateWithEmailForOAuth(userInfo);
     return this.loginUser(existingUser);
   }
-  //
+
   async registerWithEmail(user: RegisterUserDto) {
     const hash_rounds = parseInt(this.configService.get<string>(ENV_JWT_HASH_ROUNDS));
     const hashPassword = await bcrypt.hash(user.password, hash_rounds);

@@ -31,6 +31,7 @@
     "@module-federation/enhanced": "^0.8.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.6.2"
+    "react-router-dom": "^7.6.2",
+    "zustand": "^5.0.6"
   }
 }

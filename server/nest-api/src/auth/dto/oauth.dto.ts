@@ -2,7 +2,10 @@ import { PartialType } from '@nestjs/mapped-types';
 import { IsOptional, IsString } from 'class-validator';
 import { UserModel } from 'src/users/entities/users.entity';
 
-export class GithubBasicInfoUserDto extends PartialType(UserModel) {
+export class OAuthUserInfoDto extends PartialType(UserModel) {
+  @IsString()
+  email: string;
+
   @IsString()
   devName: string;
 
@@ -27,14 +30,15 @@ export class GithubBasicInfoUserDto extends PartialType(UserModel) {
   bio?: string;
 }
 
-export class GithubCodeDto {
+export class OAuthCodeDto {
   @IsString()
   readonly code: string;
 }
 
-// login = devName
-// htmlurl = github
-// location = location
-// blog = socialEtc
-// company = company
-// bio = bio
+export class OAuthLoginDto {
+  @IsString()
+  readonly provider: 'github' | 'google';
+
+  @IsString()
+  readonly code: string;
+}

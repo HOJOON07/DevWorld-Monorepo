@@ -2,12 +2,6 @@ import { Injectable, InternalServerErrorException, UnauthorizedException } from 
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosResponse } from 'axios';
 import handleAxiosError from 'src/common/axios-error/handle-error';
-import {
-  ENV_GITHUB_CLIENT_ID,
-  ENV_GITHUB_CLIENT_SECRET,
-  ENV_GOOGLE_CLIENT_ID,
-  ENV_GOOGLE_CLIENT_SECRET,
-} from 'src/common/const/env-keys.const';
 
 export interface OAuthUserInfo {
   email: string;
@@ -19,49 +13,63 @@ export interface OAuthUserInfo {
   socialEtc?: string;
 }
 
+type Provider = 'github' | 'google';
+
 @Injectable()
 export class OAuthService {
-  constructor(private readonly configService: ConfigService) {}
+  private readonly baseUrls: Record<Provider, string>;
+  private readonly clientIds: Record<Provider, string>;
+  private readonly clientSecrets: Record<Provider, string>;
+  private readonly redirectUris: Record<Provider, string>;
+  private readonly scopes: Record<Provider, string>;
 
-  generateOAuthRedirectUrl(provider: 'github' | 'google'): string {
-    const baseUrls = {
+  constructor(private readonly configService: ConfigService) {
+    this.baseUrls = {
       github: 'https://github.com/login/oauth/authorize',
       google: 'https://accounts.google.com/o/oauth2/v2/auth',
     };
 
-    const clientIds = {
-      github: this.configService.get<string>(ENV_GITHUB_CLIENT_ID),
-      google: this.configService.get<string>(ENV_GOOGLE_CLIENT_ID),
+    this.clientIds = {
+      github: this.configService.get<string>('GITHUB_CLIENT_ID')!,
+      google: this.configService.get<string>('GOOGLE_CLIENT_ID')!,
     };
 
-    const redirectUris = {
-      github: `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/auth/callback`,
-      google: `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/auth/callback`,
+    this.clientSecrets = {
+      github: this.configService.get<string>('GITHUB_CLIENT_SECRET'),
+      google: this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
     };
 
-    const scopes = {
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    this.redirectUris = {
+      github: `${frontendUrl}/auth/callback`,
+      google: `${frontendUrl}/auth/callback`,
+    };
+
+    this.scopes = {
       github: 'user:email',
       google: 'openid email profile',
     };
+  }
 
+  generateOAuthRedirectUrl(provider: 'github' | 'google'): string {
     const params = new URLSearchParams({
-      client_id: clientIds[provider],
-      redirect_uri: redirectUris[provider],
-      scope: scopes[provider],
+      client_id: this.clientIds[provider],
+      redirect_uri: this.redirectUris[provider],
+      scope: this.scopes[provider],
       response_type: 'token',
       include_granted_scopes: 'true',
       //state
     });
 
-    return `${baseUrls[provider]}?${params.toString()}`;
+    return `${this.baseUrls[provider]}?${params.toString()}`;
   }
 
   async getGithubAccessToken(githubCode: string): Promise<string> {
     const getTokenUrl = 'https://github.com/login/oauth/access_token';
     const request = {
       code: githubCode,
-      client_id: this.configService.get<string>(ENV_GITHUB_CLIENT_ID),
-      client_secret: this.configService.get<string>(ENV_GITHUB_CLIENT_SECRET),
+      client_id: this.clientIds['github'],
+      client_secret: this.clientSecrets['github'],
     };
 
     try {
@@ -72,7 +80,7 @@ export class OAuthService {
       });
 
       if (response.data.error) {
-        throw new UnauthorizedException('깃허브 인증을 실패했습니다.');
+        throw new UnauthorizedException('Github Authorization Failed');
       }
 
       if (!response.data.access_token) {
@@ -124,9 +132,9 @@ export class OAuthService {
     const tokenUrl = 'https://oauth2.googleapis.com/token';
     const requestBody = {
       code: googleCode,
-      client_id: this.configService.get<string>(ENV_GOOGLE_CLIENT_ID),
-      client_secret: this.configService.get<string>(ENV_GOOGLE_CLIENT_SECRET),
-      redirect_uri: `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/auth/callback/google`,
+      client_id: this.clientIds['google'],
+      client_secret: this.clientSecrets['google'],
+      redirect_uri: this.redirectUris['google'],
       grant_type: 'authorization_code',
     };
 

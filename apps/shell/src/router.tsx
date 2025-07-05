@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AppAuth from './components/app-auth';
 import AppFeed from './components/app-feed';
 import Layout from './components/layout';
@@ -9,10 +9,6 @@ const browserRouter = createBrowserRouter([
     path: '/',
     element: <Layout />,
     children: [
-      // {
-      //   index: true,
-      //   element: <Navigate to={appFeedBasename} />,
-      // },
       {
         path: `${appFeedBaseName}/*`,
         element: <AppFeed />,

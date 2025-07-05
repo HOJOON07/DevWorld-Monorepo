@@ -64,28 +64,31 @@ export class AuthController {
     return this.authService.registerWithEmail(body);
   }
 
-  @Post('/github')
-  @IsPublic()
-  postRegisterGithub(@Body() body: RegisterGithubUserDto) {
-    return this.authService.loginWithGithubOAuth(body);
-  }
-
-  @Post('/callback/github')
-  @IsPublic()
-  async postOauthGithubLogin(@Body() githubCode: GithubCodeDto) {
-    const userInfo = await this.authService.OAuthGithubLogin(githubCode);
-    return {
-      status: 200,
-      message: '깃허브 유저 정보를 조회했습니다',
-      userInfo,
-    };
-  }
-
   @Get('/callback/:provider')
   @IsPublic()
   async getOAuthCallbackUrl(@Param('provider') provider: 'google' | 'github') {
-    // // const callbackUrl = await this.authService.
-    // return callbackUrl
-    return { provider };
+    const redirectUrl = this.oauthService.generateOAuthRedirectUrl(provider);
+    return {
+      provider,
+      redirectUrl,
+    };
+  }
+
+  @Post('/oauth-login/:provider')
+  @IsPublic()
+  async oauthLogin(
+    @Param('provider') provider: 'google' | 'github',
+    @Body() body: { code: string },
+  ) {
+    const { code } = body;
+    const userInfo = await this.oauthService.processOAuthLogin(provider, code);
+
+    const tokens = await this.authService.loginWithOAuth(userInfo);
+
+    return {
+      status: 200,
+      message: `${provider} OAuth 로그인이 완료되었습니다.`,
+      ...tokens,
+    };
   }
 }

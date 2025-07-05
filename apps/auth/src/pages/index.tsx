@@ -1,4 +1,5 @@
-import SignInPage from './signin-page';
-import SignUpPage from './signup-page';
+import SignInPage from './sign-in-page';
+import SignUpPage from './sign-up-page';
+export { SignUpPage, SignInPage };
 
-export { SignInPage, SignUpPage };
+// export { SignInPage, SignUpPage };
