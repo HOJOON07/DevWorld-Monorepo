@@ -20,8 +20,8 @@ export class OAuthService {
   private readonly baseUrls: Record<Provider, string>;
   private readonly clientIds: Record<Provider, string>;
   private readonly clientSecrets: Record<Provider, string>;
-  private readonly redirectUris: Record<Provider, string>;
   private readonly scopes: Record<Provider, string>;
+  private readonly redirectUri: string;
 
   constructor(private readonly configService: ConfigService) {
     this.baseUrls = {
@@ -39,26 +39,23 @@ export class OAuthService {
       google: this.configService.get<string>('GOOGLE_CLIENT_SECRET'),
     };
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    this.redirectUris = {
-      github: `${frontendUrl}/auth/callback`,
-      google: `${frontendUrl}/auth/callback`,
-    };
-
     this.scopes = {
       github: 'user:email',
       google: 'openid email profile',
     };
+
+    this.redirectUri = 'http://localhost:3000/auth/callback/';
   }
 
   generateOAuthRedirectUrl(provider: 'github' | 'google'): string {
     const params = new URLSearchParams({
       client_id: this.clientIds[provider],
-      redirect_uri: this.redirectUris[provider],
       scope: this.scopes[provider],
-      response_type: 'token',
-      include_granted_scopes: 'true',
-      //state
+      response_type: 'code',
+      access_type: provider === 'google' ? 'offline' : undefined,
+      include_granted_scopes: provider === 'google' ? 'true' : undefined,
+      redirect_uri: this.redirectUri + provider,
+      prompt: provider === 'google' ? 'consent' : undefined,
     });
 
     return `${this.baseUrls[provider]}?${params.toString()}`;
@@ -108,7 +105,7 @@ export class OAuthService {
         },
       });
 
-      const { login, html_url, location, bio, company, blog } = userResponse.data;
+      const { login } = userResponse.data;
       const primaryEmail = emailResponse.data
         .filter((email: any) => email.primary && email.verified)
         .map((data: any) => data.email)[0];
@@ -116,11 +113,6 @@ export class OAuthService {
       return {
         email: primaryEmail,
         devName: login,
-        github: html_url,
-        location,
-        bio,
-        company,
-        socialEtc: blog,
       };
     } catch (error) {
       console.error('GitHub 사용자 정보를 가져오는 과정에서 에러가 발생했습니다:', error);
@@ -134,7 +126,7 @@ export class OAuthService {
       code: googleCode,
       client_id: this.clientIds['google'],
       client_secret: this.clientSecrets['google'],
-      redirect_uri: this.redirectUris['google'],
+      redirect_uri: this.redirectUri + 'google',
       grant_type: 'authorization_code',
     };
 
@@ -168,11 +160,10 @@ export class OAuthService {
         },
       });
 
-      const { email, name, picture } = response.data;
+      const { email, name } = response.data;
       return {
         email,
         devName: name,
-        socialEtc: picture,
       };
     } catch (error) {
       console.error('Google 사용자 정보를 가져오는 과정에서 에러가 발생했습니다:', error);

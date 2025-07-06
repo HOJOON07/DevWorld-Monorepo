@@ -1,44 +1,47 @@
 import { create } from 'zustand';
 
-interface AuthFunnelState {
+interface FunnelState<T = any> {
   step: number;
-  email: string;
+  data: T;
   isLoading: boolean;
   error: string | null;
 }
 
-interface AuthFunnelActions {
+interface FunnelActions<T> {
   setStep: (step: number) => void;
-  nextStep: () => void;
-  setEmail: (email: string) => void;
+  nextStep: (maxStep?: number) => void;
+  setData: (data: Partial<T>) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  reset: () => void;
+  reset: (initialData: T) => void;
 }
 
-export type AuthFunnelStore = AuthFunnelState & AuthFunnelActions;
+export type FunnelStore<T> = FunnelState<T> & FunnelActions<T>;
 
-export const createAuthFunnelStore = () =>
-  create<AuthFunnelStore>((set, get) => ({
+export const createFunnelStore = <T>(initialData: T) =>
+  create<FunnelStore<T>>((set, get) => ({
     step: 1,
-    email: '',
+    data: initialData,
     isLoading: false,
     error: null,
 
     setStep: (step) => set({ step, error: null }),
 
-    nextStep: () => {
+    nextStep: (maxStep = 3) => {
       const { step } = get();
-      if (step < 3) {
+      if (step < maxStep) {
         set({ step: step + 1, error: null });
       }
     },
 
-    setEmail: (email) => set({ email }),
+    setData: (newData) =>
+      set((state) => ({
+        data: { ...state.data, ...newData },
+      })),
 
     setLoading: (isLoading) => set({ isLoading }),
 
     setError: (error) => set({ error }),
 
-    reset: () => set({ step: 1, email: '', isLoading: false, error: null }),
+    reset: (initialData) => set({ step: 1, data: initialData, isLoading: false, error: null }),
   }));

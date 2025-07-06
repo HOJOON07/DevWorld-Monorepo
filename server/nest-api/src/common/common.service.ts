@@ -1,16 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { BasePaginationDto } from './dto/base-pagination.dto';
-import {
-  FindManyOptions,
-  FindOptionsOrder,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
-import { BaseModel } from './entities/base.entity';
-import { FILTER_MAPPER } from './const/filter-mapper.const';
-import { HOST, PROTOCOL } from './const/env.const';
 import { mergeWith } from 'lodash';
-import { PaginateArticleDto } from 'src/articles/dto/paginate-article.dto';
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { HOST, PROTOCOL } from './const/env.const';
+import { FILTER_MAPPER } from './const/filter-mapper.const';
+import { BasePaginationDto } from './dto/base-pagination.dto';
+import { BaseModel } from './entities/base.entity';
 
 @Injectable()
 export class CommonService {
@@ -72,9 +66,7 @@ export class CommonService {
       },
     );
 
-    mergeWithFindOptions.where = this.transformWhereToArray(
-      mergeWithFindOptions.where,
-    );
+    mergeWithFindOptions.where = this.transformWhereToArray(mergeWithFindOptions.where);
 
     // const [data, count] = await repository.findAndCount({
     //   ...findOptions,
@@ -113,28 +105,21 @@ export class CommonService {
         }
       },
     );
-    mergeWithFindOptions.where = this.transformWhereToArray(
-      mergeWithFindOptions.where,
-    );
+    mergeWithFindOptions.where = this.transformWhereToArray(mergeWithFindOptions.where);
 
     const results = await repository.find({
       ...mergeWithFindOptions,
     });
 
     const lastItem =
-      results.length > 0 && results.length === dto.take
-        ? results[results.length - 1]
-        : null;
+      results.length > 0 && results.length === dto.take ? results[results.length - 1] : null;
 
     const nextUrl = lastItem && new URL(`${PROTOCOL}://${HOST}/${path}`);
 
     if (nextUrl) {
       for (const key of Object.keys(dto)) {
         if (dto[key]) {
-          if (
-            key !== 'where__id__more_than' &&
-            key !== 'where__id__less_than'
-          ) {
+          if (key !== 'where__id__more_than' && key !== 'where__id__less_than') {
             nextUrl.searchParams.append(key, dto[key]);
           }
         }
@@ -159,9 +144,7 @@ export class CommonService {
     };
   }
 
-  private composeFindOptions<T extends BaseModel>(
-    dto: BasePaginationDto,
-  ): FindManyOptions<T> {
+  private composeFindOptions<T extends BaseModel>(dto: BasePaginationDto): FindManyOptions<T> {
     let where: FindOptionsWhere<T> = {};
     let order: FindOptionsOrder<T> = {};
 
@@ -221,10 +204,7 @@ export class CommonService {
     return options;
   }
 
-  private parseOrderFilter<T extends BaseModel>(
-    key: string,
-    value: any,
-  ): FindOptionsOrder<T> {
+  private parseOrderFilter<T extends BaseModel>(key: string, value: any): FindOptionsOrder<T> {
     const order: FindOptionsOrder<T> = {};
 
     /**

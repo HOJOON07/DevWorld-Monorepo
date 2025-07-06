@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run start",
     "build": "turbo run build",
-    "build:packages": "turbo run build --filter=@devworld/shell-router --filter=@devworld/ui",
+    "build:packages": "turbo run build --filter=@devworld/shell-router --filter=@devworld/ui --filter=@devworld/axios-client",
     "build:ui": "turbo run build --filter=@devworld/ui",
     "serve": "turbo run build:start",
     "lint:check": "biome check .",

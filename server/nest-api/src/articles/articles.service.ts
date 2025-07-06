@@ -1,26 +1,17 @@
-import { DEFAULT_ARTICLES_FIND_OPTIONS } from './const/default-article-find-options';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunner, Repository } from 'typeorm';
-import { ArticlesModel } from './entities/articles.entity';
-import { CreateArticleDto } from './dto/create-article-dto';
-import { UpdateArticleDto } from './dto/update-article-dto';
-import { PaginateArticleDto } from './dto/paginate-article.dto';
-import {
-  ArticlePrivateStateEnums,
-  ArticlePublishStateEnums,
-} from './const/article-state';
-
 import { CommonService } from 'src/common/common.service';
-
 import { ImageModel } from 'src/common/entities/image.entity';
-import { PaginateWorkspaceArticleDto } from './dto/paginate-workspace-articles-dto';
-import { PaginateUserPublicArticleDto } from './dto/paginate-user-public-article-dto';
 import { UserModel } from 'src/users/entities/users.entity';
+import { QueryRunner, Repository } from 'typeorm';
+import { ArticlePrivateStateEnums, ArticlePublishStateEnums } from './const/article-state';
+import { DEFAULT_ARTICLES_FIND_OPTIONS } from './const/default-article-find-options';
+import { CreateArticleDto } from './dto/create-article-dto';
+import { PaginateArticleDto } from './dto/paginate-article.dto';
+import { PaginateUserPublicArticleDto } from './dto/paginate-user-public-article-dto';
+import { PaginateWorkspaceArticleDto } from './dto/paginate-workspace-articles-dto';
+import { UpdateArticleDto } from './dto/update-article-dto';
+import { ArticlesModel } from './entities/articles.entity';
 
 @Injectable()
 export class ArticlesService {
@@ -36,9 +27,7 @@ export class ArticlesService {
   ) {}
 
   getRepository(qr?: QueryRunner) {
-    return qr
-      ? qr.manager.getRepository<ArticlesModel>(ArticlesModel)
-      : this.articlesRepository;
+    return qr ? qr.manager.getRepository<ArticlesModel>(ArticlesModel) : this.articlesRepository;
   }
 
   async getAllArticles() {
@@ -76,10 +65,7 @@ export class ArticlesService {
     );
   }
 
-  async paginateWorkspaceArticles(
-    dto: PaginateWorkspaceArticleDto,
-    userId: number,
-  ) {
+  async paginateWorkspaceArticles(dto: PaginateWorkspaceArticleDto, userId: number) {
     return await this.commonService.paginate(
       dto,
       this.articlesRepository,
@@ -92,7 +78,6 @@ export class ArticlesService {
           createdAt: true,
           updatedAt: true,
         },
-        // ...where,
         where: {
           author: {
             id: userId,
@@ -216,11 +201,7 @@ export class ArticlesService {
     );
   }
 
-  async createArticle(
-    authorId: number,
-    articleDto: CreateArticleDto,
-    qr?: QueryRunner,
-  ) {
+  async createArticle(authorId: number, articleDto: CreateArticleDto, qr?: QueryRunner) {
     const repository = this.getRepository(qr);
     //create 메서드는 동기적으로 동작함.
     const article = repository.create({
@@ -236,11 +217,7 @@ export class ArticlesService {
     return article;
   }
 
-  async updateArticle(
-    id: number,
-    updateArticleDto: UpdateArticleDto,
-    qr?: QueryRunner,
-  ) {
+  async updateArticle(id: number, updateArticleDto: UpdateArticleDto, qr?: QueryRunner) {
     const articlesRepository = this.getRepository(qr);
     // save의 두가 기능
     // 1) 만약에 데이터가 존재하지 않는다면 (id)가 없다면 새로 생성한다.
@@ -255,8 +232,7 @@ export class ArticlesService {
     if (article == undefined) {
       throw new NotFoundException();
     }
-    const { title, contents, description, isPrivate, isPublish, articleImage } =
-      updateArticleDto;
+    const { title, contents, description, isPrivate, isPublish, articleImage } = updateArticleDto;
     if (title) {
       article.title = title;
     }

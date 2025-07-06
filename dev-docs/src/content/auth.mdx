@@ -1,0 +1,336 @@
+# 마이크로 프론트엔드 인증 아키텍처
+
+## 문제 상황
+
+MFA(Micro Frontend Architecture)에서 인증 관리의 주요 도전과제:
+
+- **Shell App**: Host 앱으로써 인증 여부에 따른 동적 UI 및 Private Route 관리
+- **Auth App**: 로그인/회원가입 처리
+- **Feed App**: 인증이 필요한 콘텐츠 표시
+- **문제**: 로그아웃은 모든 앱에서 발생 가능하지만, 일일히 메시지를 보내는 것은 확장성이 떨어짐
+
+## 해결 방안: Shared Auth Store + Event Bus
+
+### 1. 공통 인증 라이브러리 생성
+
+```typescript
+// packages/shared-auth/src/auth-store.ts
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
+
+interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  tokens: { accessToken: string; refreshToken: string } | null;
+}
+
+interface AuthActions {
+  login: (user: User, tokens: any) => void;
+  logout: () => void;
+  updateUser: (user: Partial<User>) => void;
+}
+
+export const useGlobalAuth = create<AuthState & AuthActions>()(
+  subscribeWithSelector((set) => ({
+    user: null,
+    isAuthenticated: false,
+    tokens: null,
+
+    login: (user, tokens) => {
+      localStorage.setItem('auth', JSON.stringify({ user, tokens }));
+      set({ user, tokens, isAuthenticated: true });
+    },
+
+    logout: () => {
+      localStorage.removeItem('auth');
+      set({ user: null, tokens: null, isAuthenticated: false });
+    },
+
+    updateUser: (userData) =>
+      set((state) => ({
+        user: state.user ? { ...state.user, ...userData } : null,
+      })),
+  }))
+);
+```
+
+### 2. Cross-App Event Synchronization
+
+```typescript
+// packages/shared-auth/src/auth-sync.ts
+export class AuthSync {
+  private static instance: AuthSync;
+  private channel: BroadcastChannel;
+
+  private constructor() {
+    this.channel = new BroadcastChannel('mfa-auth');
+    this.setupListeners();
+  }
+
+  static getInstance() {
+    if (!AuthSync.instance) {
+      AuthSync.instance = new AuthSync();
+    }
+    return AuthSync.instance;
+  }
+
+  private setupListeners() {
+    // 다른 탭/앱에서의 변경사항 감지
+    this.channel.addEventListener('message', (event) => {
+      const authStore = useGlobalAuth.getState();
+      
+      switch (event.data.type) {
+        case 'AUTH_LOGIN':
+          authStore.login(event.data.user, event.data.tokens);
+          break;
+        case 'AUTH_LOGOUT':
+          authStore.logout();
+          break;
+        case 'AUTH_UPDATE':
+          authStore.updateUser(event.data.user);
+          break;
+      }
+    });
+
+    // localStorage 변경 감지 (다른 탭)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'auth') {
+        const authStore = useGlobalAuth.getState();
+        if (e.newValue) {
+          const { user, tokens } = JSON.parse(e.newValue);
+          authStore.login(user, tokens);
+        } else {
+          authStore.logout();
+        }
+      }
+    });
+  }
+
+  broadcastLogin(user: User, tokens: any) {
+    this.channel.postMessage({ type: 'AUTH_LOGIN', user, tokens });
+  }
+
+  broadcastLogout() {
+    this.channel.postMessage({ type: 'AUTH_LOGOUT' });
+  }
+
+  broadcastUserUpdate(user: Partial<User>) {
+    this.channel.postMessage({ type: 'AUTH_UPDATE', user });
+  }
+}
+```
+
+### 3. 각 앱에서 사용법
+
+#### Shell App
+```tsx
+function ShellApp() {
+  const { user, isAuthenticated, logout } = useGlobalAuth();
+  
+  useEffect(() => {
+    AuthSync.getInstance(); // 동기화 시작
+  }, []);
+
+  return (
+    <div>
+      <Header>
+        {isAuthenticated && (
+          <button onClick={logout}>Logout</button> // 어느 앱에서든 동일
+        )}
+      </Header>
+      <Routes>...</Routes>
+    </div>
+  );
+}
+```
+
+#### Feed App
+```tsx
+function FeedApp() {
+  const { user, isAuthenticated, logout } = useGlobalAuth();
+  
+  return (
+    <div>
+      {isAuthenticated ? (
+        <div>
+          <UserProfile user={user} />
+          <button onClick={logout}>Logout</button> // 동일한 함수!
+        </div>
+      ) : (
+        <LoginPrompt />
+      )}
+    </div>
+  );
+}
+```
+
+#### Auth App
+```tsx
+function AuthApp() {
+  const { login } = useGlobalAuth();
+  
+  const handleSignupSuccess = (user, tokens) => {
+    login(user, tokens); // 모든 앱에 자동 동기화
+    AuthSync.getInstance().broadcastLogin(user, tokens);
+  };
+}
+```
+
+## Zustand Store 공유 제약사항
+
+### 문제점: 번들 격리
+
+각 앱이 독립적인 번들을 가지면 Zustand store를 직접 공유할 수 없습니다:
+
+```
+Shell App Bundle → zustand instance A
+Auth App Bundle → zustand instance B  
+Feed App Bundle → zustand instance C
+```
+
+### 해결 방법들
+
+#### 1. Module Federation으로 Store 공유 (추천)
+
+```typescript
+// Shell App - rspack.config.ts
+new ModuleFederationPlugin({
+  name: 'shell',
+  exposes: {
+    './auth-store': './src/shared/auth-store.ts', // Shell에서 store 제공
+  },
+});
+
+// Auth App - rspack.config.ts  
+new ModuleFederationPlugin({
+  name: 'auth',
+  remotes: {
+    shell: 'shell@http://localhost:3001/remoteEntry.js',
+  },
+});
+
+// Auth App에서 사용
+import { useGlobalAuth } from 'shell/auth-store'; // Shell의 store 사용
+```
+
+#### 2. 공유 라이브러리 방식
+```typescript
+// packages/shared-auth → 각 앱의 node_modules에 설치
+// 하지만 여전히 각 앱마다 별도 인스턴스 생성됨
+// BroadcastChannel로 동기화 필요
+```
+
+## 장점
+
+1. **단일 인터페이스**: 모든 앱에서 동일한 `logout()` 함수 사용
+2. **자동 동기화**: BroadcastChannel + localStorage로 모든 탭/앱 동기화
+3. **확장성**: 새 앱 추가 시 라이브러리만 설치하면 됨
+4. **타입 안전성**: 공통 타입 정의
+5. **에러 방지**: 중앙화된 상태 관리
+
+## 권장사항
+
+**Module Federation으로 Shell이 store를 expose하고 다른 앱들이 consume하는 방식**이 가장 깔끔합니다. 
+
+하지만 **완전한 독립성**을 원한다면 각 앱이 개별 store + BroadcastChannel 동기화가 더 안전할 수 있습니다.
+
+## 개선된 접근법: 최소한의 인증 상태만 공유
+
+### 기존 접근법의 문제점
+
+1. **과도한 결합**: User 정보를 모든 앱이 공유 → 의존성 증가
+2. **보안 위험**: localStorage에 사용자 정보 저장
+3. **독립성 훼손**: 각 앱이 동일한 user 객체 구조에 의존
+4. **MFA 철학 위배**: 마이크로 앱의 독립성이 중요한데 공유 상태가 많아질수록 결합도 증가
+
+### 쿠키 기반 인증 + 최소 상태 공유
+
+#### 1. 최소한의 공유 상태
+
+```typescript
+// 최소한의 공유 상태
+interface AuthState {
+  isAuthenticated: boolean; // 이것만!
+}
+
+// 각 앱이 필요시 개별적으로 사용자 정보 요청
+const useUserInfo = () => {
+  return useQuery({
+    queryKey: ['userInfo'],
+    queryFn: () => fetch('/api/user/me'), // 쿠키로 인증
+    enabled: isAuthenticated
+  });
+};
+```
+
+#### 2. 쿠키 기반 로그인 플로우
+
+```typescript
+// Auth App
+const handleLogin = async (credentials) => {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    credentials: 'include', // 쿠키 포함
+    body: JSON.stringify(credentials)
+  });
+  
+  if (response.ok) {
+    // 쿠키에 토큰 자동 설정됨 (백엔드에서)
+    broadcastAuthChange({ isAuthenticated: true });
+    redirect('/dashboard');
+  }
+};
+```
+
+#### 3. 각 앱에서 독립적인 사용자 정보 요청
+
+```typescript
+// Feed App
+function UserProfile() {
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const response = await fetch('/api/user/me', {
+        credentials: 'include' // 쿠키로 자동 인증
+      });
+      return response.json();
+    }
+  });
+  
+  return <div>{user?.name}</div>;
+}
+```
+
+#### 4. 초간단 Auth Sync
+
+```typescript
+// 초간단 Auth Sync
+export class AuthSync {
+  private channel = new BroadcastChannel('auth-status');
+  
+  broadcastLogin() {
+    this.channel.postMessage({ isAuthenticated: true });
+  }
+  
+  broadcastLogout() {
+    this.channel.postMessage({ isAuthenticated: false });
+    // 쿠키 클리어는 백엔드 API 호출
+    fetch('/api/auth/logout', { credentials: 'include' });
+  }
+}
+```
+
+### 개선된 접근법의 장점
+
+1. **진정한 독립성**: 각 앱이 필요한 사용자 정보만 개별 요청
+2. **보안 강화**: HttpOnly 쿠키 사용 (XSS 공격 불가)
+3. **최신성 보장**: 항상 서버에서 최신 사용자 정보 제공
+4. **확장성**: 새 앱이 기존 user 객체 구조에 의존하지 않음
+5. **MFA 철학 준수**: 마이크로 앱 간 결합도 최소화
+
+### 최종 권장 아키텍처
+
+- **공유 상태**: `isAuthenticated` boolean 값만
+- **인증 토큰**: HttpOnly 쿠키로 관리
+- **사용자 정보**: 각 앱이 필요시 개별 API 요청
+- **동기화**: BroadcastChannel로 인증 상태만 동기화

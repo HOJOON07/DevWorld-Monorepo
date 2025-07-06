@@ -1,18 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { AuthService } from './auth.service';
-import { GithubCodeDto } from './dto/register-github.dto';
-import { RegisterGithubUserDto, RegisterUserDto } from './dto/register-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { BasciTokenGuard } from './guard/basic-token.guard';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { OAuthService } from './oauth.service';
@@ -23,6 +12,13 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly oauthService: OAuthService,
   ) {}
+
+  @Get('health')
+  @IsPublic()
+  healthcheck() {
+    const testMessage = 'hi!';
+    return testMessage;
+  }
 
   @Post('token/access')
   @IsPublic()
@@ -64,26 +60,30 @@ export class AuthController {
     return this.authService.registerWithEmail(body);
   }
 
-  @Get('/callback/:provider')
+  @Get('callback/:provider')
   @IsPublic()
   async getOAuthCallbackUrl(@Param('provider') provider: 'google' | 'github') {
     const redirectUrl = this.oauthService.generateOAuthRedirectUrl(provider);
+
     return {
       provider,
       redirectUrl,
     };
   }
 
-  @Post('/oauth-login/:provider')
+  @Post('oauth-login/:provider')
   @IsPublic()
   async oauthLogin(
     @Param('provider') provider: 'google' | 'github',
     @Body() body: { code: string },
   ) {
     const { code } = body;
+
     const userInfo = await this.oauthService.processOAuthLogin(provider, code);
 
     const tokens = await this.authService.loginWithOAuth(userInfo);
+    console.log(userInfo);
+    console.log(tokens);
 
     return {
       status: 200,

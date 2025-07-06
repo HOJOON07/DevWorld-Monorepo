@@ -8,12 +8,10 @@ const browserRouter = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
-    children: [
-      {
-        path: `${appFeedBaseName}/*`,
-        element: <AppFeed />,
-      },
-    ],
+  },
+  {
+    path: `${appFeedBaseName}/*`,
+    element: <AppFeed />,
   },
   { path: `${appAuthBaseName}/*`, element: <AppAuth /> },
 ]);

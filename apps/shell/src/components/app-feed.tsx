@@ -2,7 +2,7 @@ import { type injectFunctionType, useShellEvent } from '@devworld/shell-router';
 import { importRemote } from '@module-federation/utilities';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { appAuthBaseName } from '../constants/prefix';
+import { appAuthBaseName, appFeedBaseName } from '../constants/prefix';
 
 export default function AppFeed() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -29,7 +29,7 @@ export default function AppFeed() {
         unmountRef.current = inject({
           routerType: 'memory',
           rootElement: wrapperRef.current!,
-          basePath: location.pathname.replace(appAuthBaseName, ''),
+          basePath: location.pathname.replace(appFeedBaseName, ''),
         });
       })
       .catch((error) => {
