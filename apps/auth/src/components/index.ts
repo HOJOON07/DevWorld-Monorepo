@@ -1,3 +1,3 @@
-import SignInForm from './sign-in-form';
+import SignInCard from './sign-in-card';
 
-export { SignInForm };
+export { SignInCard };

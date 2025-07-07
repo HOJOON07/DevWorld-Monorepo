@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { redirect, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { OAuthProvider } from '../api/get-redirect-url';
 import { oauthLogin } from '../api/oauth-login';
 
@@ -45,7 +45,6 @@ export const useOAuthCallback = (): UseOAuthCallbackResult => {
         setError(err instanceof Error ? err.message : '알 수 없는 에러가 발생했습니다.');
       } finally {
         setIsLoading(false);
-        window.location.href = '/feed';
       }
     };
 

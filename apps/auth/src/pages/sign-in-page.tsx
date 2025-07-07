@@ -1,6 +1,6 @@
 import { Text } from '@devworld/ui';
 import DevWorldLogo from '../assets/logo-image/DevWorldLogo.png';
-import { SignInForm } from '../components';
+import { SignInCard } from '../components';
 
 export default function SignInPage() {
   return (
@@ -12,7 +12,7 @@ export default function SignInPage() {
             DevWorld
           </Text>
         </a>
-        <SignInForm />
+        <SignInCard />
       </div>
     </div>
   );

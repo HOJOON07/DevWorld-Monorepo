@@ -82,12 +82,10 @@ export class AuthController {
     const userInfo = await this.oauthService.processOAuthLogin(provider, code);
 
     const tokens = await this.authService.loginWithOAuth(userInfo);
-    console.log(userInfo);
-    console.log(tokens);
 
     return {
       status: 200,
-      message: `${provider} OAuth 로그인이 완료되었습니다.`,
+      message: `${provider} OAuth Login Sucess`,
       ...tokens,
     };
   }
