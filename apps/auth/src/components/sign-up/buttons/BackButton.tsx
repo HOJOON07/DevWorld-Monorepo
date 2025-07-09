@@ -1,15 +1,18 @@
 import { ArrowLeft, Button } from '@devworld/ui';
 import { useCallback } from 'react';
-import { useFormState } from 'react-hook-form';
+import { UseFormReturn, useFormState } from 'react-hook-form';
+import { SignUpType } from '../../../lib/form-validation';
 import { useFunnel } from '../../common/Funnel';
 
 interface BackButtonProps {
-  className?: string;
+  form: UseFormReturn<SignUpType & { _isUsernameChecked?: boolean }>;
 }
 
-export default function BackButton({ className }: BackButtonProps) {
+export default function BackButton({ form }: BackButtonProps) {
   const { setStep } = useFunnel();
-  const { isSubmitting } = useFormState();
+  const {
+    formState: { isSubmitting },
+  } = form;
 
   const handleBack = useCallback(() => {
     setStep(2);
@@ -19,7 +22,7 @@ export default function BackButton({ className }: BackButtonProps) {
     <Button
       type='button'
       variant='outline'
-      className={`w-full bg-transparent ${className || ''}`}
+      className='w-full bg-transparent'
       onClick={handleBack}
       disabled={isSubmitting}
     >

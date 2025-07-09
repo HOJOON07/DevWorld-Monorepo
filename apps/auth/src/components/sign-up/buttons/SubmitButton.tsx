@@ -1,20 +1,16 @@
 import { ArrowRight, Button, Loader2 } from '@devworld/ui';
-import { useCallback } from 'react';
-import { useFormContext, useFormState } from 'react-hook-form';
-import { emailRegister } from '../../../api/email-register';
+import { UseFormReturn, useFormState } from 'react-hook-form';
 import { SignUpType } from '../../../lib/form-validation';
-import { useFunnel } from '../../common/Funnel';
 
 interface SubmitButtonProps {
-  className?: string;
+  form: UseFormReturn<SignUpType & { _isUsernameChecked?: boolean }>;
 }
 
-export default function SubmitButton({ className }: SubmitButtonProps) {
-  const { setData } = useFunnel();
-  const { isSubmitting, isValid } = useFormState();
-  const { getValues, watch, setError } = useFormContext<
-    SignUpType & { _isUsernameChecked?: boolean }
-  >();
+export default function SubmitButton({ form }: SubmitButtonProps) {
+  const {
+    watch,
+    formState: { isSubmitting, isValid },
+  } = form;
 
   const isUsernameChecked = watch('_isUsernameChecked') || false;
 
@@ -27,7 +23,7 @@ export default function SubmitButton({ className }: SubmitButtonProps) {
   };
 
   return (
-    <Button type='submit' className={`w-full h-11 ${className || ''}`} disabled={isDisabled}>
+    <Button type='submit' className='w-full h-11' disabled={isDisabled}>
       {isSubmitting ? (
         <>
           <Loader2 className='w-4 h-4 mr-2 animate-spin' />

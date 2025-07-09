@@ -11,20 +11,19 @@ import {
   User,
 } from '@devworld/ui';
 import { useCallback, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { type UseFormReturn } from 'react-hook-form';
 import { useCheckDuplicated } from '../../../api/query-hooks/use-check-duplicated';
 import { SignUpType } from '../../../lib/form-validation';
 
 interface UsernameInputProps {
-  disabled?: boolean;
+  form: UseFormReturn<SignUpType & { _isUsernameChecked?: boolean }>;
 }
 
 type UserNameCheckStatus = 'idle' | 'available' | 'taken';
 
-export default function UsernameInput({ disabled = false }: UsernameInputProps) {
-  const { control, setError, clearErrors, setValue, watch } = useFormContext<
-    SignUpType & { _isUsernameChecked?: boolean }
-  >();
+export default function UsernameInput({ form }: UsernameInputProps) {
+  const { control, setError, clearErrors, setValue, watch } = form;
+  const disabled = false;
   const [usernameCheckStatus, setUsernameCheckStatus] = useState<UserNameCheckStatus>('idle');
 
   const checkDuplicatedMutation = useCheckDuplicated();

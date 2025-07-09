@@ -10,17 +10,19 @@ import {
   Lock,
 } from '@devworld/ui';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { type UseFormReturn } from 'react-hook-form';
+import { SignUpType } from '../../../lib/form-validation';
 
 interface PasswordInputProps {
-  disabled?: boolean;
+  form: UseFormReturn<SignUpType & { _isUsernameChecked?: boolean }>;
 }
 
-export default function PasswordInput({ disabled = false }: PasswordInputProps) {
+export default function PasswordInput({ form }: PasswordInputProps) {
+  const disabled = false;
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const { control, watch } = useFormContext();
+  const { control, watch } = form;
 
   const watchedValues = watch();
 

@@ -24,7 +24,7 @@ export default function SignUpProfileForm() {
     },
   });
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const onSubmit = async (data: SignUpType) => {
     const isUsernameChecked = form.watch('_isUsernameChecked') || false;
 
     if (!isUsernameChecked) {
@@ -47,7 +47,6 @@ export default function SignUpProfileForm() {
       localStorage.setItem('refreshToken', refreshToken);
 
       // 성공 처리
-      console.log('Registration completed successfully');
     } catch (error) {
       console.error('Registration failed:', error);
       form.setError('root', {
@@ -55,18 +54,18 @@ export default function SignUpProfileForm() {
         message: 'Registration failed. Please try again.',
       });
     }
-  });
+  };
 
   return (
     <CardContent className='space-y-6'>
       <Form {...form}>
-        <form className='space-y-5' onSubmit={handleSubmit}>
-          <EmailInput />
-          <UsernameInput />
-          <PasswordInput />
+        <form className='space-y-5' onSubmit={form.handleSubmit(onSubmit)}>
+          <EmailInput form={form} />
+          <UsernameInput form={form} />
+          <PasswordInput form={form} />
           <div className='pt-4 space-y-3'>
-            <SubmitButton />
-            <BackButton />
+            <SubmitButton form={form} />
+            <BackButton form={form} />
           </div>
         </form>
       </Form>

@@ -32,5 +32,11 @@ export const mfConfig = {
     '@devworld/tanstack-query-client': {
       singleton: true,
     },
+    'react-hook-form': {
+      singleton: true,
+      eager: true,
+      requiredVersion: deps['react-hook-form'],
+      strictVersion: true,
+    },
   },
 };

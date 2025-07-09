@@ -15,13 +15,13 @@ export default function SignUpCard() {
     <Card>
       <Funnel initialData={initialData}>
         <SignUpCardHeader />
-        <Funnel.Step step={3}>
+        <Funnel.Step step={1}>
           <SignUpEmailSentForm />
         </Funnel.Step>
         <Funnel.Step step={2}>
           <SignUpEmailVerifyForm />
         </Funnel.Step>
-        <Funnel.Step step={1}>
+        <Funnel.Step step={3}>
           <SignUpProfileForm />
         </Funnel.Step>
       </Funnel>
