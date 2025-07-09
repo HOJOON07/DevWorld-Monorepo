@@ -1,11 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { MailerService } from '@nestjs-modules/mailer';
+import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { AuthMailModel } from './entities/auth-email';
-import { UsersService } from 'src/users/users.service';
-import { MailerService } from '@nestjs-modules/mailer';
-import { response } from 'express';
 
 @Injectable()
 export class MailService {
@@ -20,9 +18,14 @@ export class MailService {
     return await this.mailRepository.find({});
   }
 
-  async deleteDB(id: string) {
-    return await this.mailRepository.delete(id);
-  }
+  // async deleteDB(id: string) {
+  //   return await this.mailRepository.delete(id);
+  // }
+
+  // async deleteAllDB() {
+  //   const dbMails = await this.mailRepository.find({});
+  //   return await this.mailRepository.remove(dbMails);
+  // }
 
   createEmailAuthNumber() {
     const authNumber = Math.floor(Math.random() * 1000000).toString();
@@ -30,9 +33,7 @@ export class MailService {
   }
 
   async createAuthEmail(email: string) {
-    // 가입 되어 있는 유저에 대한 처리
     const registerdEmail = await this.userService.findEmail(email);
-
     if (registerdEmail) {
       throw new BadRequestException('이미 가입된 이메일입니다.');
     }
@@ -68,7 +69,7 @@ export class MailService {
     });
   }
 
-  async authNumberAndEmailVerify(email: string, authNumber: string) {
+  async authNumberAndEmailVerify(email: string, verificationCode: string) {
     const authEmail = await this.mailRepository.findOne({
       where: {
         email,
@@ -78,7 +79,7 @@ export class MailService {
       throw new BadRequestException('해당 이메일을 찾을 수 없습니다.');
     }
 
-    if (authEmail.emailAuthNumber === authNumber) {
+    if (authEmail.emailAuthNumber === verificationCode) {
       return email;
     } else {
       throw new BadRequestException('인증번호를 확인할 수 없습니다.');

@@ -10,10 +10,11 @@ import {
 } from '@devworld/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { AuthEmailLogin } from '../api/email-login';
-import { SignInSchema, SignInType } from '../lib/form-validation';
+import { useEmailLogin } from '../../api/query-hooks/use-email-login';
+import { SignInSchema, SignInType } from '../../lib/form-validation';
 
 export default function SignInForm() {
+  const emailLoginMutaion = useEmailLogin();
   const form = useForm<SignInType>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
@@ -22,12 +23,8 @@ export default function SignInForm() {
     },
   });
 
-  const onSubmit = async (values: SignInType) => {
-    try {
-      await AuthEmailLogin(values);
-    } catch (error) {
-      console.log(error);
-    }
+  const onSubmit = (values: SignInType) => {
+    emailLoginMutaion.mutate(values);
   };
 
   return (

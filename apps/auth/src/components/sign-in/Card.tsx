@@ -1,7 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, cn } from '@devworld/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@devworld/ui';
 import React from 'react';
-import OAuthButton from './oauth-button';
-import SignInForm from './sign-in-form';
+import OAuthButton from '../common/OAuthButton';
+import SignInForm from './Form';
 
 interface ComponentProps extends React.ComponentProps<'div'> {
   className?: string;
@@ -27,17 +27,17 @@ export default function SignInCard({ className, ...props }: ComponentProps) {
               </span>
             </div>
             <SignInForm />
-            <div className='text-center text-sm'>
-              Don't have an account?
-              <a href='#' className='underline underline-offset-4'>
-                Sign up
+            <div className='text-center text-sm flex gap-2 justify-center'>
+              <p>Don't have an account?</p>
+              <a href='#' className='text-primary hover:underline font-medium'>
+                Sign Up
               </a>
             </div>
           </div>
         </CardContent>
       </Card>
       <div className='text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4'>
-        By clicking continue, you agree to our <a href='#'>Terms of Service</a> and{' '}
+        By clicking continue, you agree to our <a href='#'>Terms of Service</a> and
         <a href='#'>Privacy Policy</a>.
       </div>
     </div>

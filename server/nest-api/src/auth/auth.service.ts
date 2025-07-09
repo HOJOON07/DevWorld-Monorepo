@@ -6,9 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import axios, { AxiosResponse } from 'axios';
 import * as bcrypt from 'bcrypt';
 import handleAxiosError from 'src/common/axios-error/handle-error';
+import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 import {
@@ -257,5 +259,10 @@ export class AuthService {
       console.error('GitHub OAuth 로그인 과정에서 에러가 발생했습니다:', error);
       handleAxiosError(error);
     }
+  }
+
+  async checkDuplicatedDevName({ devName }: DuplicateDevNameDto) {
+    const message = this.userService.checkDuplicatedDevName;
+    return message;
   }
 }

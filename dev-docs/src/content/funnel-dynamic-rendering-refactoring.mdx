@@ -1,0 +1,233 @@
+---
+title: "Funnel 패턴 동적 렌더링 리팩토링"
+description: "Sign-up 프로세스의 Funnel 패턴을 하드코딩에서 동적 렌더링으로 개선하는 과정"
+---
+
+# Funnel 패턴 동적 렌더링 리팩토링
+
+## 배경
+
+현재 Sign-up 프로세스는 Funnel 패턴으로 관리되고 있지만, 각 스텝이 하드코딩되어 있어 유연성이 부족합니다.
+
+### 현재 구조의 문제점
+
+```typescript
+// 현재 Card.tsx - 하드코딩된 스텝 매핑
+<Funnel initialData={initialData}>
+  <SignUpCardHeader />
+  <Funnel.Step step={1}>
+    <SignUpEmailSentForm />
+  </Funnel.Step>
+  <Funnel.Step step={2}>
+    <SignUpEmailVerifyForm />
+  </Funnel.Step>
+  <Funnel.Step step={3}>
+    <SignUpProfileForm />
+  </Funnel.Step>
+</Funnel>
+```
+
+**문제점:**
+- 스텝 번호가 하드코딩되어 있음
+- 동적으로 스텝 추가/제거 어려움
+- 스텝 순서 변경 시 전체 코드 수정 필요
+- 조건부 스텝 처리 복잡
+
+## 리팩토링 접근법 분석
+
+### 1. 설정 기반 접근법
+
+```typescript
+const signUpSteps = [
+  { 
+    id: 'email-sent', 
+    component: SignUpEmailSentForm,
+    title: 'Enter Email',
+    description: 'We\'ll send you a verification code'
+  },
+  { 
+    id: 'email-verify', 
+    component: SignUpEmailVerifyForm,
+    title: 'Verify Email',
+    description: 'Enter the 6-digit code we sent'
+  },
+  { 
+    id: 'profile', 
+    component: SignUpProfileForm,
+    title: 'Complete Profile',
+    description: 'Fill in your profile information'
+  }
+];
+
+<Funnel steps={signUpSteps} initialData={initialData} />
+```
+
+**장점:**
+- 스텝 정보를 한 곳에서 관리
+- 메타데이터(제목, 설명 등) 함께 관리
+- 설정 파일로 분리 가능
+
+**단점:**
+- 기존 Funnel API 변경 필요
+- 복잡한 조건부 로직 처리 어려움
+
+### 2. 개선된 Compound 컴포넌트
+
+```typescript
+<Funnel initialData={initialData}>
+  <Funnel.Steps>
+    <Funnel.Step component={SignUpEmailSentForm} />
+    <Funnel.Step component={SignUpEmailVerifyForm} />
+    <Funnel.Step component={SignUpProfileForm} />
+  </Funnel.Steps>
+</Funnel>
+```
+
+**장점:**
+- 기존 compound 패턴 유지
+- 선언적 구조
+
+**단점:**
+- 여전히 정적 구조
+- 동적 스텝 관리 제한적
+
+### 3. Hook 기반 접근법 (채택)
+
+```typescript
+const { currentStep, StepComponent } = useFunnelSteps([
+  SignUpEmailSentForm,
+  SignUpEmailVerifyForm, 
+  SignUpProfileForm
+]);
+
+return <StepComponent />;
+```
+
+**장점:**
+- React 철학과 일치 (로직을 hook으로 분리)
+- 기존 `useFunnel` hook과 일관성
+- 높은 유연성 (조건부 스텝, 커스텀 검증 등)
+- 테스트 용이성
+- 컴포넌트 단순화
+
+**단점:**
+- 새로운 개념 학습 필요
+
+## 선택된 해결책: Hook 기반 접근법
+
+### 핵심 아이디어
+
+1. **기존 아키텍처 유지**: `useFunnel` hook과 Funnel 컴포넌트 그대로 유지
+2. **점진적 마이그레이션**: 기존 방식과 새로운 방식 병행 사용 가능
+3. **Provider 패턴 활용**: Context 범위 내에서 hook 사용
+
+### 구현 전략
+
+#### 1. useFunnelSteps Hook 구현
+
+```typescript
+// /hooks/useFunnelSteps.ts
+export function useFunnelSteps<T extends StepComponent[]>(
+  steps: T,
+  options?: {
+    onStepChange?: (step: number) => void;
+    validateStep?: (step: number, data: any) => boolean;
+  }
+): UseFunnelStepsReturn {
+  const { step: currentStep, setStep, nextStep, reset, data } = useFunnel();
+
+  const StepComponent = useMemo(() => {
+    const stepIndex = currentStep - 1;
+    return steps[stepIndex] || steps[0];
+  }, [steps, currentStep]);
+
+  // ... 추가 로직
+}
+```
+
+#### 2. Provider 내부에서 Hook 사용
+
+**중요한 제약사항 발견:**
+- `useFunnel()`은 `FunnelContext.Provider` 내부에서만 사용 가능
+- `useFunnelSteps`도 같은 제약 적용
+
+**해결책: Provider 내부 컴포넌트 분리**
+
+```typescript
+// 잘못된 접근
+export default function SignUpCard() {
+  const { StepComponent } = useFunnelSteps(signUpSteps); // ❌ Provider 외부
+
+  return (
+    <Card>
+      <Funnel initialData={initialData}>
+        <StepComponent />
+      </Funnel>
+    </Card>
+  );
+}
+
+// 올바른 접근
+function SignUpCardContent() {
+  const { StepComponent } = useFunnelSteps(signUpSteps); // ✅ Provider 내부
+  return <StepComponent />;
+}
+
+export default function SignUpCard() {
+  return (
+    <Card>
+      <Funnel initialData={initialData}>
+        <SignUpCardHeader />
+        <SignUpCardContent />
+      </Funnel>
+    </Card>
+  );
+}
+```
+
+### 왜 이 해결책이 최적인가?
+
+1. **기존 아키텍처와 호환성**
+   - 기존 `useFunnel` hook 그대로 유지
+   - 각 Form 컴포넌트 수정 불필요
+   - 점진적 마이그레이션 가능
+
+2. **책임 분리**
+   - SignUpCard: 전체 레이아웃 관리
+   - SignUpCardContent: 동적 스텝 렌더링
+   - 각 Form: 개별 스텝 로직
+
+3. **유연성**
+   - 조건부 스텝 처리 가능
+   - 커스텀 검증 로직 추가 가능
+   - 스텝 메타데이터 관리 용이
+
+4. **테스트 용이성**
+   - Hook 독립적 테스트 가능
+   - 컴포넌트별 격리 테스트
+
+## 다음 단계
+
+1. **ProfileForm 안정화**: 현재 구현에 오류가 있어 수정 필요
+2. **useFunnelSteps Hook 구현**: 위에서 설계한 hook 구현
+3. **점진적 리팩토링**: 기존 코드를 새로운 패턴으로 전환
+4. **테스트 작성**: 새로운 hook과 컴포넌트에 대한 테스트
+
+## 구현 우선순위
+
+1. **High Priority**:
+   - ProfileForm 컴포넌트 안정화
+   - useFunnelSteps hook 구현
+   - Provider 내부 hook 호출 방식으로 리팩토링
+
+2. **Medium Priority**:
+   - 조건부 스텝 로직 추가
+   - 스텝 검증 로직 구현
+   - 에러 처리 개선
+
+3. **Low Priority**:
+   - 성능 최적화
+   - 추가 유틸리티 함수
+   - 문서화 완성
+
+이 접근법을 통해 기존 코드의 안정성을 유지하면서도 더 유연하고 확장 가능한 Funnel 패턴을 구현할 수 있습니다.

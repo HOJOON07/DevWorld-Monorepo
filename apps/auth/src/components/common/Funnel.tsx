@@ -1,6 +1,6 @@
 import { createContext, JSX, ReactNode, useContext, useRef } from 'react';
 import { useStore } from 'zustand';
-import { createFunnelStore, FunnelStore } from '../stores/funnel-store';
+import { createFunnelStore, FunnelStore } from '../../stores/funnel-store';
 
 const FunnelContext = createContext<ReturnType<typeof createFunnelStore<any>> | null>(null);
 

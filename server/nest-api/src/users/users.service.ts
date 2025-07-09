@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OAuthUserInfoDto } from 'src/auth/dto/oauth.dto';
-import { RegisterGithubUserDto } from 'src/auth/dto/register-user.dto';
 import { QueryRunner, Repository } from 'typeorm';
 import { DuplicateDevNameDto } from './dto/duplicate-devname.dto';
 import { UserProfileEditDto } from './dto/user-profiles-edit.dto';
@@ -171,6 +170,20 @@ export class UsersService {
     });
 
     return userData;
+  }
+  // signup 단계
+  async checkDuplicatedDevName({ devName }: DuplicateDevNameDto) {
+    const duplicated = await this.userRepository.exists({
+      where: {
+        devName,
+      },
+    });
+
+    if (duplicated) {
+      throw new BadRequestException('이미 존재하는 데브월드 이름입니다.');
+    }
+
+    return { message: 'You can use this DevWorld name.' };
   }
 
   async duplicateGetDevName(id: number, { devName }: DuplicateDevNameDto) {

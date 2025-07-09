@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Headers, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BasciTokenGuard } from './guard/basic-token.guard';
@@ -52,6 +53,12 @@ export class AuthController {
     const credentials = this.authService.decodeBasicToken(token);
 
     return await this.authService.loginWithEmail(credentials);
+  }
+
+  @Post('check/devname')
+  @IsPublic()
+  postDuplicateDevName(@Body() duplicateDevNameDto: DuplicateDevNameDto) {
+    return this.authService.checkDuplicatedDevName(duplicateDevNameDto);
   }
 
   @Post('register/email')

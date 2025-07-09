@@ -29,5 +29,8 @@ export const mfConfig = {
     '@devworld/axios-client': {
       singleton: true,
     },
+    '@devworld/tanstack-query-client': {
+      singleton: true,
+    },
   },
 };

@@ -51,7 +51,7 @@ export const VerificationCodeSchema = z.object({
     .regex(/^\d{6}$/, { message: ERROR_MESSAGES.VERIFICATION_CODE_REGEX }),
 });
 
-export const PasswordResetEmailSchema = z.object({
+export const EmailSentSchema = z.object({
   email: z.string().trim().email({
     message: ERROR_MESSAGES.INVALID_EMAIL,
   }),
@@ -71,5 +71,5 @@ export const PasswordResetSchema = z.object({
 export type SignInType = z.infer<typeof SignInSchema>;
 export type SignUpType = z.infer<typeof SignUpSchema>;
 export type VerificationCodeType = z.infer<typeof VerificationCodeSchema>;
-export type PasswordResetEmailType = z.infer<typeof PasswordResetEmailSchema>;
+export type EmailSentType = z.infer<typeof EmailSentSchema>;
 export type PasswordResetType = z.infer<typeof PasswordResetSchema>;

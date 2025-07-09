@@ -61,7 +61,6 @@ export const setupAuthInterceptors = (instance: AxiosInstance) => {
             await rotateAccessToken();
             return instance(originalConfig);
           } catch (finalError) {
-            window.location.href = '/signin';
             return Promise.reject(finalError);
           }
         }

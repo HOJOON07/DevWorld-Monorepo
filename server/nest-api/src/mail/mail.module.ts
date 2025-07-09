@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MailService } from './mail.service';
-import { MailController } from './mail.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthMailModel } from './entities/auth-email';
-import { UsersModule } from 'src/users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { UsersModule } from 'src/users/users.module';
+import { AuthMailModel } from './entities/auth-email';
+import { MailController } from './mail.controller';
+import { MailService } from './mail.service';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
           port: 587,
           auth: {
             user: 'ghwns5909@gmail.com',
-            pass: 'supv wpdk fyoa nihu',
+            pass: 'mczz hqco pemn bvoh',
           },
         },
         defaults: {

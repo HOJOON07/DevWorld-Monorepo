@@ -15,10 +15,18 @@ export class MailController {
 
   @Post('verify')
   @IsPublic()
-  async postAuthNumberVerify(@Body() { email, authNumber }: { email: string; authNumber: string }) {
-    await this.mailService.authNumberAndEmailVerify(email, authNumber);
+  async postAuthNumberVerify(
+    @Body() { email, verificationCode }: { email: string; verificationCode: string },
+  ) {
+    await this.mailService.authNumberAndEmailVerify(email, verificationCode);
     return { message: '이메일 인증이 확인되었습니다.' };
   }
+
+  // @Get('delete')
+  // @IsPublic()
+  // async test() {
+  //   await this.mailService.deleteAllDB();
+  // }
 
   // @Get()
   // @IsPublic()

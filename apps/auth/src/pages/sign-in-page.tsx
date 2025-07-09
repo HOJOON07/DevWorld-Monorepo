@@ -1,6 +1,6 @@
 import { Text } from '@devworld/ui';
 import DevWorldLogo from '../assets/logo-image/DevWorldLogo.png';
-import { SignInCard } from '../components';
+import SignInCard from '../components/sign-in/Card';
 
 export default function SignInPage() {
   return (

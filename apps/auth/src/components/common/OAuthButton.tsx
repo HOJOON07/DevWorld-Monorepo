@@ -1,7 +1,7 @@
 import { Button } from '@devworld/ui';
-import { getRedirectUrl } from '../api/get-redirect-url';
-import { IconNameList } from '../assets/icon-map';
-import OAuthIcon from '../assets/oauth-icon';
+import { getRedirectUrl } from '../../api/get-redirect-url';
+import { IconNameList } from '../../assets/icon-map';
+import OAuthIcon from '../../assets/oauth-icon';
 
 type OAuthProvider = 'google' | 'github';
 

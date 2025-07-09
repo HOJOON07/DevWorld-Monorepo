@@ -40,7 +40,6 @@ export class BasciTokenGuard implements CanActivate {
       email,
       password,
     });
-    // 요청이 끝날 때 까지 계속 살아 있다.
     request.user = user;
 
     return true;

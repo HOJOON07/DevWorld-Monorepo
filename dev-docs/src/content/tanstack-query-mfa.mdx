@@ -1,0 +1,186 @@
+# TanStack Query in Micro Frontend Architecture
+
+마이크로 프론트엔드 환경에서 TanStack Query를 도입하는 방법과 각 접근법의 장단점을 분석합니다.
+
+## 1. 각 앱별 독립적인 QueryClient
+
+각 MFA 앱이 자체 QueryClient 인스턴스를 가지는 방식입니다.
+
+### 구현 방법
+
+```typescript
+// apps/auth/src/query-client.ts
+import { QueryClient } from '@tanstack/react-query'
+
+export const authQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5분
+      cacheTime: 1000 * 60 * 10, // 10분
+    },
+  },
+})
+
+// apps/auth/src/app.tsx  
+import { QueryClientProvider } from '@tanstack/react-query'
+import { authQueryClient } from './query-client'
+
+export default function AuthApp() {
+  return (
+    <QueryClientProvider client={authQueryClient}>
+      {/* auth app routes */}
+    </QueryClientProvider>
+  )
+}
+```
+
+### 장점
+- **완전한 격리**: 각 앱의 캐시가 독립적으로 관리됨
+- **개발 독립성**: 각 팀이 자신의 QueryClient 설정을 자유롭게 변경 가능
+- **배포 독립성**: 한 앱의 Query 설정 변경이 다른 앱에 영향 없음
+- **메모리 격리**: 앱별로 메모리 사용량 관리 가능
+
+### 단점
+- **데이터 중복**: 같은 데이터를 여러 앱에서 캐시할 경우 메모리 낭비
+- **일관성 문제**: 앱 간 데이터 동기화가 어려움
+- **설정 중복**: 각 앱마다 비슷한 QueryClient 설정 코드 반복
+
+### 적합한 상황
+- 앱 간 데이터 공유가 거의 없는 경우
+- 각 팀의 완전한 자율성이 중요한 경우
+- 앱 간 강한 격리가 필요한 경우
+
+## 2. 공유 QueryClient (Shell에서 제공)
+
+Shell 앱에서 단일 QueryClient를 생성하고 모든 자식 앱에서 공유하는 방식입니다.
+
+### 구현 방법
+
+```typescript
+// apps/shell/src/providers/query-provider.tsx
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 10,
+    },
+  },
+})
+
+export function QueryProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  )
+}
+
+// apps/shell/src/app.tsx
+<QueryProvider>
+  <Router />
+</QueryProvider>
+```
+
+### 장점
+- **데이터 공유**: 모든 앱이 같은 캐시를 공유하여 중복 요청 방지
+- **일관성**: 앱 간 데이터 동기화가 자동으로 이루어짐
+- **메모리 효율성**: 단일 캐시로 메모리 사용량 최적화
+- **설정 중앙화**: 한 곳에서 Query 설정 관리
+
+### 단점
+- **결합도 증가**: 앱 간 의존성 증가
+- **충돌 위험**: Query key 충돌 가능성
+- **버전 의존성**: 모든 앱이 같은 TanStack Query 버전 사용 필요
+- **개발 제약**: Shell 앱 변경 시 모든 앱에 영향
+
+### 적합한 상황
+- 앱 간 데이터 공유가 빈번한 경우
+- 통합된 사용자 경험이 중요한 경우
+- 메모리 효율성이 중요한 경우
+
+## 3. 하이브리드 방식 (권장)
+
+공통 설정을 패키지로 분리하고 각 앱에서 개별 QueryClient 인스턴스를 생성하는 방식입니다.
+
+### 구현 방법
+
+```typescript
+// packages/shared-query/src/create-query-client.ts
+import { QueryClient } from '@tanstack/react-query'
+
+export function createQueryClient(overrides?: Partial<QueryClientConfig>) {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5,
+        retry: 3,
+        refetchOnWindowFocus: false,
+        ...overrides?.queries,
+      },
+      mutations: {
+        retry: 1,
+        ...overrides?.mutations,
+      },
+    },
+  })
+}
+
+// packages/shared-query/src/hooks/index.ts
+export * from './use-auth'
+export * from './use-user'
+
+// apps/auth/src/app.tsx
+import { QueryClientProvider } from '@tanstack/react-query'
+import { createQueryClient } from '@devworld/shared-query'
+
+const queryClient = createQueryClient({
+  queries: {
+    staleTime: 1000 * 60 * 2, // auth 앱은 더 짧은 staleTime
+  }
+})
+
+export default function AuthApp() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* auth app routes */}
+    </QueryClientProvider>
+  )
+}
+```
+
+### 장점
+- **설정 일관성**: 공통 설정을 통한 일관된 동작
+- **커스터마이징 가능**: 각 앱별 필요에 따른 설정 오버라이드
+- **코드 재사용**: 공통 훅과 유틸리티 공유
+- **유지보수성**: 중앙화된 설정과 분산된 인스턴스의 균형
+
+### 단점
+- **복잡성 증가**: 초기 설정이 다소 복잡
+- **패키지 관리**: 추가 패키지 의존성 관리 필요
+- **부분적 격리**: 완전한 격리는 아님
+
+### 적합한 상황
+- 설정 일관성과 앱별 자율성을 모두 원하는 경우
+- 공통 데이터 로직을 공유하고 싶은 경우
+- 확장 가능한 아키텍처가 필요한 경우
+
+## 추천 접근법
+
+현재 프로젝트 상황을 고려할 때 **하이브리드 방식**을 추천합니다:
+
+1. **@devworld/shared-query** 패키지 생성
+2. 공통 QueryClient 설정과 훅 제공
+3. 각 앱에서 개별 QueryClient 인스턴스 생성
+4. 필요시 앱별 설정 오버라이드
+
+이 방식은 현재의 모듈 연합 구조와 잘 맞으며, 향후 확장성도 보장합니다.
+
+## 구현 단계
+
+1. `packages/shared-query` 패키지 생성
+2. `createQueryClient` 함수 구현
+3. 공통 훅 (useAuth, useUser 등) 구현
+4. 각 앱에 QueryClientProvider 설정
+5. 기존 API 호출을 React Query로 마이그레이션

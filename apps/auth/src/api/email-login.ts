@@ -16,12 +16,11 @@ export const AuthEmailLogin = async ({
 }: EmailLoginRequest): Promise<EmailLoginResponse> => {
   const base64EmailPassword = btoa(`${email}:${password}`);
 
-  console.log(base64EmailPassword);
   const api = APIBuilder.post('/auth/login/email', {})
     .headers({
       authorization: `Basic ${base64EmailPassword}`,
     })
-    .withCredentials(true)
+    .withCredentials(false)
     .build();
   const response = await api.call<EmailLoginResponse>();
   return response.data;
