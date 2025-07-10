@@ -4,10 +4,10 @@ import type { RouteObject } from 'react-router-dom';
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <AppRoutingManager type='feed' />,
+    element: <AppRoutingManager type='app-feed' />,
     children: [
       {
-        index: true,
+        // index: true,
         element: <div>Feed Root</div>,
       },
       {

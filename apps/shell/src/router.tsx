@@ -16,11 +16,6 @@ const browserRouter = createBrowserRouter([
       { path: `${appAuthBaseName}/*`, element: <AppAuth /> },
     ],
   },
-  // {
-  //   path: `${appFeedBaseName}/*`,
-  //   element: <AppFeed />,
-  // },
-  // { path: `${appAuthBaseName}/*`, element: <AppAuth /> },
 ]);
 
 export default function Router() {

@@ -9,7 +9,7 @@ export interface EmailRegisterResponse {
 }
 
 export const emailRegister = async (data: EmailRegisterRequest): Promise<EmailRegisterResponse> => {
-  const api = APIBuilder.post('/auth/register/email', data).withCredentials(true).build();
+  const api = APIBuilder.post('/auth/register/email', data).withCredentials(false).build();
 
   const response = await api.call<EmailRegisterResponse>();
   return response.data;

@@ -2,13 +2,13 @@ import { type injectFunctionType, useShellEvent } from '@devworld/shell-router';
 import { importRemote } from '@module-federation/utilities';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { appAuthBaseName, appFeedBaseName } from '../constants/prefix';
+import { appFeedBaseName } from '../constants/prefix';
 
 export default function AppFeed() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
-  useShellEvent('app-feed', appAuthBaseName);
+  useShellEvent('app-feed', appFeedBaseName);
 
   const isFirstRunRef = useRef(true);
   const unmountRef = useRef<() => void>(() => {});
