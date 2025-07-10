@@ -2,13 +2,11 @@ import { Exclude } from 'class-transformer';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { CommentsModel } from 'src/articles/comments/entities/comment.entity';
 import { ArticlesModel } from 'src/articles/entities/articles.entity';
-import { ChatsModel } from 'src/chats/entities/chats.entity';
-import { MessagesModel } from 'src/chats/messages/entities/messages.entity';
 import { BaseModel } from 'src/common/entities/base.entity';
 import { EmailValidationMessage } from 'src/common/validation-message/email-validation.message';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, OneToMany } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
 import { UserFollowersModel } from './user-followers.entity';
 
@@ -50,6 +48,7 @@ export class UserModel extends BaseModel {
     () => ArticlesModel,
     (articles) => articles.author,
   )
+  @Exclude() // 로그인 응답에서 제외
   articles: ArticlesModel[];
 
   @Column({
@@ -103,23 +102,12 @@ export class UserModel extends BaseModel {
   // get devNameAndEmail() {
   //   return this.devName + '/' + this.email;
   // }
-  @ManyToMany(
-    () => ChatsModel,
-    (chat) => chat.users,
-  )
-  @JoinTable()
-  chats: ChatsModel[];
-
-  @OneToMany(
-    () => MessagesModel,
-    (message) => message.author,
-  )
-  messages: MessagesModel;
 
   @OneToMany(
     () => CommentsModel,
     (comments) => comments.author,
   )
+  @Exclude() // 로그인 응답에서 제외
   articlesComments: CommentsModel[];
   // 내가 팔로우 하는 사람
   @OneToMany(
@@ -127,6 +115,7 @@ export class UserModel extends BaseModel {
     (ufm) => ufm.follower,
   )
   @JoinTable()
+  @Exclude() // 로그인 응답에서 제외
   followers: UserFollowersModel[];
 
   // 나를 팔로우 하는 사람
@@ -134,6 +123,7 @@ export class UserModel extends BaseModel {
     () => UserFollowersModel,
     (ufm) => ufm.followee,
   )
+  @Exclude() // 로그인 응답에서 제외
   followees: UserFollowersModel[];
 
   @Column({

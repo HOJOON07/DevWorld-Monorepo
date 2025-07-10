@@ -20,7 +20,7 @@ export const AuthEmailLogin = async ({
     .headers({
       authorization: `Basic ${base64EmailPassword}`,
     })
-    .withCredentials(false)
+    .withCredentials(true)
     .build();
   const response = await api.call<EmailLoginResponse>();
   return response.data;

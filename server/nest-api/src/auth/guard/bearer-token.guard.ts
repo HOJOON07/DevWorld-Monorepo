@@ -28,13 +28,6 @@ export class BearerTokenGuard implements CanActivate {
 
     const result = await this.authService.verifyToken(token);
 
-    /**
-     * 1) 사용자 정보
-     * 2) token - token
-     * 3) tokenType - access | refresh
-     * 4)
-     */
-
     const user = await this.usersService.getUserByEmail(result.email);
 
     request.user = user;
@@ -65,20 +58,39 @@ export class AccessTokenGuard extends BearerTokenGuard {
 }
 
 @Injectable()
-export class RefreshTokenGuard extends BearerTokenGuard {
+export class RefreshTokenGuard implements CanActivate {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+    private readonly reflector: Reflector,
+  ) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context);
+    const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     const request = context.switchToHttp().getRequest();
 
-    if (request.isRoutePublic) {
+    if (isPublic) {
+      request.isRoutePublic = true;
       return true;
     }
+
+    const token = this.authService.extractTokenFromCookies(request, 'refresh');
+
+    const result = await this.authService.verifyToken(token);
+
+    const user = await this.usersService.getUserByEmail(result.email);
+
+    request.user = user;
+    request.token = token;
+    request.tokenType = result.type;
 
     if (request.tokenType !== 'refresh') {
       throw new UnauthorizedException('Refresh Token이 아닙니다.');
     }
-
     return true;
   }
 }

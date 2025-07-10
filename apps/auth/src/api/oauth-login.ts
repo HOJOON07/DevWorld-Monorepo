@@ -17,7 +17,7 @@ export const oauthLogin = async (
   code: string,
 ): Promise<OAuthLoginResponse> => {
   const api = APIBuilder.post(`/auth/oauth-login/${provider}`, { code })
-    .withCredentials(false)
+    .withCredentials(true)
     .build();
 
   const response = await api.call<OAuthLoginResponse>();

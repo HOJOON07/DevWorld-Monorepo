@@ -1,26 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import axios, { AxiosResponse } from 'axios';
 import * as bcrypt from 'bcrypt';
-import handleAxiosError from 'src/common/axios-error/handle-error';
 import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
-import {
-  ENV_GITHUB_CLIENT_ID,
-  ENV_GITHUB_CLIENT_SECRET,
-  ENV_JWT_HASH_ROUNDS,
-  ENV_JWT_SECRET,
-} from './../common/const/env-keys.const';
+import { ENV_JWT_HASH_ROUNDS, ENV_JWT_SECRET } from './../common/const/env-keys.const';
 import { JWT_Expires_Time } from './const/auth.const';
 import { OAuthUserInfoDto } from './dto/oauth.dto';
-import { GithubBasicInfoUserDto, GithubCodeDto } from './dto/register-github.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
@@ -41,11 +28,11 @@ export class AuthService {
 
   extractTokenFromCookies(request: any, tokenType: 'access' | 'refresh' = 'access'): string {
     const cookieName = tokenType === 'access' ? 'access_token' : 'refresh_token';
-    
+
     if (!request.cookies || !request.cookies[cookieName]) {
       throw new UnauthorizedException(`쿠키에서 ${tokenType} 토큰을 찾을 수 없습니다.`);
     }
-    
+
     return request.cookies[cookieName];
   }
 
@@ -112,11 +99,47 @@ export class AuthService {
     });
   }
 
-  loginUser(user: Pick<UserModel, 'id' | 'devName' | 'email'>) {
+  loginUser(user: any) {
     return {
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
     };
+  }
+
+  setTokenCookies(response: any, tokens: { accessToken: string; refreshToken: string }) {
+    const cookieOptions = {
+      httpOnly: false, // 개발용: 브라우저에서 확인 가능
+      secure: false, // 개발용: HTTP에서도 작동
+      sameSite: 'lax' as const,
+    };
+
+    response.cookie('access_token', tokens.accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000, // 15분
+    });
+
+    response.cookie('refresh_token', tokens.refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+    });
+  }
+
+  setAccessTokenCookie(response: any, accessToken: string) {
+    response.cookie('access_token', accessToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax' as const,
+      maxAge: 15 * 60 * 1000, // 15분
+    });
+  }
+
+  setRefreshTokenCookie(response: any, refreshToken: string) {
+    response.cookie('refresh_token', refreshToken, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax' as const,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+    });
   }
 
   async authenticateWithEmailForOAuth(userInfo: OAuthUserInfoDto) {
@@ -148,7 +171,6 @@ export class AuthService {
 
   async loginWithEmail(user: Pick<UserModel, 'email' | 'password'>) {
     const existingUser = await this.authenticateWithEmailAndPassword(user);
-
     return this.loginUser(existingUser);
   }
   async loginWithOAuth(userInfo: OAuthUserInfoDto) {
@@ -176,99 +198,99 @@ export class AuthService {
     return this.loginUser(newUser);
   }
 
-  async getGithubAccessToken(githubCode: string) {
-    const getTokenUrl: string = 'https://github.com/login/oauth/access_token';
-    const request = {
-      code: githubCode,
-      client_id: this.configService.get<string>(ENV_GITHUB_CLIENT_ID),
-      client_secret: this.configService.get<string>(ENV_GITHUB_CLIENT_SECRET),
-    };
-    try {
-      const response: AxiosResponse = await axios.post(getTokenUrl, request, {
-        headers: {
-          accept: 'application/json',
-        },
-      });
-      if (response.data.error) {
-        throw new UnauthorizedException('깃허브 인증을 실패했습니다.');
-      }
-      if (!response.data.access_token) {
-        throw new InternalServerErrorException('액세스 토큰이 반환되지 않았습니다.');
-      }
+  // async getGithubAccessToken(githubCode: string) {
+  //   const getTokenUrl: string = 'https://github.com/login/oauth/access_token';
+  //   const request = {
+  //     code: githubCode,
+  //     client_id: this.configService.get<string>(ENV_GITHUB_CLIENT_ID),
+  //     client_secret: this.configService.get<string>(ENV_GITHUB_CLIENT_SECRET),
+  //   };
+  //   try {
+  //     const response: AxiosResponse = await axios.post(getTokenUrl, request, {
+  //       headers: {
+  //         accept: 'application/json',
+  //       },
+  //     });
+  //     if (response.data.error) {
+  //       throw new UnauthorizedException('깃허브 인증을 실패했습니다.');
+  //     }
+  //     if (!response.data.access_token) {
+  //       throw new InternalServerErrorException('액세스 토큰이 반환되지 않았습니다.');
+  //     }
 
-      return response.data.access_token;
-    } catch (error) {
-      console.error('GitHub Access Token을 받아오는 과정에서 에러가 발생했습니다:', error);
-      handleAxiosError(error);
-    }
-  }
+  //     return response.data.access_token;
+  //   } catch (error) {
+  //     console.error('GitHub Access Token을 받아오는 과정에서 에러가 발생했습니다:', error);
+  //     handleAxiosError(error);
+  //   }
+  // }
 
-  async getGithubBasicInfo(githubCode: string) {
-    try {
-      const access_token = await this.getGithubAccessToken(githubCode);
+  // async getGithubBasicInfo(githubCode: string) {
+  //   try {
+  //     const access_token = await this.getGithubAccessToken(githubCode);
 
-      const getBasicInfoUserUrl: string = 'https://api.github.com/user';
-      const response = await axios.get(getBasicInfoUserUrl, {
-        headers: {
-          authorization: `token ${access_token}`,
-        },
-      });
+  //     const getBasicInfoUserUrl: string = 'https://api.github.com/user';
+  //     const response = await axios.get(getBasicInfoUserUrl, {
+  //       headers: {
+  //         authorization: `token ${access_token}`,
+  //       },
+  //     });
 
-      const { login, html_url, location, bio, company, blog } = response.data;
-      const basicGithubUserInfo: GithubBasicInfoUserDto = {
-        devName: login,
-        github: html_url,
-        location,
-        bio,
-        company,
-        socialEtc: blog,
-      };
+  //     const { login, html_url, location, bio, company, blog } = response.data;
+  //     const basicGithubUserInfo: GithubBasicInfoUserDto = {
+  //       devName: login,
+  //       github: html_url,
+  //       location,
+  //       bio,
+  //       company,
+  //       socialEtc: blog,
+  //     };
 
-      return { ...basicGithubUserInfo, access_token };
-    } catch (error) {
-      console.error('GitHub 기본 정보를 가져오는 과정에서 에러가 발생했습니다:', error);
-      handleAxiosError(error);
-    }
-  }
-  async getGithubUserEmail(access_token: string) {
-    const getUserEmailUrl = 'https://api.github.com/user/emails';
-    try {
-      const response = await axios.get(getUserEmailUrl, {
-        headers: {
-          authorization: `token ${access_token}`,
-        },
-      });
-      const email = response.data
-        .filter((email) => email.primary && email.verified)
-        .map((data) => data.email); // 수정: 이메일 객체에서 이메일 주소만 추출
-      return email[0];
-    } catch (error) {
-      console.error('GitHub 이메일 정보를 가져오는데 실패했습니다.', error);
-      handleAxiosError(error);
-    }
-  }
+  //     return { ...basicGithubUserInfo, access_token };
+  //   } catch (error) {
+  //     console.error('GitHub 기본 정보를 가져오는 과정에서 에러가 발생했습니다:', error);
+  //     handleAxiosError(error);
+  //   }
+  // }
+  // async getGithubUserEmail(access_token: string) {
+  //   const getUserEmailUrl = 'https://api.github.com/user/emails';
+  //   try {
+  //     const response = await axios.get(getUserEmailUrl, {
+  //       headers: {
+  //         authorization: `token ${access_token}`,
+  //       },
+  //     });
+  //     const email = response.data
+  //       .filter((email) => email.primary && email.verified)
+  //       .map((data) => data.email); // 수정: 이메일 객체에서 이메일 주소만 추출
+  //     return email[0];
+  //   } catch (error) {
+  //     console.error('GitHub 이메일 정보를 가져오는데 실패했습니다.', error);
+  //     handleAxiosError(error);
+  //   }
+  // }
 
-  async OAuthGithubLogin(githubcode: GithubCodeDto) {
-    try {
-      const { code } = githubcode;
-      const { devName, github, location, bio, company, socialEtc, access_token } =
-        await this.getGithubBasicInfo(code);
-      const email = await this.getGithubUserEmail(access_token);
+  // async OAuthGithubLogin(githubcode: GithubCodeDto) {
+  //   try {
+  //     const { code } = githubcode;
+  //     const { devName, github, location, bio, company, socialEtc, access_token } =
+  //       await this.getGithubBasicInfo(code);
+  //     const email = await this.getGithubUserEmail(access_token);
 
-      return {
-        devName,
-        github,
-        location,
-        bio,
-        company,
-        socialEtc,
-        email,
-      };
-    } catch (error) {
-      console.error('GitHub OAuth 로그인 과정에서 에러가 발생했습니다:', error);
-      handleAxiosError(error);
-    }
-  }
+  //     return {
+  //       devName,
+  //       github,
+  //       location,
+  //       bio,
+  //       company,
+  //       socialEtc,
+  //       email,
+  //     };
+  //   } catch (error) {
+  //     console.error('GitHub OAuth 로그인 과정에서 에러가 발생했습니다:', error);
+  //     handleAxiosError(error);
+  //   }
+  // }
 
   async checkDuplicatedDevName({ devName }: DuplicateDevNameDto) {
     const message = this.userService.checkDuplicatedDevName;

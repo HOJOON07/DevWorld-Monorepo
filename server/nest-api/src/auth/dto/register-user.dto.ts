@@ -1,13 +1,17 @@
-import { PickType } from '@nestjs/mapped-types';
-import { IsString } from 'class-validator';
-import { UserModel } from 'src/users/entities/users.entity';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 import { GithubBasicInfoUserDto } from './register-github.dto';
 
-export class PickRegisterUserDto extends PickType(UserModel, [
-  'devName',
-  'email',
-  'password',
-]) {}
+export class PickRegisterUserDto {
+  @IsString()
+  devName: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(6)
+  password: string;
+}
 
 export class RegisterUserDto extends PickRegisterUserDto {
   @IsString()

@@ -12,9 +12,6 @@ import { ArticlesModel } from './articles/entities/articles.entity';
 import { AuthModule } from './auth/auth.module';
 import { AccessTokenGuard } from './auth/guard/bearer-token.guard';
 import { AwsS3UploadModule } from './aws_s3_upload/aws_s3_upload.module';
-import { ChatsModule } from './chats/chats.module';
-import { ChatsModel } from './chats/entities/chats.entity';
-import { MessagesModel } from './chats/messages/entities/messages.entity';
 import { CommonModule } from './common/common.module';
 import {
   ENV_DB_DATABASE,
@@ -54,8 +51,6 @@ import { UsersModule } from './users/users.module';
         UserModel,
         AuthMailModel,
         ImageModel,
-        ChatsModel,
-        MessagesModel,
         CommentsModel,
         UserFollowersModel,
       ],
@@ -66,7 +61,6 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     CommonModule,
     MailModule,
-    ChatsModule,
     CommentsModule,
     AwsS3UploadModule,
     HealthCheckModule,
@@ -74,6 +68,7 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController],
   providers: [
     AppService,
+    // ClassSerializerInterceptor 비활성화 - UserModel 순환 참조 문제
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,

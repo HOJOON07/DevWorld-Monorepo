@@ -1,8 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { IsOptional, IsString } from 'class-validator';
-import { UserModel } from 'src/users/entities/users.entity';
 
-export class OAuthUserInfoDto extends PartialType(UserModel) {
+export class OAuthUserInfoDto {
   @IsString()
   email: string;
 

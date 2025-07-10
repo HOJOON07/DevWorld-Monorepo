@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Headers, Param, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { AuthService } from './auth.service';
@@ -22,37 +33,52 @@ export class AuthController {
   }
 
   @Post('token/access')
-  @IsPublic()
   @UseGuards(RefreshTokenGuard)
-  postTokenAccess(@Headers('authorization') rawToken: string) {
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
+  postTokenAccess(@Request() req, @Res() res: Response) {
+    const token = req.token;
     const newToken = this.authService.rotateToken(token, false);
 
-    return {
-      accessToken: newToken,
-    };
+    // 쿠키 설정을 서비스로 위임
+    this.authService.setAccessTokenCookie(res, newToken);
+
+    res.json({
+      message: 'Access token renewed successfully',
+    });
   }
 
   @Post('token/refresh')
-  @IsPublic()
   @UseGuards(RefreshTokenGuard)
-  postTokenRefresh(@Headers('authorization') rawToken: string) {
-    const token = this.authService.extractTokenFromHeader(rawToken, true);
+  postTokenRefresh(@Request() req, @Res() res: Response) {
+    const token = req.token;
     const newToken = this.authService.rotateToken(token, true);
 
-    return {
-      refreshToken: newToken,
-    };
+    // 쿠키 설정을 서비스로 위임
+    this.authService.setRefreshTokenCookie(res, newToken);
+
+    res.json({
+      message: 'Refresh token renewed successfully',
+    });
   }
 
   @Post('login/email')
   @IsPublic()
   @UseGuards(BasciTokenGuard)
-  async postLoginEmail(@Headers('authorization') rawToken: string, @Request() req) {
+  async postLoginEmail(
+    @Headers('authorization') rawToken: string,
+    @Request() req,
+    @Res() res: Response,
+  ) {
     const token = this.authService.extractTokenFromHeader(rawToken, false);
     const credentials = this.authService.decodeBasicToken(token);
 
-    return await this.authService.loginWithEmail(credentials);
+    const tokens = await this.authService.loginWithEmail(credentials);
+
+    // 쿠키 설정을 서비스로 위임
+    this.authService.setTokenCookies(res, tokens);
+
+    res.send({
+      message: 'Login successful',
+    });
   }
 
   @Post('check/devname')
@@ -63,8 +89,13 @@ export class AuthController {
 
   @Post('register/email')
   @IsPublic()
-  postRegisterEmail(@Body() body: RegisterUserDto) {
-    return this.authService.registerWithEmail(body);
+  async postRegisterEmail(@Body() body: RegisterUserDto, @Res() res: Response) {
+    const tokens = await this.authService.registerWithEmail(body);
+    this.authService.setTokenCookies(res, tokens);
+
+    res.json({
+      message: 'Registration successful',
+    });
   }
 
   @Get('callback/:provider')
@@ -83,17 +114,17 @@ export class AuthController {
   async oauthLogin(
     @Param('provider') provider: 'google' | 'github',
     @Body() body: { code: string },
+    @Res() res: Response,
   ) {
     const { code } = body;
-
     const userInfo = await this.oauthService.processOAuthLogin(provider, code);
 
     const tokens = await this.authService.loginWithOAuth(userInfo);
+    this.authService.setTokenCookies(res, tokens);
 
-    return {
+    res.json({
       status: 200,
-      message: `${provider} OAuth Login Sucess`,
-      ...tokens,
-    };
+      message: `${provider} OAuth Login Success`,
+    });
   }
 }

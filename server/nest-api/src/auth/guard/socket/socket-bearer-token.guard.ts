@@ -11,24 +11,39 @@ export class SocketBearerTokenGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const socket = context.switchToWs().getClient();
-    const headers = socket.handshake.headers;
-    const rawToken = headers['authorization'];
+    const cookies = socket.handshake.headers.cookie;
 
-    if (!rawToken) {
-      throw new WsException('토큰이 없습니다.');
+    if (!cookies) {
+      throw new WsException('쿠키가 없습니다.');
     }
+
     try {
-      const token = this.authService.extractTokenFromHeader(rawToken, true);
+      // 쿠키 문자열을 파싱하여 객체로 변환
+      const cookieObj = this.parseCookies(cookies);
+      const mockRequest = { cookies: cookieObj };
+      
+      const token = this.authService.extractTokenFromCookies(mockRequest, 'access');
       const payload = this.authService.verifyToken(token);
       const user = await this.userService.getUserByEmail(payload.email);
 
       socket.user = user;
       socket.token = token;
-      socket.tokenType = payload.tokenType;
+      socket.tokenType = payload.type;
 
       return true;
     } catch (err) {
       throw new WsException('토큰이 유효하지 않습니다.');
     }
+  }
+
+  private parseCookies(cookieString: string): Record<string, string> {
+    const cookies = {};
+    cookieString.split(';').forEach(cookie => {
+      const [name, value] = cookie.trim().split('=');
+      if (name && value) {
+        cookies[name] = decodeURIComponent(value);
+      }
+    });
+    return cookies;
   }
 }
