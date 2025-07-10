@@ -6,7 +6,7 @@ const withNextra = nextra({
   search: {
     codeblocks: false,
   },
-  contentDirBasePath: '/src',
+  contentDirBasePath: '/',
   // ... Add Nextra-specific options here
 });
 

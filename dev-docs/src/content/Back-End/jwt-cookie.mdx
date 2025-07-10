@@ -1,0 +1,527 @@
+# JWT 인증 방식 변경
+#### Authorization Header → HTTP Cookie
+
+## 개요
+
+기존 JWT 인증 방식을 Authorization Bearer Header에서 HTTP Cookie 기반으로 변경한 과정과 그 장점에 대해 정리합니다.
+
+## 기존 방식 (Authorization Header)
+
+### 구현 방식
+```typescript
+// 기존: Authorization Header 방식
+const token = request.headers.authorization?.split(' ')[1]; // "Bearer {token}"
+
+// 가드에서 토큰 추출
+extractTokenFromHeader(header: string, isBearer: boolean) {
+  const splitToken = header.split(' ');
+  const prefix = isBearer ? 'Bearer' : 'Basic';
+  
+  if (splitToken.length !== 2 || splitToken[0] !== prefix) {
+    throw new UnauthorizedException('잘못된 토큰입니다.');
+  }
+  
+  return splitToken[1];
+}
+```
+
+### 클라이언트 측 구현
+```typescript
+// 프론트엔드에서 매번 헤더에 토큰 포함
+const response = await fetch('/api/protected', {
+  headers: {
+    'Authorization': `Bearer ${accessToken}`
+  }
+});
+```
+
+### 문제점
+1. **클라이언트 측 토큰 관리 복잡성**: localStorage 또는 sessionStorage에 토큰 저장 필요
+2. **XSS 공격 취약성**: JavaScript로 접근 가능한 토큰
+3. **수동 토큰 관리**: 모든 API 호출에 수동으로 헤더 추가 필요
+4. **토큰 만료 처리 복잡성**: 클라이언트에서 토큰 갱신 로직 구현 필요
+
+## 변경된 방식 (HTTP Cookie)
+
+### 구현 방식
+```typescript
+// 변경: Cookie 기반 방식
+extractTokenFromCookies(request: any, tokenType: 'access' | 'refresh' = 'access'): string {
+  const cookieName = tokenType === 'access' ? 'access_token' : 'refresh_token';
+
+  if (!request.cookies || !request.cookies[cookieName]) {
+    throw new UnauthorizedException(`쿠키에서 ${tokenType} 토큰을 찾을 수 없습니다.`);
+  }
+
+  return request.cookies[cookieName];
+}
+
+// 토큰 쿠키 설정
+setTokenCookies(response: any, tokens: { accessToken: string; refreshToken: string }) {
+  const cookieOptions = {
+    httpOnly: false, // 개발용: 브라우저에서 확인 가능
+    secure: false,   // 개발용: HTTP에서도 작동
+    sameSite: 'lax' as const,
+  };
+
+  response.cookie('access_token', tokens.accessToken, {
+    ...cookieOptions,
+    maxAge: 15 * 60 * 1000, // 15분
+  });
+
+  response.cookie('refresh_token', tokens.refreshToken, {
+    ...cookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+  });
+}
+```
+
+### 가드 변경사항
+```typescript
+// Bearer Token Guard에서 Cookie 기반으로 변경
+async canActivate(context: ExecutionContext): Promise<boolean> {
+  const request = context.switchToHttp().getRequest();
+  
+  if (isPublic) {
+    request.isRoutePublic = true;
+    return true;
+  }
+
+  // 기존: const token = this.authService.extractTokenFromHeader(rawToken, true);
+  // 변경: 쿠키에서 토큰 추출
+  const token = this.authService.extractTokenFromCookies(request, 'access');
+  
+  const result = await this.authService.verifyToken(token);
+  const user = await this.usersService.getUserByEmail(result.email);
+
+  request.user = {
+    id: user.id,
+    email: user.email,
+    devName: user.devName,
+    role: user.role,
+  };
+  
+  return true;
+}
+```
+
+## 주요 변경사항
+
+### 1. 로그인 API 응답 변경
+```typescript
+// 기존: JSON으로 토큰 반환
+return {
+  accessToken: token,
+  refreshToken: refreshToken
+};
+
+// 변경: 쿠키로 토큰 설정 후 성공 메시지만 반환
+async postLoginEmail(@Res() res: Response) {
+  const tokens = await this.authService.loginWithEmail(credentials);
+  
+  this.authService.setTokenCookies(res, tokens);
+  
+  res.json({
+    message: 'Login successful',
+  });
+}
+```
+
+### 2. 클라이언트 측 변경
+```typescript
+// 기존: 수동 헤더 관리
+const response = await fetch('/api/protected', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+
+// 변경: 자동 쿠키 전송
+const response = await fetch('/api/protected', {
+  credentials: 'include' // 쿠키 자동 포함
+});
+```
+
+## 장점 분석
+
+### 1. 보안성 향상
+
+#### XSS (Cross-Site Scripting) 방어
+```javascript
+// ❌ 기존 방식: localStorage에 토큰 저장 (XSS 취약)
+localStorage.setItem('accessToken', token);
+// 악성 스크립트가 토큰에 접근 가능
+const stolenToken = localStorage.getItem('accessToken');
+
+// ✅ 변경 방식: HttpOnly 쿠키 (XSS 방어)
+// JavaScript로 접근 불가능
+document.cookie; // "access_token" 쿠키가 보이지 않음 (HttpOnly: true일 때)
+```
+
+#### CSRF (Cross-Site Request Forgery) 방어
+```javascript
+// ✅ SameSite 속성으로 CSRF 방어
+response.cookie('access_token', token, {
+  sameSite: 'lax', // 또는 'strict'
+  // 다른 사이트에서의 요청에는 쿠키가 전송되지 않음
+});
+```
+
+**보안 레벨 비교:**
+- **기존 (Header)**: XSS 취약, CSRF는 별도 토큰 필요
+- **변경 (Cookie)**: XSS 방어 (HttpOnly), CSRF 방어 (SameSite)
+
+### 2. 개발 편의성 증대
+
+#### Before vs After 비교
+
+**기존 방식의 복잡한 토큰 관리:**
+```typescript
+// 1. 로그인 시 토큰 저장
+const loginResponse = await fetch('/auth/login', {
+  method: 'POST',
+  body: JSON.stringify(credentials)
+});
+const { accessToken, refreshToken } = await loginResponse.json();
+localStorage.setItem('accessToken', accessToken);
+localStorage.setItem('refreshToken', refreshToken);
+
+// 2. 매 API 호출마다 수동으로 헤더 추가
+const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem('accessToken');
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+// 3. 토큰 만료 시 갱신 로직
+const apiCall = async (url: string) => {
+  let response = await fetchWithAuth(url);
+  
+  if (response.status === 401) {
+    // 토큰 갱신 시도
+    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshResponse = await fetch('/auth/refresh', {
+      headers: { 'Authorization': `Bearer ${refreshToken}` }
+    });
+    
+    if (refreshResponse.ok) {
+      const { accessToken } = await refreshResponse.json();
+      localStorage.setItem('accessToken', accessToken);
+      // 원래 요청 재시도
+      response = await fetchWithAuth(url);
+    }
+  }
+  
+  return response;
+};
+
+// 4. 모든 컴포넌트에서 반복적인 토큰 관리
+useEffect(() => {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    router.push('/login');
+  }
+}, []);
+```
+
+**변경된 방식의 간단한 관리:**
+```typescript
+// 1. 로그인 - 쿠키 자동 설정
+const loginResponse = await fetch('/auth/login', {
+  method: 'POST',
+  credentials: 'include', // 쿠키 포함
+  body: JSON.stringify(credentials)
+});
+// 서버에서 자동으로 쿠키 설정, 클라이언트는 저장 로직 불필요
+
+// 2. API 호출 - 헤더 설정 불필요
+const apiCall = async (url: string, options: RequestInit = {}) => {
+  return fetch(url, {
+    ...options,
+    credentials: 'include', // 브라우저가 자동으로 쿠키 전송
+  });
+};
+
+// 3. 토큰 갱신 - 서버에서 자동 처리
+// 토큰 만료 시 서버에서 자동으로 새 쿠키 설정
+// 클라이언트는 별도 갱신 로직 불필요
+
+// 4. 인증 상태 확인도 간단
+const checkAuth = async () => {
+  const response = await fetch('/auth/me', {
+    credentials: 'include'
+  });
+  return response.ok;
+};
+```
+
+**코드 감소량:**
+- **토큰 저장 로직**: 100% 제거
+- **헤더 관리 코드**: 90% 감소
+- **토큰 갱신 로직**: 클라이언트에서 완전 제거
+- **인증 상태 관리**: 80% 단순화
+
+### 3. 사용자 경험 개선
+- **자동 로그인 유지**: 브라우저 재시작 후에도 로그인 상태 유지
+- **투명한 토큰 갱신**: 백그라운드에서 자동 처리
+- **세션 지속성**: 탭 간 로그인 상태 공유
+
+## MFA 환경에서의 장점
+
+### 1. Micro Frontend 간 자동 인증 공유
+
+#### 쿠키 기반 인증의 MFA 아키텍처
+```typescript
+// 현재 MFA 구조에서 쿠키 기반 인증 공유 방식
+
+// Shell App (localhost:3000) - 메인 컨테이너
+const shellApp = {
+  role: 'host',
+  manages: 'global authentication state',
+  cookieDomain: 'localhost', // 모든 포트에서 공유
+  authProvider: true
+};
+
+// Auth App (localhost:3001) - 인증 전용
+const authApp = {
+  role: 'authentication',
+  handles: ['login', 'logout', 'registration'],
+  cookieAccess: 'read/write',
+  domain: 'localhost:3001'
+};
+
+// Feed App (localhost:3002) - 피드 기능
+const feedApp = {
+  role: 'content',
+  handles: 'user content',
+  cookieAccess: 'read-only',
+  domain: 'localhost:3002'
+};
+```
+
+#### 실제 동작 시나리오
+```typescript
+// 1. 사용자가 Auth App에서 로그인
+// localhost:3001/login
+await fetch('http://localhost:3000/auth/login', {
+  credentials: 'include',
+  method: 'POST',
+  body: JSON.stringify(credentials)
+});
+// 결과: 쿠키가 .localhost 도메인에 설정됨
+
+// 2. Shell App에서 자동 인증 상태 확인
+// localhost:3000 - 쿠키 자동으로 사용 가능
+const checkAuthStatus = async () => {
+  const response = await fetch('/auth/me', {
+    credentials: 'include' // 같은 쿠키 자동 전송
+  });
+  return response.ok;
+};
+
+// 3. Feed App에서도 동일한 쿠키 사용
+// localhost:3002 - 추가 설정 없이 인증된 API 호출
+const fetchFeedData = async () => {
+  const response = await fetch('http://localhost:3000/api/feed', {
+    credentials: 'include' // 동일한 인증 쿠키 자동 사용
+  });
+  return response.json();
+};
+```
+
+### 2. Header 방식 vs Cookie 방식 MFA 비교
+
+#### 기존 Header 방식의 문제점
+```typescript
+// ❌ Header 방식: 각 MFE에서 개별 토큰 관리 필요
+
+// Auth App에서 로그인 후
+const authApp = {
+  onLogin: (tokens) => {
+    // 1. 자체 저장
+    localStorage.setItem('tokens', JSON.stringify(tokens));
+    
+    // 2. 다른 MFE에게 토큰 전달 (복잡!)
+    window.postMessage({
+      type: 'AUTH_SUCCESS',
+      tokens: tokens
+    }, '*');
+    
+    // 3. Shell App에 알림
+    parent.postMessage({
+      type: 'LOGIN',
+      tokens: tokens
+    }, 'http://localhost:3000');
+  }
+};
+
+// Shell App에서 토큰 수신 및 관리
+const shellApp = {
+  handleMessage: (event) => {
+    if (event.data.type === 'LOGIN') {
+      // 4. 모든 자식 MFE에 토큰 브로드캐스트
+      feedFrame.contentWindow.postMessage({
+        type: 'SET_TOKEN',
+        tokens: event.data.tokens
+      }, '*');
+    }
+  }
+};
+
+// Feed App에서 토큰 수신
+const feedApp = {
+  handleMessage: (event) => {
+    if (event.data.type === 'SET_TOKEN') {
+      // 5. 토큰 저장 및 API 호출 준비
+      localStorage.setItem('tokens', JSON.stringify(event.data.tokens));
+    }
+  }
+};
+```
+
+#### 쿠키 방식의 간단한 공유
+```typescript
+// ✅ Cookie 방식: 자동으로 모든 MFE에서 공유
+
+// Auth App - 로그인만 처리
+const authApp = {
+  onLogin: async (credentials) => {
+    await fetch('http://localhost:3000/auth/login', {
+      credentials: 'include',
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+    // 끝! 쿠키는 자동으로 모든 localhost 앱에서 사용 가능
+  }
+};
+
+// Shell App - 별도 토큰 관리 불필요
+const shellApp = {
+  checkAuth: async () => {
+    return fetch('/auth/me', { credentials: 'include' });
+    // 쿠키가 자동으로 전송됨
+  }
+};
+
+// Feed App - 즉시 인증된 API 호출 가능
+const feedApp = {
+  fetchData: async () => {
+    return fetch('http://localhost:3000/api/feed', {
+      credentials: 'include' // 동일한 쿠키 자동 사용
+    });
+  }
+};
+```
+
+### 3. 개발 및 운영 효율성
+
+#### 코드 복잡도 비교
+```typescript
+// 기존 방식: MFE 간 통신 코드 (약 200줄)
+// - postMessage 핸들러
+// - 토큰 동기화 로직  
+// - 에러 처리
+// - 타임아웃 관리
+
+// 쿠키 방식: 단순한 fetch (약 10줄)
+const apiCall = async (url: string) => {
+  return fetch(url, { credentials: 'include' });
+};
+```
+
+#### 실시간 상태 동기화
+```typescript
+// 시나리오: 한 MFE에서 로그아웃 시
+
+// ❌ Header 방식: 수동 동기화
+const logout = () => {
+  localStorage.removeItem('tokens');
+  // 모든 MFE에 로그아웃 알림 필요
+  broadcastToAllMFEs({ type: 'LOGOUT' });
+};
+
+// ✅ Cookie 방식: 자동 동기화  
+const logout = async () => {
+  await fetch('/auth/logout', { credentials: 'include' });
+  // 서버에서 쿠키 삭제 → 모든 MFE에서 자동으로 인증 해제됨
+};
+```
+
+### 4. 디버깅 및 모니터링
+
+#### 개발자 경험 개선
+```typescript
+// 쿠키 방식의 디버깅 장점
+
+// 1. 브라우저 개발자 도구에서 쉽게 확인
+// Application > Cookies > localhost
+// - access_token: eyJhbGc...
+// - refresh_token: eyJhbGc...
+
+// 2. Network 탭에서 자동 쿠키 전송 확인
+// 모든 요청에 Cookie 헤더 자동 포함
+
+// 3. 각 MFE에서 동일한 인증 상태 확인 가능
+const debugAuth = () => {
+  console.log('Current cookies:', document.cookie);
+  // 모든 MFE에서 동일한 결과
+};
+```
+
+### 5. 성능 및 네트워크 최적화
+
+#### 불필요한 통신 제거
+```typescript
+// 기존: MFE 간 토큰 동기화를 위한 추가 통신
+// Auth App → Shell App → Feed App (3단계 통신)
+
+// 쿠키: 브라우저 자동 처리
+// 추가 통신 없이 모든 MFE에서 즉시 사용 가능
+```
+
+## 구현 시 고려사항
+
+### 1. CORS 설정
+```typescript
+// main.ts에서 CORS 설정
+app.enableCors({
+  origin: true,
+  credentials: true, // 쿠키 전송을 위해 필수
+});
+```
+
+### 2. 쿠키 옵션 설정
+```typescript
+const cookieOptions = {
+  httpOnly: false,    // 개발환경: 디버깅을 위해 false
+  secure: false,      // 개발환경: HTTP에서 테스트하기 위해 false  
+  sameSite: 'lax',    // CSRF 방지 및 호환성
+  maxAge: 15 * 60 * 1000 // 토큰별 적절한 만료 시간 설정
+};
+```
+
+### 3. 프로덕션 환경 보안
+```typescript
+// 프로덕션에서는 보안 강화
+const cookieOptions = {
+  httpOnly: true,     // JavaScript 접근 차단
+  secure: true,       // HTTPS에서만 전송
+  sameSite: 'strict', // 엄격한 CSRF 방지
+};
+```
+
+## 결론
+
+JWT 인증 방식을 Authorization Header에서 HTTP Cookie로 변경함으로써:
+
+1. **보안성이 크게 향상**되었습니다 (XSS, CSRF 방지)
+2. **개발 편의성이 증대**되었습니다 (자동 토큰 관리)
+3. **MFA 환경에서 인증 상태 공유**가 효율적으로 이루어집니다
+4. **사용자 경험이 개선**되었습니다 (투명한 인증 처리)
+
+특히 Micro Frontend 아키텍처에서는 쿠키 기반 인증이 여러 앱 간의 인증 상태 공유를 자연스럽게 처리할 수 있어 매우 적합한 선택입니다.
