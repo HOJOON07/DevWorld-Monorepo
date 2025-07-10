@@ -39,6 +39,16 @@ export class AuthService {
     return token;
   }
 
+  extractTokenFromCookies(request: any, tokenType: 'access' | 'refresh' = 'access'): string {
+    const cookieName = tokenType === 'access' ? 'access_token' : 'refresh_token';
+    
+    if (!request.cookies || !request.cookies[cookieName]) {
+      throw new UnauthorizedException(`쿠키에서 ${tokenType} 토큰을 찾을 수 없습니다.`);
+    }
+    
+    return request.cookies[cookieName];
+  }
+
   decodeBasicToken(base64string: string) {
     const decoded = Buffer.from(base64string, 'base64').toString('utf-8');
 

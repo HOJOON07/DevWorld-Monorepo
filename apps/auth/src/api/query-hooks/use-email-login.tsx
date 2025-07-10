@@ -1,12 +1,11 @@
 import { useMutation } from '@devworld/tanstack-query-client';
 import { useToast } from '@devworld/ui';
-import { useNavigate } from 'react-router-dom';
 import { SignInType } from '../../lib/form-validation';
+import { globalNavigate } from '../../lib/global-navigate';
 import { AuthEmailLogin } from '../email-login';
 
 export const useEmailLogin = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   return useMutation({
     mutationFn: async (credentials: SignInType) => {
       return await AuthEmailLogin(credentials);
@@ -17,8 +16,7 @@ export const useEmailLogin = () => {
         title: 'User Login Success',
         description: 'You have successfully logged in',
       });
-      // navigate('feed', { replace: true });
-      window.dispatchEvent(new CustomEvent('global:navigate', { detail: '/feed' }));
+      globalNavigate('/feed');
     },
     onError: () => {
       toast({

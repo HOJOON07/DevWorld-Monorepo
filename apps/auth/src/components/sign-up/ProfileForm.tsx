@@ -1,7 +1,7 @@
 import { CardContent, Form, FormField } from '@devworld/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { emailRegister } from '../../api/email-register';
+import { useSignUp } from '../../api/query-hooks/use-sign-up';
 import { SignUpSchema, SignUpType } from '../../lib/form-validation';
 import { useFunnel } from '../common/Funnel';
 import BackButton from './buttons/BackButton';
@@ -12,6 +12,7 @@ import UsernameInput from './inputs/UsernameInput';
 
 export default function SignUpProfileForm() {
   const { data: funnelData, setData } = useFunnel();
+  const signUpMutaion = useSignUp();
 
   const form = useForm<SignUpType & { _isUsernameChecked?: boolean }>({
     resolver: zodResolver(SignUpSchema),
@@ -38,17 +39,16 @@ export default function SignUpProfileForm() {
     try {
       // funnel 데이터 업데이트
       setData(data);
+      signUpMutaion.mutate(data);
+      // // 실제 회원가입 API 호출
+      // // const { accessToken, refreshToken } = await emailRegister(data);
 
-      // 실제 회원가입 API 호출
-      const { accessToken, refreshToken } = await emailRegister(data);
-
-      // 토큰 저장
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      // // 토큰 저장
+      // localStorage.setItem('accessToken', accessToken);
+      // localStorage.setItem('refreshToken', refreshToken);
 
       // 성공 처리
-    } catch (error) {
-      console.error('Registration failed:', error);
+    } catch (err) {
       form.setError('root', {
         type: 'manual',
         message: 'Registration failed. Please try again.',

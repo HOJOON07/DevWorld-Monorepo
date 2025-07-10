@@ -2,7 +2,7 @@ import { Toaster } from '@devworld/ui';
 import { Outlet } from 'react-router-dom';
 import { GlobalNavigateProvider } from '../provider/global-navigate-provider';
 
-const Layout = () => {
+const AppContainer = () => {
   return (
     <GlobalNavigateProvider>
       <Outlet />
@@ -11,4 +11,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default AppContainer;
