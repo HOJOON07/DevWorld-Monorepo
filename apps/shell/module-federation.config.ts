@@ -14,14 +14,6 @@ export const mfConfig = {
   dts: process.env.NODE_ENV === 'production',
   shared: {
     ...deps,
-    react: {
-      singleton: true,
-      requiredVersion: deps['react'],
-    },
-    'react-dom': {
-      singleton: true,
-      requiredVersion: deps['react-dom'],
-    },
     '@devworld/ui': {
       singleton: true,
     },
@@ -30,6 +22,20 @@ export const mfConfig = {
     },
     '@devworld/tailwind-config': {
       singleton: true,
+    },
+    '@devworld/event-bus': {
+      singleton: true,
+    },
+    '@devworld/axios-client': {
+      singleton: true,
+    },
+    react: {
+      singleton: true,
+      requiredVersion: deps['react'],
+    },
+    'react-dom': {
+      singleton: true,
+      requiredVersion: deps['react-dom'],
     },
     'react-hook-form': {
       singleton: true,

@@ -13,6 +13,7 @@ import {
   Request,
   UseInterceptors,
 } from '@nestjs/common';
+import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';

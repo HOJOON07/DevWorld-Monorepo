@@ -55,14 +55,7 @@ export const setupAuthInterceptors = (instance: AxiosInstance) => {
           await rotateAccessToken();
           return instance(originalConfig);
         } catch (err) {
-          console.log(err, 'Rotate AccessToken Failed');
-          try {
-            await rotateRefreshToken();
-            await rotateAccessToken();
-            return instance(originalConfig);
-          } catch (finalError) {
-            return Promise.reject(finalError);
-          }
+          return Promise.reject(err);
         }
       }
 

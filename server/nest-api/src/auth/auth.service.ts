@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
@@ -108,14 +109,15 @@ export class AuthService {
 
   setTokenCookies(response: any, tokens: { accessToken: string; refreshToken: string }) {
     const cookieOptions = {
-      httpOnly: false, // 개발용: 브라우저에서 확인 가능
-      secure: false, // 개발용: HTTP에서도 작동
+      httpOnly: false,
+      secure: false,
       sameSite: 'lax' as const,
     };
 
     response.cookie('access_token', tokens.accessToken, {
       ...cookieOptions,
-      maxAge: 15 * 60 * 1000, // 15분
+      // maxAge: 15 * 60 * 1000, // 15분
+      maxAge: 5000, // 1초
     });
 
     response.cookie('refresh_token', tokens.refreshToken, {
@@ -198,102 +200,70 @@ export class AuthService {
     return this.loginUser(newUser);
   }
 
-  // async getGithubAccessToken(githubCode: string) {
-  //   const getTokenUrl: string = 'https://github.com/login/oauth/access_token';
-  //   const request = {
-  //     code: githubCode,
-  //     client_id: this.configService.get<string>(ENV_GITHUB_CLIENT_ID),
-  //     client_secret: this.configService.get<string>(ENV_GITHUB_CLIENT_SECRET),
-  //   };
-  //   try {
-  //     const response: AxiosResponse = await axios.post(getTokenUrl, request, {
-  //       headers: {
-  //         accept: 'application/json',
-  //       },
-  //     });
-  //     if (response.data.error) {
-  //       throw new UnauthorizedException('깃허브 인증을 실패했습니다.');
-  //     }
-  //     if (!response.data.access_token) {
-  //       throw new InternalServerErrorException('액세스 토큰이 반환되지 않았습니다.');
-  //     }
-
-  //     return response.data.access_token;
-  //   } catch (error) {
-  //     console.error('GitHub Access Token을 받아오는 과정에서 에러가 발생했습니다:', error);
-  //     handleAxiosError(error);
-  //   }
-  // }
-
-  // async getGithubBasicInfo(githubCode: string) {
-  //   try {
-  //     const access_token = await this.getGithubAccessToken(githubCode);
-
-  //     const getBasicInfoUserUrl: string = 'https://api.github.com/user';
-  //     const response = await axios.get(getBasicInfoUserUrl, {
-  //       headers: {
-  //         authorization: `token ${access_token}`,
-  //       },
-  //     });
-
-  //     const { login, html_url, location, bio, company, blog } = response.data;
-  //     const basicGithubUserInfo: GithubBasicInfoUserDto = {
-  //       devName: login,
-  //       github: html_url,
-  //       location,
-  //       bio,
-  //       company,
-  //       socialEtc: blog,
-  //     };
-
-  //     return { ...basicGithubUserInfo, access_token };
-  //   } catch (error) {
-  //     console.error('GitHub 기본 정보를 가져오는 과정에서 에러가 발생했습니다:', error);
-  //     handleAxiosError(error);
-  //   }
-  // }
-  // async getGithubUserEmail(access_token: string) {
-  //   const getUserEmailUrl = 'https://api.github.com/user/emails';
-  //   try {
-  //     const response = await axios.get(getUserEmailUrl, {
-  //       headers: {
-  //         authorization: `token ${access_token}`,
-  //       },
-  //     });
-  //     const email = response.data
-  //       .filter((email) => email.primary && email.verified)
-  //       .map((data) => data.email); // 수정: 이메일 객체에서 이메일 주소만 추출
-  //     return email[0];
-  //   } catch (error) {
-  //     console.error('GitHub 이메일 정보를 가져오는데 실패했습니다.', error);
-  //     handleAxiosError(error);
-  //   }
-  // }
-
-  // async OAuthGithubLogin(githubcode: GithubCodeDto) {
-  //   try {
-  //     const { code } = githubcode;
-  //     const { devName, github, location, bio, company, socialEtc, access_token } =
-  //       await this.getGithubBasicInfo(code);
-  //     const email = await this.getGithubUserEmail(access_token);
-
-  //     return {
-  //       devName,
-  //       github,
-  //       location,
-  //       bio,
-  //       company,
-  //       socialEtc,
-  //       email,
-  //     };
-  //   } catch (error) {
-  //     console.error('GitHub OAuth 로그인 과정에서 에러가 발생했습니다:', error);
-  //     handleAxiosError(error);
-  //   }
-  // }
-
   async checkDuplicatedDevName({ devName }: DuplicateDevNameDto) {
     const message = this.userService.checkDuplicatedDevName;
     return message;
+  }
+
+  validateAuthTokens(
+    accessToken: string | undefined,
+    refreshToken: string | undefined,
+    response: any,
+  ) {
+    // Case 1: 둘 다 있는 정상적인 경우
+    if (accessToken && refreshToken) {
+      try {
+        const accessPayload = this.verifyToken(accessToken);
+        const refreshPayload = this.verifyToken(refreshToken);
+
+        // 토큰 소유자 일치 확인
+        if (accessPayload.sub !== refreshPayload.sub) {
+          throw new UnauthorizedException('토큰 소유자가 일치하지 않습니다.');
+        }
+
+        return { message: '인증 성공 (Both Tokens Valid)' };
+      } catch (accessError) {
+        // access_token 만료, refresh_token 유효한 경우
+        const refreshPayload = this.verifyToken(refreshToken);
+        const newAccessToken = this.rotateToken(refreshToken, false);
+        this.setAccessTokenCookie(response, newAccessToken);
+
+        return { message: '인증 성공 (Token Refreshed)' };
+      }
+    }
+
+    // Case 2: refresh_token만 있는 경우 (정상 - access_token 만료)
+    if (!accessToken && refreshToken) {
+      const refreshPayload = this.verifyToken(refreshToken);
+      const newAccessToken = this.rotateToken(refreshToken, false);
+      this.setAccessTokenCookie(response, newAccessToken);
+
+      return { message: '인증 성공 (Access Token Generated)' };
+    }
+
+    // Case 3: access_token만 있는 경우 (비정상!)
+    if (accessToken && !refreshToken) {
+      response.clearCookie('access_token');
+      throw new UnauthorizedException('Refresh token이 없습니다. 재로그인이 필요합니다.');
+    }
+
+    // Case 4: 둘 다 없는 경우
+    throw new UnauthorizedException('인증 토큰이 없습니다.');
+  }
+
+  clearAuthCookies(response: Response) {
+    response.clearCookie('access_token', {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    response.clearCookie('refresh_token', {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
   }
 }

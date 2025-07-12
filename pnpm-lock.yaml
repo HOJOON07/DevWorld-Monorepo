@@ -175,6 +175,12 @@ importers:
 
   apps/shell:
     dependencies:
+      '@devworld/axios-client':
+        specifier: workspace:*
+        version: link:../../packages/axios-client
+      '@devworld/event-bus':
+        specifier: workspace:*
+        version: link:../../packages/event-bus
       '@devworld/shell-router':
         specifier: workspace:*
         version: link:../../packages/shell-router
@@ -376,6 +382,15 @@ importers:
       axios:
         specifier: ^1.6.0
         version: 1.10.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.1
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/event-bus:
     devDependencies:
       '@types/node':
         specifier: ^20.0.0

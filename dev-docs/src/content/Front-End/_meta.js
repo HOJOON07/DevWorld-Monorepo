@@ -6,6 +6,7 @@ const meta = {
   oauth: '',
   'oauth-dynamic-routing': '',
   'react-hook-form-context': '',
+  'shell-router-architecture': '',
   'tanstack-query-mfa': '',
 };
 

@@ -79,9 +79,7 @@ export class RefreshTokenGuard implements CanActivate {
     }
 
     const token = this.authService.extractTokenFromCookies(request, 'refresh');
-
     const result = await this.authService.verifyToken(token);
-
     const user = await this.usersService.getUserByEmail(result.email);
 
     request.user = user;

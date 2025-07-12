@@ -32,6 +32,8 @@
     "@devworld/shell-router": "workspace:*",
     "@devworld/tailwind-config": "workspace:*",
     "@devworld/ui": "workspace:*",
+    "@devworld/event-bus": "workspace:*",
+    "@devworld/axios-client": "workspace:*",
     "@module-federation/enhanced": "^0.8.9",
     "@module-federation/utilities": "^3.1.59",
     "class-variance-authority": "^0.7.1",

@@ -3,19 +3,13 @@ import {
   ExecutionContext,
   InternalServerErrorException,
 } from '@nestjs/common';
-
-interface RequestUser {
-  id: number;
-  email: string;
-  devName: string;
-  role: string;
-}
+import { UserModel } from '../entities/users.entity';
 
 export const User = createParamDecorator(
-  (data: keyof RequestUser | undefined, context: ExecutionContext) => {
+  (data: keyof UserModel | undefined, context: ExecutionContext) => {
     const request = context.switchToHttp().getRequest();
 
-    const user = request.user as RequestUser;
+    const user = request.user as UserModel;
 
     if (!user) {
       throw new InternalServerErrorException(

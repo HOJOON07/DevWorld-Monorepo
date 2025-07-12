@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,6 +8,7 @@ import {
   Post,
   Request,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -15,7 +17,7 @@ import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { BasciTokenGuard } from './guard/basic-token.guard';
-import { RefreshTokenGuard } from './guard/bearer-token.guard';
+import { AccessTokenGuard, RefreshTokenGuard } from './guard/bearer-token.guard';
 import { OAuthService } from './oauth.service';
 
 @Controller('auth')
@@ -24,6 +26,23 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly oauthService: OAuthService,
   ) {}
+
+  @Get('isAuth')
+  @IsPublic()
+  async isAuthenticated(@Request() req, @Res() res: Response) {
+    const accessToken = req.cookies.access_token;
+    const refreshToken = req.cookies.refresh_token;
+
+    try {
+      const result = this.authService.validateAuthTokens(accessToken, refreshToken, res);
+      res.json(result);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException('토큰이 유효하지 않습니다.');
+    }
+  }
 
   @Get('health')
   @IsPublic()
@@ -37,8 +56,6 @@ export class AuthController {
   postTokenAccess(@Request() req, @Res() res: Response) {
     const token = req.token;
     const newToken = this.authService.rotateToken(token, false);
-
-    // 쿠키 설정을 서비스로 위임
     this.authService.setAccessTokenCookie(res, newToken);
 
     res.json({
@@ -46,13 +63,23 @@ export class AuthController {
     });
   }
 
+  @Post()
+  async logout(@Res() res: Response) {
+    try {
+      this.authService.clearAuthCookies(res);
+      res.json({
+        message: 'Logout Success',
+      });
+    } catch (err) {
+      throw new BadRequestException('Logout Failed');
+    }
+  }
+
   @Post('token/refresh')
   @UseGuards(RefreshTokenGuard)
   postTokenRefresh(@Request() req, @Res() res: Response) {
     const token = req.token;
     const newToken = this.authService.rotateToken(token, true);
-
-    // 쿠키 설정을 서비스로 위임
     this.authService.setRefreshTokenCookie(res, newToken);
 
     res.json({
