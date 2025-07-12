@@ -63,7 +63,7 @@ export class AuthController {
     });
   }
 
-  @Post()
+  @Post('logout')
   async logout(@Res() res: Response) {
     try {
       this.authService.clearAuthCookies(res);
