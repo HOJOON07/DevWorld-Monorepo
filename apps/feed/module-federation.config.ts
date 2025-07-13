@@ -6,7 +6,7 @@ export const mfConfig = {
   filename: 'remoteEntry.js',
   remotes: {},
   exposes: {
-    './injector': './src/injector.tsx',
+    './injector': './src/app/injector/injector.tsx',
   },
   // Disable auto type generation in development to prevent infinite recompilation
   dts: process.env.NODE_ENV === 'production',
@@ -24,6 +24,12 @@ export const mfConfig = {
       singleton: true,
     },
     '@devworld/shell-router': {
+      singleton: true,
+    },
+    '@devworld/axios-client': {
+      singleton: true,
+    },
+    '@devworld/tanstack-query-client': {
       singleton: true,
     },
   },

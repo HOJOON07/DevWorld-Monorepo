@@ -1,5 +1,6 @@
 const meta = {
   auth: '',
+  'centralized-route-management': '',
   'funnel-dynamic-rendering-refactoring': '',
   funnel: '',
   'global-navigate': '',

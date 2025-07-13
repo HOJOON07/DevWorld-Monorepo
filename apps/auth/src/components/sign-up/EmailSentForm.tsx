@@ -14,6 +14,7 @@ import {
 } from '@devworld/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { useEmailSentVerificationCode } from '../../api/query-hooks/use-email-sent-verification-code';
 import { EmailSentSchema, EmailSentType } from '../../lib/form-validation';
 import { useFunnel } from '../common/Funnel';
@@ -85,9 +86,9 @@ export default function SignUpEmailSentForm() {
       </Form>
       <div className='text-sm text-center flex gap-2 justify-center'>
         <p className='text-muted-foreground'>Already have an account?</p>
-        <a href='#' className='text-primary hover:underline font-medium'>
+        <Link to='/signin' className='text-primary hover:underline font-medium'>
           Sign In
-        </a>
+        </Link>
       </div>
     </CardContent>
   );

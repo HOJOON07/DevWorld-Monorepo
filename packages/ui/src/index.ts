@@ -1,5 +1,6 @@
 export { cva } from 'class-variance-authority';
 export * from 'lucide-react';
+export { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export { Button, buttonVariants } from '@/components/ui/button';
 export {
   Card,

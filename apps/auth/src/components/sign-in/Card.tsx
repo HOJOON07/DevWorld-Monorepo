@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@devworld/ui';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import OAuthButton from '../common/OAuthButton';
 import SignInForm from './Form';
 
@@ -29,9 +30,9 @@ export default function SignInCard({ className, ...props }: ComponentProps) {
             <SignInForm />
             <div className='text-center text-sm flex gap-2 justify-center'>
               <p>Don't have an account?</p>
-              <a href='#' className='text-primary hover:underline font-medium'>
+              <Link className='text-primary hover:underline font-medium' to='/signup' replace>
                 Sign Up
-              </a>
+              </Link>
             </div>
           </div>
         </CardContent>

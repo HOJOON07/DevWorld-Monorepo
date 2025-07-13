@@ -1,4 +1,5 @@
 import inject from './injector';
+import '../styles/styles.css';
 
 inject({
   routerType: 'browser',

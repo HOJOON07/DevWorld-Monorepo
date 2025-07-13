@@ -6,6 +6,7 @@ export const isAuthFetch = async (): Promise<boolean> => {
     await api.call();
     return true;
   } catch (err) {
+    console.error(err);
     return false;
   }
 };

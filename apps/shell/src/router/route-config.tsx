@@ -17,7 +17,7 @@ export interface RouteConfig {
   path: string;
   element: React.ReactNode;
   type: RouteType;
-  redirect: RouteRedirectUrl;
+  redirect?: RouteRedirectUrl;
 }
 
 export const routeConfig: RouteConfig[] = [

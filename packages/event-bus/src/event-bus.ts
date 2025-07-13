@@ -11,7 +11,6 @@ export type ChannelName = keyof ChannelEventMap;
 
 export class BroadcastChannelEventBus<C extends ChannelName> {
   private channel: BroadcastChannel;
-  // 각 채널의 이벤트 맵을 자동 타입 추론!
   private listeners: {
     [K in keyof ChannelEventMap[C]]?: ((payload: ChannelEventMap[C][K]) => void)[];
   } = {};

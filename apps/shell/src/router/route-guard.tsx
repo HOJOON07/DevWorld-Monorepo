@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../provider/auth-provider';
-import { RouteConfig, RouteRedirectUrl, RouteType } from './route-config';
+import { RouteRedirectUrl, RouteType } from './route-config';
 
 interface RouteGuardProps {
   children: React.ReactNode;

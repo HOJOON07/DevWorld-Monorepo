@@ -37,6 +37,7 @@ export class UsersController {
   }
 
   @Delete('delete')
+  @IsPublic()
   deleteUser(@Body('email') email: string) {
     return this.usersService.deleteUser(email);
   }

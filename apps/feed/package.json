@@ -24,7 +24,10 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@devworld/axios-client": "workspace:*",
     "@devworld/shell-router": "workspace:*",
+    "@devworld/tailwind-config": "workspace:*",
+    "@devworld/tanstack-query-client": "workspace:*",
     "@devworld/ui": "workspace:*",
     "@module-federation/enhanced": "^0.8.9",
     "react": "^19.0.0",
