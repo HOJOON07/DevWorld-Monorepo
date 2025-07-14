@@ -12,14 +12,14 @@ const ItemList: ItemType[] = [
     text: 'Feed',
     icon: <House />,
   },
-  {
-    text: 'Search',
-    icon: <Search />,
-  },
-  {
-    text: 'Notifications',
-    icon: <Bell />,
-  },
+  // {
+  //   text: 'Search',
+  //   icon: <Search />,
+  // },
+  // {
+  //   text: 'Notifications',
+  //   icon: <Bell />,
+  // },
   {
     text: 'Workspace',
     icon: <Pencil />,

@@ -1,4 +1,5 @@
 import FeedCard from '../feed/Card';
+import FeedHeader from '../feed/Header';
 import IconSidebar from '../icon-sidebar/Sidebar';
 import SidePannel from '../side-pannel/SidePannel';
 
@@ -8,7 +9,8 @@ export default function PageLayout() {
       <IconSidebar />
       <div className='ml-20 flex pr-1'>
         <main className='flex-1'>
-          <div className='mx-auto max-w-[640px]'>
+          <div className='mx-auto flex max-w-[640px] flex-col gap-8'>
+            <FeedHeader />
             <FeedCard />
             <FeedCard />
             <FeedCard />

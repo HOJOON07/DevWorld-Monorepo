@@ -30,6 +30,7 @@
     "@devworld/tanstack-query-client": "workspace:*",
     "@devworld/ui": "workspace:*",
     "@module-federation/enhanced": "^0.8.9",
+    "motion": "^12.23.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.6.2"
