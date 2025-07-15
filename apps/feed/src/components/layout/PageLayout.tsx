@@ -9,8 +9,8 @@ export default function PageLayout() {
       <IconSidebar />
       <div className='ml-20 flex pr-1'>
         <main className='flex-1'>
+          <FeedHeader />
           <div className='mx-auto flex max-w-[640px] flex-col gap-8'>
-            <FeedHeader />
             <FeedCard />
             <FeedCard />
             <FeedCard />
