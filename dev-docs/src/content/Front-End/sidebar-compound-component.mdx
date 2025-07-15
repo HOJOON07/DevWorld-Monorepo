@@ -1,0 +1,273 @@
+# Sidebar Compound Component Pattern
+
+## 개요
+
+기존 `IconSidebar` 컴포넌트를 **Compound Component 패턴**으로 리팩토링하여 더 직관적이고 확장 가능한 구조로 개선했습니다.
+
+## 문제점
+
+### 기존 구조의 문제
+```tsx
+// 기존: 직관적이지 않은 구조
+<IconSidebar />
+  <Group hoveredItem={item} setHoveredItem={setItem} />
+    <Item isActive={item === 'feed'} onHover={...} />
+```
+
+- `IconSidebar` → `Group` → `Item` 구조가 직관적이지 않음
+- 각 컴포넌트의 역할이 명확하지 않음
+- 복잡한 상태 prop drilling
+- 설정과 렌더링 로직이 분산되어 있음
+
+## 해결책: Compound Component 패턴
+
+### 새로운 구조
+```tsx
+// 개선: 명확한 계층 구조
+<Sidebar defaultActive='feed'>
+  <Sidebar.Header>
+    <Sidebar.Header.Logo src={logo} text="DevWorld" />
+  </Sidebar.Header>
+  
+  <Sidebar.Content>
+    <Sidebar.Item id="feed">
+      <Sidebar.Item.Indicator />
+      <div className='flex items-center space-x-2'>
+        <Sidebar.Item.Icon><House /></Sidebar.Item.Icon>
+        <Sidebar.Item.Text>Feed</Sidebar.Item.Text>
+      </div>
+    </Sidebar.Item>
+  </Sidebar.Content>
+  
+  <Sidebar.Footer>
+    <Sidebar.Footer.Avatar user="Guest" />
+  </Sidebar.Footer>
+</Sidebar>
+```
+
+## 구현 상세
+
+### 1. Context 기반 상태 관리
+
+```tsx
+// /components/sidebar/context.tsx
+interface SidebarContextType {
+  hoveredItem: string | null;
+  setHoveredItem: (item: string | null) => void;
+  activeItem: string | null;
+  setActiveItem: (item: string | null) => void;
+}
+
+export const SidebarProvider = ({ children, defaultActive = 'feed' }) => {
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [activeItem, setActiveItem] = useState<string | null>(defaultActive);
+  
+  return (
+    <SidebarContext.Provider value={{...}}>
+      {children}
+    </SidebarContext.Provider>
+  );
+};
+```
+
+### 2. 메인 Sidebar 컴포넌트
+
+```tsx
+// /components/sidebar/Sidebar.tsx
+function SidebarRoot({ children, className, defaultActive }) {
+  return (
+    <SidebarProvider defaultActive={defaultActive}>
+      <div className={cn('group fixed ...', className)}>
+        {children}
+      </div>
+    </SidebarProvider>
+  );
+}
+
+// Compound Components
+const Sidebar = Object.assign(SidebarRoot, {
+  Header: SidebarHeader,
+  Content: SidebarContent,
+  Footer: SidebarFooter,
+  Item: SidebarItem,
+});
+```
+
+### 3. Nested Context를 통한 Item 관리
+
+```tsx
+// /components/sidebar/SidebarItem.tsx
+interface SidebarItemContextType {
+  id: string;
+  isActive: boolean;
+}
+
+const SidebarItemContext = createContext<SidebarItemContextType | undefined>(undefined);
+
+function SidebarItemRoot({ id, children, isActive }) {
+  const { hoveredItem, setHoveredItem, activeItem, setActiveItem } = useSidebar();
+  const isItemActive = isActive ?? (activeItem === id);
+  
+  return (
+    <SidebarItemContext.Provider value={{ id, isActive: isItemActive }}>
+      <div onMouseEnter={() => setHoveredItem(id)} /* ... */>
+        {children}
+      </div>
+    </SidebarItemContext.Provider>
+  );
+}
+
+// Sub Components
+function SidebarItemIndicator() {
+  const { isActive } = useSidebarItem();
+  return <div className={cn('...', isActive && 'bg-primary')} />;
+}
+```
+
+### 4. 컴포넌트 구조
+
+```
+sidebar/
+├── context.tsx           # 상태 관리 Context
+├── Sidebar.tsx           # 메인 컴포넌트
+├── SidebarHeader.tsx     # 헤더 컨테이너
+├── SidebarContent.tsx    # 컨텐츠 컨테이너
+├── SidebarFooter.tsx     # 푸터 컨테이너
+├── SidebarItem.tsx       # 아이템 + 하위 컴포넌트들
+├── SidebarLogo.tsx       # 로고 컴포넌트
+└── SidebarAvatar.tsx     # 아바타 컴포넌트
+```
+
+## 개선 효과
+
+### 1. 직관적인 API
+- 명확한 계층 구조 (`Header` → `Content` → `Footer`)
+- 각 컴포넌트의 역할이 이름으로 명확히 드러남
+- 조립 가능한 구조로 확장성 극대화
+
+### 2. 상태 관리 개선
+- **Context 기반 중앙 관리**: hover/active 상태 자동 처리
+- **Nested Context**: 각 Item이 독립적인 상태 관리
+- **Prop Drilling 제거**: 불필요한 props 전달 없음
+
+### 3. 재사용성 향상
+- 각 컴포넌트가 독립적으로 사용 가능
+- 커스텀 스타일링 옵션 제공
+- 새로운 아이템 타입 쉽게 추가 가능
+
+### 4. 개발자 경험 개선
+- 타입 안전성 보장
+- 명확한 에러 메시지 (context 사용 오류 시)
+- 일관된 API 패턴
+
+## 사용 예시
+
+### 기본 사용법
+```tsx
+import Sidebar from '@/components/sidebar/Sidebar';
+import { House, Settings, User } from '@devworld/ui';
+
+<Sidebar defaultActive="home">
+  <Sidebar.Header>
+    <Sidebar.Header.Logo src="/logo.png" text="MyApp" />
+  </Sidebar.Header>
+  
+  <Sidebar.Content>
+    <Sidebar.Item id="home">
+      <Sidebar.Item.Indicator />
+      <div className="flex items-center space-x-2">
+        <Sidebar.Item.Icon><House /></Sidebar.Item.Icon>
+        <Sidebar.Item.Text>Home</Sidebar.Item.Text>
+      </div>
+    </Sidebar.Item>
+    
+    <Sidebar.Item id="settings">
+      <Sidebar.Item.Indicator />
+      <div className="flex items-center space-x-2">
+        <Sidebar.Item.Icon><Settings /></Sidebar.Item.Icon>
+        <Sidebar.Item.Text>Settings</Sidebar.Item.Text>
+      </div>
+    </Sidebar.Item>
+  </Sidebar.Content>
+  
+  <Sidebar.Footer>
+    <Sidebar.Footer.Avatar user="John Doe" />
+  </Sidebar.Footer>
+</Sidebar>
+```
+
+### 확장 예시
+```tsx
+// 새로운 아이템 타입 추가
+<Sidebar.Item id="notifications">
+  <Sidebar.Item.Indicator />
+  <div className="flex items-center space-x-2">
+    <Sidebar.Item.Icon>
+      <Bell />
+      {/* 알림 배지 추가 */}
+      <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full" />
+    </Sidebar.Item.Icon>
+    <Sidebar.Item.Text>Notifications</Sidebar.Item.Text>
+  </div>
+</Sidebar.Item>
+```
+
+## 마이그레이션 가이드
+
+### Before (기존)
+```tsx
+import IconSidebar from '@/components/icon-sidebar/Sidebar';
+
+<IconSidebar />
+```
+
+### After (개선)
+```tsx
+import Sidebar from '@/components/sidebar/Sidebar';
+import DevWorldLogo from '@/assets/logo-image/DevWorldLogo.png';
+import { House, Pencil } from '@devworld/ui';
+
+<Sidebar defaultActive='feed'>
+  <Sidebar.Header>
+    <Sidebar.Header.Logo 
+      src={DevWorldLogo} 
+      alt='DevWorld Logo' 
+      text='DevWorld' 
+    />
+  </Sidebar.Header>
+  
+  <Sidebar.Content>
+    <Sidebar.Item id='feed'>
+      <Sidebar.Item.Indicator />
+      <div className='flex items-center space-x-2'>
+        <Sidebar.Item.Icon><House /></Sidebar.Item.Icon>
+        <Sidebar.Item.Text>Feed</Sidebar.Item.Text>
+      </div>
+    </Sidebar.Item>
+    
+    <Sidebar.Item id='workspace'>
+      <Sidebar.Item.Indicator />
+      <div className='flex items-center space-x-2'>
+        <Sidebar.Item.Icon><Pencil /></Sidebar.Item.Icon>
+        <Sidebar.Item.Text>Workspace</Sidebar.Item.Text>
+      </div>
+    </Sidebar.Item>
+  </Sidebar.Content>
+  
+  <Sidebar.Footer>
+    <Sidebar.Footer.Avatar user='Guest' />
+  </Sidebar.Footer>
+</Sidebar>
+```
+
+## 결론
+
+Compound Component 패턴을 적용하여 다음과 같은 성과를 얻었습니다:
+
+1. **84줄 → 26줄**: 복잡한 로직을 작은 컴포넌트로 분리
+2. **직관적 API**: 명확한 계층 구조로 가독성 향상
+3. **확장성**: 새로운 기능 추가가 용이
+4. **재사용성**: 독립적인 컴포넌트로 다른 곳에서도 활용 가능
+5. **타입 안전성**: 각 컴포넌트별 명확한 타입 정의
+
+이 패턴은 복잡한 UI 컴포넌트를 구조화하는 데 매우 효과적이며, 다른 컴포넌트에도 적용할 수 있는 좋은 참고 사례입니다.

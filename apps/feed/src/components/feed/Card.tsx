@@ -127,21 +127,6 @@ export default function FeedCard() {
               testing, and iteration, we've created something that's not just beautiful, but truly
               accessible and scalable.
             </p>
-            <div
-              className={`transition-all duration-300 ease-in-out ${isExpanded ? 'h-auto opacity-100' : 'h-0 overflow-hidden opacity-0'}`}
-            >
-              <p className='mt-2 text-gray-800 leading-relaxed'>
-                Key improvements:
-                <br />• 40% faster component loading
-                <br />• WCAG 2.1 AA compliance across all components
-                <br />• Dark mode support with automatic theme switching
-                <br />• Mobile-first responsive design patterns
-              </p>
-              <p className='mt-2 text-gray-600'>
-                What's your biggest challenge when building design systems? Would love to hear your
-                thoughts! 👇
-              </p>
-            </div>
             <button
               onClick={() => setIsExpanded(!isExpanded)}
               className='mt-1.5 font-medium text-blue-600 text-xs transition-colors duration-200 hover:text-blue-700 hover:underline' // Reduced text size, margin
@@ -149,21 +134,7 @@ export default function FeedCard() {
               {isExpanded ? 'Read less' : 'Read more'}
             </button>
           </div>
-          {isExpanded && (
-            <div className='relative mt-3 aspect-video overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-purple-50'>
-              <img
-                src='/placeholder.svg?height=200&width=400' // Reduced placeholder size
-                alt='Design system preview'
-                className='h-full w-full object-cover'
-              />
-              <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent'></div>
-              <div className='absolute bottom-3 left-3 text-white'>
-                <Badge className='border-white/30 bg-white/20 px-2 py-0.5 text-white text-xs backdrop-blur-sm'>
-                  Design System 2.0
-                </Badge>
-              </div>
-            </div>
-          )}
+
           <div className='mt-3 flex items-center justify-between border-gray-100 border-t pt-3 text-gray-600 text-xs'>
             <div className='flex items-center gap-3'>
               <div className='flex items-center gap-0.5'>
