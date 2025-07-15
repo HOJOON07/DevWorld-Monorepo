@@ -8,8 +8,6 @@ import Workspace from './Workspace';
 
 type SidebarMode = 'preview' | 'workspace' | 'notifications' | 'profile';
 
-// 샘플 데이터들
-
 export default function SidePannel() {
   const [activeMode, setActiveMode] = useState<SidebarMode>('preview');
 
@@ -31,7 +29,6 @@ export default function SidePannel() {
   return (
     <div className='flex h-screen w-full max-w-md flex-col border-gray-200 border-l bg-white '>
       <SidePannelHeader activeMode={activeMode} setActiveMode={setActiveMode} />
-
       <ScrollArea className='flex-1'>
         <div className='p-6'>{renderModeContent()}</div>
       </ScrollArea>

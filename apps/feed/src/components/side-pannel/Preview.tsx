@@ -31,7 +31,6 @@ export default function Preview() {
 
   return (
     <div className='space-y-6'>
-      {/* Featured Image */}
       <div className='relative overflow-hidden rounded-xl'>
         <img
           src={sampleArticle.image || '/placeholder.svg'}
@@ -52,7 +51,6 @@ export default function Preview() {
         </div>
       </div>
 
-      {/* Author Info */}
       <div className='flex items-center space-x-3 rounded-xl bg-gray-50 p-4'>
         <Avatar className='h-12 w-12 ring-2 ring-white'>
           <AvatarImage
@@ -103,11 +101,7 @@ export default function Preview() {
         <h5 className='font-medium text-gray-900 text-sm'>Topics</h5>
         <div className='flex flex-wrap gap-2'>
           {sampleArticle.tags.map((tag) => (
-            <Badge
-              key={tag}
-              variant='outline'
-              className='cursor-pointer text-xs hover:bg-gray-100'
-            >
+            <Badge key={tag} variant='outline' className='cursor-pointer text-xs hover:bg-gray-100'>
               {tag}
             </Badge>
           ))}

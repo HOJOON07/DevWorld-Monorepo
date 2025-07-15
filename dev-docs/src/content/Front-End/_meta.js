@@ -1,6 +1,7 @@
 const meta = {
   auth: '',
   'centralized-route-management': '',
+  'feed-card-refactoring': '',
   'funnel-dynamic-rendering-refactoring': '',
   funnel: '',
   'global-navigate': '',

@@ -1,4 +1,4 @@
-import { Badge, Button, Settings, cn } from '@devworld/ui';
+import { Badge, Button, cn, Settings } from '@devworld/ui';
 import { workspaceItems } from '../../mock/mock-data';
 
 export default function Workspace() {
@@ -48,9 +48,7 @@ export default function Workspace() {
             >
               <div className='mb-2 flex items-start justify-between'>
                 <h5 className='font-medium text-gray-900 text-sm'>{item.title}</h5>
-                <Badge className={cn('text-xs', getStatusColor(item.status))}>
-                  {item.status}
-                </Badge>
+                <Badge className={cn('text-xs', getStatusColor(item.status))}>{item.status}</Badge>
               </div>
               <div className='flex items-center justify-between text-gray-500 text-xs'>
                 <span>{item.type}</span>
