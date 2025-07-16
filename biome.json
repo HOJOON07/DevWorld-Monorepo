@@ -39,7 +39,7 @@
         }
       },
       "complexity": {
-        "noVoid": "error"
+        "noVoid": "off"
       }
     }
   },
