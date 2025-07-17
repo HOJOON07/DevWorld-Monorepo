@@ -44,7 +44,7 @@ const value = [
     ],
     type: 'p',
   },
-  // Suggestions & Comments Section
+
   {
     children: [{ text: 'Collaborative Editing' }],
     type: 'h2',

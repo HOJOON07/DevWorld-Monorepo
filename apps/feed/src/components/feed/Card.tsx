@@ -54,10 +54,10 @@ export default function FeedCard({ data }: FeedCardProps) {
 
           <div className='mt-3 flex items-center justify-between border-gray-100 border-t pt-3 text-gray-600 text-xs'>
             <div className='flex items-center gap-3'>
-              <div className='flex items-center gap-0.5'>
+              {/* <div className='flex items-center gap-0.5'>
                 <Eye className='h-3.5 w-3.5' />
                 <span>{data.stats.views} views</span>
-              </div>
+              </div> */}
               <LikeButton initialLikes={data.stats.likes} postId={data.id} />
               <CommentButton initialCount={data.stats.comments} postId={data.id} />
             </div>
