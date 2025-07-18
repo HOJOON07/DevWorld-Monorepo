@@ -1,7 +1,3 @@
-'use client';
-
-import * as React from 'react';
-
 import {
   type FloatingToolbarState,
   flip,
@@ -11,11 +7,8 @@ import {
 } from '@platejs/floating';
 import { useComposedRef } from '@udecode/cn';
 import { KEYS } from 'platejs';
-import {
-  useEditorId,
-  useEventEditorValue,
-  usePluginOption,
-} from 'platejs/react';
+import { useEditorId, useEventEditorValue, usePluginOption } from 'platejs/react';
+import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -43,12 +36,7 @@ export function FloatingToolbar({
       middleware: [
         offset(12),
         flip({
-          fallbackPlacements: [
-            'top-start',
-            'top-end',
-            'bottom-start',
-            'bottom-end',
-          ],
+          fallbackPlacements: ['top-start', 'top-end', 'bottom-start', 'bottom-end'],
           padding: 12,
         }),
       ],
@@ -75,9 +63,9 @@ export function FloatingToolbar({
         {...rootProps}
         ref={ref}
         className={cn(
-          'absolute z-50 scrollbar-hide overflow-x-auto rounded-md border bg-popover p-1 whitespace-nowrap opacity-100 shadow-md print:hidden',
+          'scrollbar-hide absolute z-50 overflow-x-auto whitespace-nowrap rounded-md border bg-popover p-1 opacity-100 shadow-md print:hidden',
           'max-w-[80vw]',
-          className
+          className,
         )}
       >
         {children}

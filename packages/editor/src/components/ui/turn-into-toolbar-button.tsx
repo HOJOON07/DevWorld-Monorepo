@@ -1,10 +1,6 @@
 'use client';
 
-import * as React from 'react';
-
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
-import type { TElement } from 'platejs';
-
 import { DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu';
 import {
   CheckIcon,
@@ -20,19 +16,17 @@ import {
   QuoteIcon,
   SquareIcon,
 } from 'lucide-react';
+import type { TElement } from 'platejs';
 import { KEYS } from 'platejs';
 import { useEditorRef, useSelectionFragmentProp } from 'platejs/react';
-
+import * as React from 'react';
+import { getBlockType, setBlockType } from '@/components/editor/transforms';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  getBlockType,
-  setBlockType,
-} from '@/components/editor/transforms';
 
 import { ToolbarButton, ToolbarMenuGroup } from './toolbar';
 
@@ -113,47 +107,40 @@ export function TurnIntoToolbarButton(props: DropdownMenuProps) {
     getProp: (node) => getBlockType(node as TElement),
   });
   const selectedItem = React.useMemo(
-    () =>
-      turnIntoItems.find((item) => item.value === (value ?? KEYS.p)) ??
-      turnIntoItems[0],
-    [value]
+    () => turnIntoItems.find((item) => item.value === (value ?? KEYS.p)) ?? turnIntoItems[0],
+    [value],
   );
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton
-          className="min-w-[125px]"
-          pressed={open}
-          tooltip="Turn into"
-          isDropdown
-        >
+        <ToolbarButton className='min-w-[125px]' pressed={open} tooltip='Turn into' isDropdown>
           {selectedItem.label}
         </ToolbarButton>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="ignore-click-outside/toolbar min-w-0"
+        className='ignore-click-outside/toolbar min-w-0'
         onCloseAutoFocus={(e) => {
           e.preventDefault();
           editor.tf.focus();
         }}
-        align="start"
+        align='start'
       >
         <ToolbarMenuGroup
           value={value}
           onValueChange={(type) => {
             setBlockType(editor, type);
           }}
-          label="Turn into"
+          label='Turn into'
         >
           {turnIntoItems.map(({ icon, label, value: itemValue }) => (
             <DropdownMenuRadioItem
               key={itemValue}
-              className="min-w-[180px] pl-2 *:first:[span]:hidden"
+              className='min-w-[180px] pl-2 *:first:[span]:hidden'
               value={itemValue}
             >
-              <span className="pointer-events-none absolute right-2 flex size-3.5 items-center justify-center">
+              <span className='pointer-events-none absolute right-2 flex size-3.5 items-center justify-center'>
                 <DropdownMenuItemIndicator>
                   <CheckIcon />
                 </DropdownMenuItemIndicator>

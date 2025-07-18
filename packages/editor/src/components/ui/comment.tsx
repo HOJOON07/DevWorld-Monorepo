@@ -1,17 +1,8 @@
 'use client';
 
-import * as React from 'react';
-
-import type { CreatePlateEditorOptions } from 'platejs/react';
-
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  format,
-} from 'date-fns';
+import { differenceInDays, differenceInHours, differenceInMinutes, format } from 'date-fns';
 import {
   ArrowUpIcon,
   CheckIcon,
@@ -20,7 +11,8 @@ import {
   TrashIcon,
   XIcon,
 } from 'lucide-react';
-import { type Value, KEYS, nanoid, NodeApi } from 'platejs';
+import { KEYS, NodeApi, nanoid, type Value } from 'platejs';
+import type { CreatePlateEditorOptions } from 'platejs/react';
 import {
   Plate,
   useEditorPlugin,
@@ -28,7 +20,9 @@ import {
   usePlateEditor,
   usePluginOption,
 } from 'platejs/react';
-
+import * as React from 'react';
+import { BasicMarksKit } from '@/components/editor/plugins/basic-marks-kit';
+import { discussionPlugin, type TDiscussion } from '@/components/editor/plugins/discussion-kit';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -39,11 +33,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { BasicMarksKit } from '@/components/editor/plugins/basic-marks-kit';
-import {
-  type TDiscussion,
-  discussionPlugin,
-} from '@/components/editor/plugins/discussion-kit';
 
 import { Editor, EditorContainer } from './editor';
 
@@ -140,7 +129,7 @@ export function Comment(props: {
       id: comment.id,
       value: initialValue,
     },
-    [initialValue]
+    [initialValue],
   );
 
   const onCancel = () => {
@@ -174,37 +163,32 @@ export function Comment(props: {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   return (
-    <div
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
-      <div className="relative flex items-center">
-        <Avatar className="size-5">
+    <div onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
+      <div className='relative flex items-center'>
+        <Avatar className='size-5'>
           <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
           <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
         </Avatar>
-        <h4 className="mx-2 text-sm leading-none font-semibold">
+        <h4 className='mx-2 font-semibold text-sm leading-none'>
           {/* Replace to your own backend or refer to potion */}
           {userInfo?.name}
         </h4>
 
-        <div className="text-xs leading-none text-muted-foreground/80">
-          <span className="mr-1">
-            {formatCommentDate(new Date(comment.createdAt))}
-          </span>
+        <div className='text-muted-foreground/80 text-xs leading-none'>
+          <span className='mr-1'>{formatCommentDate(new Date(comment.createdAt))}</span>
           {comment.isEdited && <span>(edited)</span>}
         </div>
 
         {isMyComment && (hovering || dropdownOpen) && (
-          <div className="absolute top-0 right-0 flex space-x-1">
+          <div className='absolute top-0 right-0 flex space-x-1'>
             {index === 0 && (
               <Button
-                variant="ghost"
-                className="h-6 p-1 text-muted-foreground"
+                variant='ghost'
+                className='h-6 p-1 text-muted-foreground'
                 onClick={onResolveComment}
-                type="button"
+                type='button'
               >
-                <CheckIcon className="size-4" />
+                <CheckIcon className='size-4' />
               </Button>
             )}
 
@@ -230,53 +214,47 @@ export function Comment(props: {
       </div>
 
       {isFirst && showDocumentContent && (
-        <div className="text-subtle-foreground relative mt-1 flex pl-[32px] text-sm">
+        <div className='relative mt-1 flex pl-[32px] text-sm text-subtle-foreground'>
           {discussionLength > 1 && (
-            <div className="absolute top-[5px] left-3 h-full w-0.5 shrink-0 bg-muted" />
+            <div className='absolute top-[5px] left-3 h-full w-0.5 shrink-0 bg-muted' />
           )}
-          <div className="my-px w-0.5 shrink-0 bg-highlight" />
-          {documentContent && <div className="ml-2">{documentContent}</div>}
+          <div className='my-px w-0.5 shrink-0 bg-highlight' />
+          {documentContent && <div className='ml-2'>{documentContent}</div>}
         </div>
       )}
 
-      <div className="relative my-1 pl-[26px]">
-        {!isLast && (
-          <div className="absolute top-0 left-3 h-full w-0.5 shrink-0 bg-muted" />
-        )}
+      <div className='relative my-1 pl-[26px]'>
+        {!isLast && <div className='absolute top-0 left-3 h-full w-0.5 shrink-0 bg-muted' />}
         <Plate readOnly={!isEditing} editor={commentEditor}>
-          <EditorContainer variant="comment">
-            <Editor
-              variant="comment"
-              className="w-auto grow"
-              onClick={() => onEditorClick?.()}
-            />
+          <EditorContainer variant='comment'>
+            <Editor variant='comment' className='w-auto grow' onClick={() => onEditorClick?.()} />
 
             {isEditing && (
-              <div className="ml-auto flex shrink-0 gap-1">
+              <div className='ml-auto flex shrink-0 gap-1'>
                 <Button
-                  size="icon"
-                  variant="ghost"
-                  className="size-[28px]"
+                  size='icon'
+                  variant='ghost'
+                  className='size-[28px]'
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     void onCancel();
                   }}
                 >
-                  <div className="flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-primary/40">
-                    <XIcon className="size-3 stroke-[3px] text-background" />
+                  <div className='flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-primary/40'>
+                    <XIcon className='size-3 stroke-[3px] text-background' />
                   </div>
                 </Button>
 
                 <Button
-                  size="icon"
-                  variant="ghost"
+                  size='icon'
+                  variant='ghost'
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     void onSave();
                   }}
                 >
-                  <div className="flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-brand">
-                    <CheckIcon className="size-3 stroke-[3px] text-background" />
+                  <div className='flex size-5 shrink-0 items-center justify-center rounded-[50%] bg-brand'>
+                    <CheckIcon className='size-3 stroke-[3px] text-background' />
                   </div>
                 </Button>
               </div>
@@ -310,8 +288,7 @@ function CommentMoreDropdown(props: {
   const selectedEditCommentRef = React.useRef<boolean>(false);
 
   const onDeleteComment = React.useCallback(() => {
-    if (!comment.id)
-      return alert('You are operating too quickly, please try again later.');
+    if (!comment.id) return alert('You are operating too quickly, please try again later.');
 
     // Find and update the discussion
     const updatedDiscussions = editor
@@ -321,9 +298,7 @@ function CommentMoreDropdown(props: {
           return discussion;
         }
 
-        const commentIndex = discussion.comments.findIndex(
-          (c) => c.id === comment.id
-        );
+        const commentIndex = discussion.comments.findIndex((c) => c.id === comment.id);
         if (commentIndex === -1) {
           return discussion;
         }
@@ -345,25 +320,20 @@ function CommentMoreDropdown(props: {
   const onEditComment = React.useCallback(() => {
     selectedEditCommentRef.current = true;
 
-    if (!comment.id)
-      return alert('You are operating too quickly, please try again later.');
+    if (!comment.id) return alert('You are operating too quickly, please try again later.');
 
     setEditingId(comment.id);
   }, [comment.id, setEditingId]);
 
   return (
-    <DropdownMenu
-      open={dropdownOpen}
-      onOpenChange={setDropdownOpen}
-      modal={false}
-    >
+    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen} modal={false}>
       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-        <Button variant="ghost" className={cn('h-6 p-1 text-muted-foreground')}>
-          <MoreHorizontalIcon className="size-4" />
+        <Button variant='ghost' className={cn('h-6 p-1 text-muted-foreground')}>
+          <MoreHorizontalIcon className='size-4' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-48"
+        className='w-48'
         onCloseAutoFocus={(e) => {
           if (selectedEditCommentRef.current) {
             onCloseAutoFocus?.();
@@ -375,11 +345,11 @@ function CommentMoreDropdown(props: {
       >
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={onEditComment}>
-            <PencilIcon className="size-4" />
+            <PencilIcon className='size-4' />
             Edit comment
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onDeleteComment}>
-            <TrashIcon className="size-4" />
+            <TrashIcon className='size-4' />
             Delete comment
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -390,7 +360,7 @@ function CommentMoreDropdown(props: {
 
 const useCommentEditor = (
   options: Omit<CreatePlateEditorOptions, 'plugins'> = {},
-  deps: any[] = []
+  deps: any[] = [],
 ) => {
   const commentEditor = usePlateEditor(
     {
@@ -399,7 +369,7 @@ const useCommentEditor = (
       value: [],
       ...options,
     },
-    deps
+    deps,
   );
 
   return commentEditor;
@@ -425,11 +395,8 @@ export function CommentCreateForm({
   const userInfo = usePluginOption(discussionPlugin, 'currentUser');
   const [commentValue, setCommentValue] = React.useState<Value | undefined>();
   const commentContent = React.useMemo(
-    () =>
-      commentValue
-        ? NodeApi.string({ children: commentValue, type: KEYS.p })
-        : '',
-    [commentValue]
+    () => (commentValue ? NodeApi.string({ children: commentValue, type: KEYS.p }) : ''),
+    [commentValue],
   );
   const commentEditor = useCommentEditor();
 
@@ -466,10 +433,7 @@ export function CommentCreateForm({
           userId: editor.getOption(discussionPlugin, 'currentUserId'),
         };
 
-        editor.setOption(discussionPlugin, 'discussions', [
-          ...discussions,
-          newDiscussion,
-        ]);
+        editor.setOption(discussionPlugin, 'discussions', [...discussions, newDiscussion]);
         return;
       }
 
@@ -499,15 +463,11 @@ export function CommentCreateForm({
       return;
     }
 
-    const commentsNodeEntry = editor
-      .getApi(CommentPlugin)
-      .comment.nodes({ at: [], isDraft: true });
+    const commentsNodeEntry = editor.getApi(CommentPlugin).comment.nodes({ at: [], isDraft: true });
 
     if (commentsNodeEntry.length === 0) return;
 
-    const documentContent = commentsNodeEntry
-      .map(([node]) => node.text)
-      .join('');
+    const documentContent = commentsNodeEntry.map(([node]) => node.text).join('');
 
     const _discussionId = nanoid();
     // Mock creating new discussion
@@ -529,10 +489,7 @@ export function CommentCreateForm({
       userId: editor.getOption(discussionPlugin, 'currentUserId'),
     };
 
-    editor.setOption(discussionPlugin, 'discussions', [
-      ...discussions,
-      newDiscussion,
-    ]);
+    editor.setOption(discussionPlugin, 'discussions', [...discussions, newDiscussion]);
 
     const id = newDiscussion.id;
 
@@ -541,7 +498,7 @@ export function CommentCreateForm({
         {
           [getCommentKey(id)]: true,
         },
-        { at: path, split: true }
+        { at: path, split: true },
       );
       editor.tf.unsetNodes([getDraftCommentKey()], { at: path });
     });
@@ -549,47 +506,47 @@ export function CommentCreateForm({
 
   return (
     <div className={cn('flex w-full', className)}>
-      <div className="mt-2 mr-1 shrink-0">
+      <div className='mt-2 mr-1 shrink-0'>
         {/* Replace to your own backend or refer to potion */}
-        <Avatar className="size-5">
+        <Avatar className='size-5'>
           <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
           <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
         </Avatar>
       </div>
 
-      <div className="relative flex grow gap-2">
+      <div className='relative flex grow gap-2'>
         <Plate
           onChange={({ value }) => {
             setCommentValue(value);
           }}
           editor={commentEditor}
         >
-          <EditorContainer variant="comment">
+          <EditorContainer variant='comment'>
             <Editor
-              variant="comment"
-              className="min-h-[25px] grow pt-0.5 pr-8"
+              variant='comment'
+              className='min-h-[25px] grow pt-0.5 pr-8'
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   onAddComment();
                 }
               }}
-              placeholder="Reply..."
-              autoComplete="off"
+              placeholder='Reply...'
+              autoComplete='off'
               autoFocus={autoFocus}
             />
 
             <Button
-              size="icon"
-              variant="ghost"
-              className="absolute right-0.5 bottom-0.5 ml-auto size-6 shrink-0"
+              size='icon'
+              variant='ghost'
+              className='absolute right-0.5 bottom-0.5 ml-auto size-6 shrink-0'
               disabled={commentContent.trim().length === 0}
               onClick={(e) => {
                 e.stopPropagation();
                 onAddComment();
               }}
             >
-              <div className="flex size-6 items-center justify-center rounded-full">
+              <div className='flex size-6 items-center justify-center rounded-full'>
                 <ArrowUpIcon />
               </div>
             </Button>

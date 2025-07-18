@@ -1,7 +1,3 @@
-'use client';
-
-import * as React from 'react';
-
 import {
   BoldIcon,
   Code2Icon,
@@ -31,7 +27,7 @@ export function FloatingToolbarButtons() {
       {!readOnly && (
         <>
           <ToolbarGroup>
-            <AIToolbarButton tooltip="AI commands">
+            <AIToolbarButton tooltip='AI commands'>
               <WandSparklesIcon />
               Ask AI
             </AIToolbarButton>
@@ -40,29 +36,23 @@ export function FloatingToolbarButtons() {
           <ToolbarGroup>
             <TurnIntoToolbarButton />
 
-            <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
+            <MarkToolbarButton nodeType={KEYS.bold} tooltip='Bold (⌘+B)'>
               <BoldIcon />
             </MarkToolbarButton>
 
-            <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
+            <MarkToolbarButton nodeType={KEYS.italic} tooltip='Italic (⌘+I)'>
               <ItalicIcon />
             </MarkToolbarButton>
 
-            <MarkToolbarButton
-              nodeType={KEYS.underline}
-              tooltip="Underline (⌘+U)"
-            >
+            <MarkToolbarButton nodeType={KEYS.underline} tooltip='Underline (⌘+U)'>
               <UnderlineIcon />
             </MarkToolbarButton>
 
-            <MarkToolbarButton
-              nodeType={KEYS.strikethrough}
-              tooltip="Strikethrough (⌘+⇧+M)"
-            >
+            <MarkToolbarButton nodeType={KEYS.strikethrough} tooltip='Strikethrough (⌘+⇧+M)'>
               <StrikethroughIcon />
             </MarkToolbarButton>
 
-            <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
+            <MarkToolbarButton nodeType={KEYS.code} tooltip='Code (⌘+E)'>
               <Code2Icon />
             </MarkToolbarButton>
 

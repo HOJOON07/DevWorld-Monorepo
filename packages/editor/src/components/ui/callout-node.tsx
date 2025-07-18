@@ -1,10 +1,9 @@
 'use client';
 
-import * as React from 'react';
-
 import { useCalloutEmojiPicker } from '@platejs/callout/react';
 import { useEmojiDropdownMenuState } from '@platejs/emoji/react';
 import { PlateElement } from 'platejs/react';
+import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -21,11 +20,10 @@ export function CalloutElement({
     closeOnSelect: true,
   });
 
-  const { emojiToolbarDropdownProps, props: calloutProps } =
-    useCalloutEmojiPicker({
-      isOpen,
-      setIsOpen,
-    });
+  const { emojiToolbarDropdownProps, props: calloutProps } = useCalloutEmojiPicker({
+    isOpen,
+    setIsOpen,
+  });
 
   return (
     <PlateElement
@@ -39,13 +37,13 @@ export function CalloutElement({
       }}
       {...props}
     >
-      <div className="flex w-full gap-2 rounded-md">
+      <div className='flex w-full gap-2 rounded-md'>
         <EmojiPopover
           {...emojiToolbarDropdownProps}
           control={
             <Button
-              variant="ghost"
-              className="size-6 p-1 text-[18px] select-none hover:bg-muted-foreground/15"
+              variant='ghost'
+              className='size-6 select-none p-1 text-[18px] hover:bg-muted-foreground/15'
               style={{
                 fontFamily:
                   '"Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols',
@@ -58,7 +56,7 @@ export function CalloutElement({
         >
           <EmojiPicker {...emojiPickerState} {...calloutProps} />
         </EmojiPopover>
-        <div className="w-full">{children}</div>
+        <div className='w-full'>{children}</div>
       </div>
     </PlateElement>
   );

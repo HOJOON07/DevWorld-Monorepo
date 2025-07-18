@@ -1,14 +1,13 @@
 'use client';
 
-import * as React from 'react';
+import { MarkdownPlugin } from '@platejs/markdown';
 
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
-
-import { MarkdownPlugin } from '@platejs/markdown';
 import { ArrowDownToLineIcon } from 'lucide-react';
 import { createSlateEditor, serializeHtml } from 'platejs';
 import { useEditorRef } from 'platejs/react';
-
+import * as React from 'react';
+import { BaseEditorKit } from '@/components/editor/editor-base-kit';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +15,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { BaseEditorKit } from '@/components/editor/editor-base-kit';
 
 import { EditorStatic } from './editor-static';
 import { ToolbarButton } from './toolbar';
@@ -35,15 +33,13 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
 
     const canvas = await html2canvas(editor.api.toDOMNode(editor)!, {
       onclone: (document: Document) => {
-        const editorElement = document.querySelector(
-          '[contenteditable="true"]'
-        );
+        const editorElement = document.querySelector('[contenteditable="true"]');
         if (editorElement) {
           Array.from(editorElement.querySelectorAll('*')).forEach((element) => {
             const existingStyle = element.getAttribute('style') || '';
             element.setAttribute(
               'style',
-              `${existingStyle}; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important`
+              `${existingStyle}; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important`,
             );
           });
         }
@@ -149,25 +145,17 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Export" isDropdown>
-          <ArrowDownToLineIcon className="size-4" />
+        <ToolbarButton pressed={open} tooltip='Export' isDropdown>
+          <ArrowDownToLineIcon className='size-4' />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align='start'>
         <DropdownMenuGroup>
-          <DropdownMenuItem onSelect={exportToHtml}>
-            Export as HTML
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={exportToPdf}>
-            Export as PDF
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={exportToImage}>
-            Export as Image
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={exportToMarkdown}>
-            Export as Markdown
-          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={exportToHtml}>Export as HTML</DropdownMenuItem>
+          <DropdownMenuItem onSelect={exportToPdf}>Export as PDF</DropdownMenuItem>
+          <DropdownMenuItem onSelect={exportToImage}>Export as Image</DropdownMenuItem>
+          <DropdownMenuItem onSelect={exportToMarkdown}>Export as Markdown</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

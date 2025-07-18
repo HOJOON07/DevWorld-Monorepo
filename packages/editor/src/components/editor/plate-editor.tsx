@@ -1,12 +1,10 @@
 'use client';
 
-import * as React from 'react';
-
 import { Plate, usePlateEditor } from 'platejs/react';
 
 import { EditorKit } from '@/components/editor/editor-kit';
 import { SettingsDialog } from '@/components/editor/settings-dialog';
-import { Editor, EditorContainer } from '@/components/ui/editor';
+import { EditorContainer } from '@/components/ui/editor';
 
 export function PlateEditor() {
   const editor = usePlateEditor({
@@ -17,7 +15,7 @@ export function PlateEditor() {
   return (
     <Plate editor={editor}>
       <EditorContainer>
-        <Editor variant="demo" />
+        <EditorContainer variant='demo' />
       </EditorContainer>
 
       <SettingsDialog />
@@ -105,9 +103,7 @@ const value = [
       },
       { text: '. Discuss changes using ' },
       {
-        children: [
-          { comment: true, comment_discussion1: true, text: 'comments' },
-        ],
+        children: [{ comment: true, comment_discussion1: true, text: 'comments' }],
         type: 'a',
         url: '/docs/comment',
       },
@@ -168,17 +164,13 @@ const value = [
     type: 'p',
   },
   {
-    children: [
-      { text: 'Generate content (continue writing, summarize, explain)' },
-    ],
+    children: [{ text: 'Generate content (continue writing, summarize, explain)' }],
     indent: 1,
     listStyleType: 'disc',
     type: 'p',
   },
   {
-    children: [
-      { text: 'Edit existing text (improve, fix grammar, change tone)' },
-    ],
+    children: [{ text: 'Edit existing text (improve, fix grammar, change tone)' }],
     indent: 1,
     listStyleType: 'disc',
     type: 'p',
@@ -319,9 +311,7 @@ const value = [
       {
         children: [
           {
-            children: [
-              { children: [{ bold: true, text: 'Feature' }], type: 'p' },
-            ],
+            children: [{ children: [{ bold: true, text: 'Feature' }], type: 'p' }],
             type: 'th',
           },
           {
@@ -334,9 +324,7 @@ const value = [
             type: 'th',
           },
           {
-            children: [
-              { children: [{ bold: true, text: 'Tiptap' }], type: 'p' },
-            ],
+            children: [{ children: [{ bold: true, text: 'Tiptap' }], type: 'p' }],
             type: 'th',
           },
         ],
@@ -405,9 +393,7 @@ const value = [
             type: 'td',
           },
           {
-            children: [
-              { children: [{ text: 'Paid (Comments Pro)' }], type: 'p' },
-            ],
+            children: [{ children: [{ text: 'Paid (Comments Pro)' }], type: 'p' }],
             type: 'td',
           },
         ],
@@ -439,9 +425,7 @@ const value = [
       {
         children: [
           {
-            children: [
-              { children: [{ text: 'Table of Contents' }], type: 'p' },
-            ],
+            children: [{ children: [{ text: 'Table of Contents' }], type: 'p' }],
             type: 'td',
           },
           {
@@ -487,9 +471,7 @@ const value = [
       {
         children: [
           {
-            children: [
-              { children: [{ text: 'Collaboration (Yjs)' }], type: 'p' },
-            ],
+            children: [{ children: [{ text: 'Collaboration (Yjs)' }], type: 'p' }],
             type: 'td',
           },
           {
@@ -503,9 +485,7 @@ const value = [
             type: 'td',
           },
           {
-            children: [
-              { children: [{ text: 'Hocuspocus (OSS/Paid)' }], type: 'p' },
-            ],
+            children: [{ children: [{ text: 'Hocuspocus (OSS/Paid)' }], type: 'p' }],
             type: 'td',
           },
         ],

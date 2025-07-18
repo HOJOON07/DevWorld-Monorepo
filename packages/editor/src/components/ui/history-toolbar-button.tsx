@@ -1,20 +1,14 @@
 'use client';
 
-import * as React from 'react';
-
 import { Redo2Icon, Undo2Icon } from 'lucide-react';
 import { useEditorRef, useEditorSelector } from 'platejs/react';
+import * as React from 'react';
 
 import { ToolbarButton } from './toolbar';
 
-export function RedoToolbarButton(
-  props: React.ComponentProps<typeof ToolbarButton>
-) {
+export function RedoToolbarButton(props: React.ComponentProps<typeof ToolbarButton>) {
   const editor = useEditorRef();
-  const disabled = useEditorSelector(
-    (editor) => editor.history.redos.length === 0,
-    []
-  );
+  const disabled = useEditorSelector((editor) => editor.history.redos.length === 0, []);
 
   return (
     <ToolbarButton
@@ -22,21 +16,16 @@ export function RedoToolbarButton(
       disabled={disabled}
       onClick={() => editor.redo()}
       onMouseDown={(e) => e.preventDefault()}
-      tooltip="Redo"
+      tooltip='Redo'
     >
       <Redo2Icon />
     </ToolbarButton>
   );
 }
 
-export function UndoToolbarButton(
-  props: React.ComponentProps<typeof ToolbarButton>
-) {
+export function UndoToolbarButton(props: React.ComponentProps<typeof ToolbarButton>) {
   const editor = useEditorRef();
-  const disabled = useEditorSelector(
-    (editor) => editor.history.undos.length === 0,
-    []
-  );
+  const disabled = useEditorSelector((editor) => editor.history.undos.length === 0, []);
 
   return (
     <ToolbarButton
@@ -44,7 +33,7 @@ export function UndoToolbarButton(
       disabled={disabled}
       onClick={() => editor.undo()}
       onMouseDown={(e) => e.preventDefault()}
-      tooltip="Undo"
+      tooltip='Undo'
     >
       <Undo2Icon />
     </ToolbarButton>

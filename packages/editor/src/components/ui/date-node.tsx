@@ -6,11 +6,7 @@ import type { PlateElementProps } from 'platejs/react';
 import { PlateElement, useReadOnly } from 'platejs/react';
 
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
 export function DateElement(props: PlateElementProps<TDateElement>) {
@@ -20,9 +16,7 @@ export function DateElement(props: PlateElementProps<TDateElement>) {
 
   const trigger = (
     <span
-      className={cn(
-        'w-fit cursor-pointer rounded-sm bg-muted px-1 text-muted-foreground'
-      )}
+      className={cn('w-fit cursor-pointer rounded-sm bg-muted px-1 text-muted-foreground')}
       contentEditable={false}
       draggable
     >
@@ -65,7 +59,7 @@ export function DateElement(props: PlateElementProps<TDateElement>) {
   return (
     <PlateElement
       {...props}
-      className="inline-block"
+      className='inline-block'
       attributes={{
         ...props.attributes,
         contentEditable: false,
@@ -73,18 +67,15 @@ export function DateElement(props: PlateElementProps<TDateElement>) {
     >
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className='w-auto p-0'>
           <Calendar
             selected={new Date(element.date as string)}
             onSelect={(date) => {
               if (!date) return;
 
-              editor.tf.setNodes(
-                { date: date.toDateString() },
-                { at: element }
-              );
+              editor.tf.setNodes({ date: date.toDateString() }, { at: element });
             }}
-            mode="single"
+            mode='single'
             initialFocus
           />
         </PopoverContent>

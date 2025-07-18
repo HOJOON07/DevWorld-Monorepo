@@ -1,20 +1,14 @@
 'use client';
 
-import * as React from 'react';
-
-import type { TElement } from 'platejs';
-
 import { toUnitLess } from '@platejs/basic-styles';
 import { FontSizePlugin } from '@platejs/basic-styles/react';
 import { Minus, Plus } from 'lucide-react';
+import type { TElement } from 'platejs';
 import { KEYS } from 'platejs';
 import { useEditorPlugin, useEditorSelector } from 'platejs/react';
+import * as React from 'react';
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
 import { ToolbarButton } from './toolbar';
@@ -89,7 +83,7 @@ export function FontSizeToolbarButton() {
   const displayValue = isFocused ? inputValue : cursorFontSize;
 
   return (
-    <div className="flex h-7 items-center gap-1 rounded-md bg-muted/60 p-0">
+    <div className='flex h-7 items-center gap-1 rounded-md bg-muted/60 p-0'>
       <ToolbarButton onClick={() => handleFontSizeChange(-1)}>
         <Minus />
       </ToolbarButton>
@@ -98,7 +92,7 @@ export function FontSizeToolbarButton() {
         <PopoverTrigger asChild>
           <input
             className={cn(
-              'h-full w-10 shrink-0 bg-transparent px-1 text-center text-sm hover:bg-muted'
+              'h-full w-10 shrink-0 bg-transparent px-1 text-center text-sm hover:bg-muted',
             )}
             value={displayValue}
             onBlur={() => {
@@ -116,26 +110,23 @@ export function FontSizeToolbarButton() {
                 handleInputChange();
               }
             }}
-            data-plate-focus="true"
-            type="text"
+            data-plate-focus='true'
+            type='text'
           />
         </PopoverTrigger>
-        <PopoverContent
-          className="w-10 px-px py-1"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-        >
+        <PopoverContent className='w-10 px-px py-1' onOpenAutoFocus={(e) => e.preventDefault()}>
           {FONT_SIZES.map((size) => (
             <button
               key={size}
               className={cn(
-                'flex h-8 w-full items-center justify-center text-sm hover:bg-accent data-[highlighted=true]:bg-accent'
+                'flex h-8 w-full items-center justify-center text-sm hover:bg-accent data-[highlighted=true]:bg-accent',
               )}
               onClick={() => {
                 tf.fontSize.addMark(`${size}px`);
                 setIsFocused(false);
               }}
               data-highlighted={size === displayValue}
-              type="button"
+              type='button'
             >
               {size}
             </button>
