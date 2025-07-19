@@ -1,31 +1,7 @@
-import { Plate, useEditorRef, usePlateEditor } from 'platejs/react';
-import Value from '../value';
-import { EditorKit } from './components/editor/editor-kit';
-import { SettingsDialog } from './components/editor/settings-dialog';
-import { Editor, EditorContainer } from './components/ui/editor';
 import { useEditableEditor } from './hooks/use-editable-editor';
 
 function App() {
-  // const editor = usePlateEditor({
-  //   plugins: EditorKit,
-  //   value,
-  // });
-
-  // return (
-  //   <Plate editor={editor}>
-  //     <Value />
-  //     <EditorContainer>
-  //       <Editor variant='default' />
-  //     </EditorContainer>
-  //     <SettingsDialog />
-  //   </Plate>
-  // );
-
   const editor = useEditableEditor(value);
-
-  const textValues = editor.getValue();
-
-  console.log(textValues);
 
   return <div>{editor.component}</div>;
 }

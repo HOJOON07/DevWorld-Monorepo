@@ -43,7 +43,6 @@ export function useEditableEditor(initialValue?: TElement[]): UseEditableEditorR
 
   return {
     component,
-    // useEditorRef의 모든 API를 프록시
     get children() {
       return apiRef.current?.children;
     },
@@ -59,7 +58,6 @@ export function useEditableEditor(initialValue?: TElement[]): UseEditableEditorR
     get operations() {
       return apiRef.current?.operations;
     },
-    // 필요한 메서드들도 프록시
     getValue: () => apiRef.current?.children,
     setValue: (value: TElement[]) => apiRef.current?.tf?.setValue?.(value),
   };
