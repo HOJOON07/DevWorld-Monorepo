@@ -28,7 +28,6 @@ interface SidebarItemProps {
 function SidebarItemRoot({ id, children, isActive, className }: SidebarItemProps) {
   const { hoveredItem, setHoveredItem, activeItem } = useSidebar();
 
-  // 원래 동작 복원: hover 상태에 따라 active 결정
   const isItemActive = isActive ?? (hoveredItem ? hoveredItem === id : activeItem === id);
 
   const handleMouseEnter = () => {

@@ -9,18 +9,23 @@ interface RouteGuardProps {
 }
 
 const RouteGuard = ({ children, type, redirect }: RouteGuardProps) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   switch (type) {
     case RouteType.PRIVATE:
       if (!isAuthenticated) {
-        return <Navigate to={redirect as RouteRedirectUrl.PRIVATE} replace />;
+        return <Navigate to={redirect as RouteRedirectUrl.PRIVATE} />;
       }
       break;
     case RouteType.GUEST:
       if (isAuthenticated) {
         return <Navigate to={redirect as RouteRedirectUrl.GUEST} replace />;
       }
+      break;
     case RouteType.PUBLIC:
     default:
       break;

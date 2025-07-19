@@ -1,12 +1,10 @@
 import { ScrollArea } from '@devworld/ui';
 import { useState } from 'react';
 import SidePannelHeader from './Header';
-import Notifications from './Notifications';
 import Preview from './Preview';
 import Profile from './Profile';
-import Workspace from './Workspace';
 
-type SidebarMode = 'preview' | 'workspace' | 'notifications' | 'profile';
+type SidebarMode = 'preview' | 'profile';
 
 export default function SidePannel() {
   const [activeMode, setActiveMode] = useState<SidebarMode>('preview');
@@ -15,10 +13,6 @@ export default function SidePannel() {
     switch (activeMode) {
       case 'preview':
         return <Preview />;
-      case 'workspace':
-        return <Workspace />;
-      case 'notifications':
-        return <Notifications />;
       case 'profile':
         return <Profile />;
       default:

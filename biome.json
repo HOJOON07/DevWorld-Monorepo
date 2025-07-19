@@ -23,7 +23,7 @@
     "rules": {
       "recommended": false,
       "nursery": {
-        "useSortedClasses": "error"
+        "useSortedClasses": "info"
       },
       "correctness": {
         "noUnusedImports": {

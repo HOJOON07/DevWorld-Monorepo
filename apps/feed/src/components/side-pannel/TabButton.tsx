@@ -1,4 +1,4 @@
-import { cn } from '@devworld/ui';
+import { Button, cn } from '@devworld/ui';
 import { ReactNode } from 'react';
 
 interface TabButtonProps {
@@ -9,18 +9,19 @@ interface TabButtonProps {
   badge?: ReactNode;
 }
 
-export default function TabButton({ icon, isActive, onClick, title, badge }: TabButtonProps) {
+export default function TabButton({ icon, isActive, onClick, badge }: TabButtonProps) {
   return (
-    <button
+    <Button
+      size='icon'
+      variant='ghost'
       onClick={onClick}
       className={cn(
-        'relative rounded-md p-2 transition-colors',
-        isActive ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900',
+        'relative cursor-pointer rounded-md p-2 transition-colors hover:text-green-500',
+        isActive ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600',
       )}
-      title={title}
     >
       {icon}
       {badge}
-    </button>
+    </Button>
   );
 }

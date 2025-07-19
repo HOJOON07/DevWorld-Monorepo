@@ -358,6 +358,82 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.0.8)(@vitest/browser@3.2.4)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0)
 
+  apps/workspace:
+    dependencies:
+      '@devworld/axios-client':
+        specifier: workspace:*
+        version: link:../../packages/axios-client
+      '@devworld/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
+      '@devworld/shell-router':
+        specifier: workspace:*
+        version: link:../../packages/shell-router
+      '@devworld/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      '@devworld/tanstack-query-client':
+        specifier: workspace:*
+        version: link:../../packages/tanstack-query-client
+      '@devworld/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@module-federation/enhanced':
+        specifier: ^0.8.9
+        version: 0.8.12(@rspack/core@1.2.8(@swc/helpers@0.5.17))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(webpack@5.99.9(@swc/core@1.12.6(@swc/helpers@0.5.17)))
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.1.0(react@19.1.0)
+      react-router-dom:
+        specifier: ^7.6.2
+        version: 7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+    devDependencies:
+      '@rspack/cli':
+        specifier: ~1.2.0
+        version: 1.2.8(@rspack/core@1.2.8(@swc/helpers@0.5.17))(@types/express@4.17.23)(webpack@5.99.9(@swc/core@1.12.6(@swc/helpers@0.5.17)))
+      '@rspack/core':
+        specifier: ~1.2.0
+        version: 1.2.8(@swc/helpers@0.5.17)
+      '@rspack/plugin-react-refresh':
+        specifier: ~1.0.1
+        version: 1.0.3(react-refresh@0.14.2)
+      '@tailwindcss/postcss':
+        specifier: ^4.0.3
+        version: 4.1.10
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.1.6(@types/react@19.1.8)
+      autoprefixer:
+        specifier: ^10.1.0
+        version: 10.4.21(postcss@8.5.6)
+      css-loader:
+        specifier: ^7.1.2
+        version: 7.1.2(@rspack/core@1.2.8(@swc/helpers@0.5.17))(webpack@5.99.9(@swc/core@1.12.6(@swc/helpers@0.5.17)))
+      postcss:
+        specifier: ^8.2.1
+        version: 8.5.6
+      postcss-loader:
+        specifier: ^8.0.0
+        version: 8.1.1(@rspack/core@1.2.8(@swc/helpers@0.5.17))(postcss@8.5.6)(typescript@5.8.3)(webpack@5.99.9(@swc/core@1.12.6(@swc/helpers@0.5.17)))
+      react-refresh:
+        specifier: ^0.14.0
+        version: 0.14.2
+      tailwindcss:
+        specifier: ^4.0.3
+        version: 4.1.11
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.12.6(@swc/helpers@0.5.17))(@types/node@24.0.8)(typescript@5.8.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.8.3
+
   dev-docs:
     dependencies:
       next:
@@ -624,8 +700,8 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-player:
-        specifier: ^3.2.1
-        version: 3.2.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.16.0
+        version: 2.16.0(react@19.1.0)
       react-textarea-autosize:
         specifier: ^8.5.9
         version: 8.5.9(@types/react@19.1.8)(react@19.1.0)
@@ -656,6 +732,9 @@ importers:
       use-file-picker:
         specifier: 2.1.2
         version: 2.1.2(react@19.1.0)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@24.0.8)(rollup@4.44.0)(typescript@5.8.3)(vite@7.0.4(@types/node@24.0.8)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0))
       zod:
         specifier: ^3.25.67
         version: 3.25.67
@@ -663,6 +742,9 @@ importers:
       '@eslint/js':
         specifier: ^9.30.1
         version: 9.31.0
+      '@types/lodash':
+        specifier: ^4
+        version: 4.17.19
       '@types/react':
         specifier: ^19.1.8
         version: 19.1.8
@@ -778,9 +860,6 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
     devDependencies:
-      '@devworld/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.1
@@ -794,8 +873,6 @@ importers:
         specifier: ^5.0.0
         version: 5.8.3
 
-  packages/typescript-config: {}
-
   packages/ui:
     dependencies:
       '@devworld/tailwind-config':
@@ -807,12 +884,24 @@ importers:
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.1.10(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-collapsible':
+        specifier: ^1.1.11
+        version: 1.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.14
+        version: 1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-dropdown-menu':
+        specifier: ^2.1.15
+        version: 2.1.15(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-hover-card':
         specifier: ^1.1.14
         version: 1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-label':
         specifier: ^2.1.7
         version: 2.1.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-popover':
+        specifier: ^1.1.14
+        version: 1.1.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-progress':
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -831,6 +920,9 @@ importers:
       '@radix-ui/react-toast':
         specifier: ^1.2.14
         version: 1.2.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-tooltip':
+        specifier: ^1.2.7
+        version: 1.2.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tailwindcss/cli':
         specifier: ^4.1.5
         version: 4.1.11
@@ -2911,31 +3003,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@mux/mux-data-google-ima@0.2.8':
-    resolution: {integrity: sha512-0ZEkHdcZ6bS8QtcjFcoJeZxJTpX7qRIledf4q1trMWPznugvtajCjCM2kieK/pzkZj1JM6liDRFs1PJSfVUs2A==}
-
-  '@mux/mux-player-react@3.5.1':
-    resolution: {integrity: sha512-tm32fSo9IBA/J8AD99bp64CyBkmv8jtsn4RhSHgNufvfWJUMBFJ7cfXgLsxiG/VdegpfBLRatMC5YiuZjoZ6yg==}
-    peerDependencies:
-      '@types/react': ^17.0.0 || ^17.0.0-0 || ^18 || ^18.0.0-0 || ^19 || ^19.0.0-0
-      '@types/react-dom': '*'
-      react: ^17.0.2 || ^17.0.0-0 || ^18 || ^18.0.0-0 || ^19 || ^19.0.0-0
-      react-dom: ^17.0.2 || ^17.0.2-0 || ^18 || ^18.0.0-0 || ^19 || ^19.0.0-0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-
-  '@mux/mux-player@3.5.1':
-    resolution: {integrity: sha512-PSi3mPb4LrEh4i3xUdodaEvMrbbpKbL2yaewRjsqBr3PFb+hd/Dp1KtyaAnXaBCHl09hDURUSrqYpg1cZvwDiQ==}
-
-  '@mux/mux-video@0.26.1':
-    resolution: {integrity: sha512-gkMdBAgNlB4+krANZHkQFzYWjWeNsJz69y1/hnPtmNQnpvW+O7oc71OffcZrbblyibSxWMQ6MQpYmBVjXlp6sA==}
-
-  '@mux/playback-core@0.30.1':
-    resolution: {integrity: sha512-rnO1NE9xHDyzbAkmE6ygJYcD7cyyMt7xXqWTykxlceaoSXLjUqgp42HDio7Lcidto4x/O4FIa7ztjV2aCBCXgQ==}
-
   '@napi-rs/simple-git-android-arm-eabi@0.1.19':
     resolution: {integrity: sha512-XryEH/hadZ4Duk/HS/HC/cA1j0RHmqUGey3MsCf65ZS0VrWMqChXM/xlTPWuY5jfCc/rPubHaqI7DZlbexnX/g==}
     engines: {node: '>= 10'}
@@ -3694,6 +3761,19 @@ packages:
 
   '@radix-ui/react-checkbox@1.3.2':
     resolution: {integrity: sha512-yd+dI56KZqawxKZrJ31eENUwqc1QSqg4OZ15rybGjF2ZNwMO+wCyHzAVLRp9qoYJf7kYy0YpZ2b0JCzJ42HZpA==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@radix-ui/react-collapsible@1.1.11':
+    resolution: {integrity: sha512-2qrRsVGSCYasSz1RFOorXwl0H7g7J1frQtgpQgYrt+MOidtPAINHn9CPovQXb83r8ahapdx3Tu0fa/pdFFSdPg==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -4855,9 +4935,6 @@ packages:
     resolution: {integrity: sha512-LnhVjMWyMQV9ZmeEy26maJk+8HTIbd59cH4F2MJ439k9DqejRisfFNGAPvRYlKETuh9LrImlS8aKsBgKjMA8WA==}
     engines: {node: '>=14'}
 
-  '@svta/common-media-library@0.12.4':
-    resolution: {integrity: sha512-9EuOoaNmz7JrfGwjsrD9SxF9otU5TNMnbLu1yU4BeLK0W5cDxVXXR58Z89q9u2AnHjIctscjMTYdlqQ1gojTuw==}
-
   '@swc/core-darwin-arm64@1.12.6':
     resolution: {integrity: sha512-yLiw+XzG+MilfFh0ON7qt67bfIr7UxB9JprhYReVOmLTBDmDVQSC3T4/vIuc+GwlX08ydnHy0ud4lIjTNW4uWg==}
     engines: {node: '>=10'}
@@ -5752,12 +5829,6 @@ packages:
   '@uploadthing/shared@7.1.8':
     resolution: {integrity: sha512-OA9ZrTfILOCt1G93wOD7dZmS653z99Nr3isZpIxzBO3y4B2geKFmPjJUZClig2RrAWLKr2VUYToXKfd9D/wP9w==}
 
-  '@vercel/edge@1.2.2':
-    resolution: {integrity: sha512-1+y+f6rk0Yc9ss9bRDgz/gdpLimwoRteKHhrcgHvEpjbP1nyT3ByqEMWm2BTcpIO5UtDmIFXc8zdq4LR190PDA==}
-
-  '@vimeo/player@2.29.0':
-    resolution: {integrity: sha512-9JjvjeqUndb9otCCFd0/+2ESsLk7VkDE6sxOBy9iy2ukezuQbplVRi+g9g59yAurKofbmTi/KcKxBGO/22zWRw==}
-
   '@vitejs/plugin-react-swc@3.10.2':
     resolution: {integrity: sha512-xD3Rdvrt5LgANug7WekBn1KhcvLn1H3jNBfJRL3reeOIua/WnZOEV5qi5qIBq5T8R0jUDmRtxuvk4bPhzGHDWw==}
     peerDependencies:
@@ -6208,15 +6279,6 @@ packages:
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
 
-  bcp-47-match@2.0.3:
-    resolution: {integrity: sha512-JtTezzbAibu8G0R9op9zb3vcWZd9JF6M0xOYGPn0fNCd7wOpRB1mU2mH9T8gaBGbAAyIIVgB2G7xG0GP98zMAQ==}
-
-  bcp-47-normalize@2.3.0:
-    resolution: {integrity: sha512-8I/wfzqQvttUFz7HVJgIZ7+dj3vUaIyIxYXaTRP1YWoSDfzt6TUmxaKZeuXR62qBmYr+nvuWINFRl6pZ5DlN4Q==}
-
-  bcp-47@2.1.0:
-    resolution: {integrity: sha512-9IIS3UPrvIa1Ej+lVDdDwO7zLehjqsaByECw0bu2RRGP73jALm6FYbzI5gWbgHLvNdkvfXB5YrSbocZdOS0c0w==}
-
   bcrypt@6.0.0:
     resolution: {integrity: sha512-cU8v/EGSrnH+HnxV2z0J7/blxH8gq7Xh2JFT6Aroax7UohdmiJJlxApMxtKfuI7z68NvvVcmR78k2LbT6efhRg==}
     engines: {node: '>= 18'}
@@ -6343,16 +6405,8 @@ packages:
   caniuse-lite@1.0.30001724:
     resolution: {integrity: sha512-WqJo7p0TbHDOythNTqYujmaJTvtYRZrjpP8TCvH6Vb9CYJerJNKamKzIWOM4BkQatWj9H2lYulpdAQNBe7QhNA==}
 
-  castable-video@1.1.10:
-    resolution: {integrity: sha512-/T1I0A4VG769wTEZ8gWuy1Crn9saAfRTd1UYTb8xbOPlN78+zOi/1nU2dD5koNkfE5VWvgabkIqrGKmyNXOjSQ==}
-
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
-
-  ce-la-react@0.3.0:
-    resolution: {integrity: sha512-84SEDLNHaAjykzlkqgKRq95hA3qnxrsTrwh4hTgBq6tfpINqajxz4bkz9q4orhUfpqDPQRgdCzYTF3bHcvTIlQ==}
-    peerDependencies:
-      react: '>=17.0.0'
 
   chai@5.2.0:
     resolution: {integrity: sha512-mCuXncKXk5iCLhfhwTc0izo0gtEmpz5CtG2y8GiOINBlMVS6v8TMRc5TaLWKS6692m9+dVVfzgeVxR5UxWHTYw==}
@@ -6502,9 +6556,6 @@ packages:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
 
-  cloudflare-video-element@1.3.3:
-    resolution: {integrity: sha512-qrHzwLmUhisoIuEoKc7iBbdzBNj2Pi7ThHslU/9U/6PY9DEvo4mh/U+w7OVuzXT9ks7ZXfARvDBfPAaMGF/hIg==}
-
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
@@ -6518,9 +6569,6 @@ packages:
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
-
-  codem-isoboxer@0.3.10:
-    resolution: {integrity: sha512-eNk3TRV+xQMJ1PEj0FQGY8KD4m0GPxT487XJ+Iftm7mVa9WpPFDMWqPt+46buiP5j5Wzqe5oMIhqBcAeKfygSA==}
 
   collapse-white-space@2.1.0:
     resolution: {integrity: sha512-loKTxY1zCOuG4j9f6EPnuyyYkf58RnhhWTvRoZEokgB+WbdXehfjFviyOVYkqzEWz1Q5kRiZdBYS5SwxbQYwzw==}
@@ -6778,9 +6826,6 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
-  custom-media-element@1.4.5:
-    resolution: {integrity: sha512-cjrsQufETwxjvwZbYbKBCJNvmQ2++G9AvT45zDi7NXL9k2PdVcs2h0jQz96J6G4TMKRCcEsoJ+QTgQD00Igtjw==}
-
   cytoscape-cose-bilkent@4.1.0:
     resolution: {integrity: sha512-wgQlVIUJF13Quxiv5e1gstZ08rnZj2XaLHGoFMYXz7SkNfCDOOteKBE6SYRfA9WxxI/iBc3ajfDoc6hb/MRAHQ==}
     peerDependencies:
@@ -6936,12 +6981,6 @@ packages:
 
   dagre-d3-es@7.0.11:
     resolution: {integrity: sha512-tvlJLyQf834SylNKax8Wkzco/1ias1OPw8DcUMDE7oUIoSEW25riQVuiu/0OWEFqT0cxHT3Pa9/D82Jr47IONw==}
-
-  dash-video-element@0.1.6:
-    resolution: {integrity: sha512-4gHShaQjcFv6diX5EzB6qAdUGKlIUGGZY8J8yp2pQkWqR0jX4c6plYy0cFraN7mr0DZINe8ujDN1fssDYxJjcg==}
-
-  dashjs@5.0.3:
-    resolution: {integrity: sha512-TXndNnCUjFjF2nYBxDVba+hWRpVkadkQ8flLp7kHkem+5+wZTfRShJCnVkPUosmjS0YPE9fVNLbYPJxHBeQZvA==}
 
   date-fns-jalali@4.1.0-0:
     resolution: {integrity: sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg==}
@@ -8005,12 +8044,6 @@ packages:
     resolution: {integrity: sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==}
     engines: {node: '>=12.0.0'}
 
-  hls-video-element@1.5.6:
-    resolution: {integrity: sha512-KPdvSR+oBJPiCVb+m6pd2mn3rJEjNbaK8pGhSkxFI2pmyvZIeTVQrPbEO9PT/juwXHwhvCoKJnNxAuFwJG9H5A==}
-
-  hls.js@1.6.7:
-    resolution: {integrity: sha512-QW2fnwDGKGc9DwQUGLbmMOz8G48UZK7PVNJPcOUql1b8jubKx4/eMHNP5mGqr6tYlJNDG1g10Lx2U/qPzL6zwQ==}
-
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
@@ -8127,9 +8160,6 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
-  immediate@3.0.6:
-    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
-
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
 
@@ -8145,9 +8175,6 @@ packages:
     resolution: {integrity: sha512-2SPlun1JUPWoM6t3F0dw0FkCF/jWY8kttcY4f599GLTSjh2OCuuhdTkJQsEcZzBqbXZGKMK2OqW1oZsjtf/gQA==}
     engines: {node: '>=8'}
     hasBin: true
-
-  imsc@1.1.5:
-    resolution: {integrity: sha512-V8je+CGkcvGhgl2C1GlhqFFiUOIEdwXbXLiu1Fcubvvbo+g9inauqT3l0pNYXGoLPBj3jxtZz9t+wCopMkwadQ==}
 
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
@@ -8801,9 +8828,6 @@ packages:
   libqp@2.1.1:
     resolution: {integrity: sha512-0Wd+GPz1O134cP62YU2GTOPNA7Qgl09XwCqM5zpBv87ERCXdfDtyKXvV7c9U22yWJh44QZqBocFnXN11K96qow==}
 
-  lie@3.1.1:
-    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
-
   lightningcss-darwin-arm64@1.30.1:
     resolution: {integrity: sha512-c8JK7hyE65X1MHMN+Viq9n11RRC7hgin3HhYKhrMyaXflk5GVplZ60IxyoVtzILeKr+xAJwg6zK6sjTBJ0FKYQ==}
     engines: {node: '>= 12.0.0'}
@@ -8879,6 +8903,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  load-script@1.0.0:
+    resolution: {integrity: sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==}
+
   loader-runner@4.3.0:
     resolution: {integrity: sha512-3R/1M+yS3j5ou80Me59j7F9IMs4PXs3VqRrm0TU3AbKPxlmpoY1TNscJV/oGJXo8qCatFGTfDbY6W6ipGOYXfg==}
     engines: {node: '>=6.11.5'}
@@ -8886,9 +8913,6 @@ packages:
   local-pkg@1.1.1:
     resolution: {integrity: sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg==}
     engines: {node: '>=14'}
-
-  localforage@1.10.0:
-    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
 
   locate-path@5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
@@ -9102,12 +9126,6 @@ packages:
   mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
 
-  media-chrome@4.11.1:
-    resolution: {integrity: sha512-+2niDc4qOwlpFAjwxg1OaizK/zKV6y7QqGm4nBFEVlSaG0ZBgOmfc4IXAPiirZqAlZGaFFUaMqCl1SpGU0/naA==}
-
-  media-tracks@0.3.3:
-    resolution: {integrity: sha512-9P2FuUHnZZ3iji+2RQk7Zkh5AmZTnOG5fODACnjhCVveX1McY3jmCRHofIEI+yTBqplz7LXy48c7fQ3Uigp88w==}
-
   media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
@@ -9119,6 +9137,9 @@ packages:
   memfs@4.17.2:
     resolution: {integrity: sha512-NgYhCOWgovOXSzvYgUW0LQ7Qy72rWQMGGFJDoWg4G30RHd3z77VbYdtJ4fembJXBy8pMIUA31XNAupobOQlwdg==}
     engines: {node: '>= 4.0.0'}
+
+  memoize-one@5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
 
   mensch@0.3.4:
     resolution: {integrity: sha512-IAeFvcOnV9V0Yk+bFhYR07O3yNina9ANIN5MoXBKYJ/RLYPurd2d0yw14MDhpr9/momp0WofT1bPUh3hkzdi/g==}
@@ -9517,12 +9538,6 @@ packages:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  mux-embed@5.11.0:
-    resolution: {integrity: sha512-uczzXVraqMRmyYmpGh2zthTmBKvvc5D5yaVKQRgGhFOnF7E4nkhqNkdkQc4C0WTPzdqdPl5OtCelNWMF4tg5RQ==}
-
-  mux-embed@5.9.0:
-    resolution: {integrity: sha512-wmunL3uoPhma/tWy8PrDPZkvJpXvSFBwbD3KkC4PG8Ztjfb1X3hRJwGUAQyRz7z99b/ovLm2UTTitrkvStjH4w==}
-
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -9532,9 +9547,6 @@ packages:
     resolution: {integrity: sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==}
     engines: {node: ^18 || >=20}
     hasBin: true
-
-  native-promise-only@0.8.1:
-    resolution: {integrity: sha512-zkVhZUA3y8mbz652WrL5x0fB0ehrBkulWT3TomAQ9iDtyXZvzKeEA6GPxAItBYeNYl5yngKRX612qHOhvMkDeg==}
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -10000,9 +10012,6 @@ packages:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
 
-  player.style@0.1.9:
-    resolution: {integrity: sha512-aFmIhHMrnAP8YliFYFMnRw+5AlHqBvnqWy4vHGo2kFxlC+XjmTXqgg62qSxlE8ubAY83c0ViEZGYglSJi6mGCA==}
-
   playwright-core@1.53.1:
     resolution: {integrity: sha512-Z46Oq7tLAyT0lGoFx4DOuB1IA9D1TPj0QkYxpPVUnGDqHHvDpCftu1J2hM2PiWsNMoZh8+LQaarAWcDfPBc6zg==}
     engines: {node: '>=18'}
@@ -10269,6 +10278,9 @@ packages:
     peerDependencies:
       react: ^19.1.0
 
+  react-fast-compare@3.2.2:
+    resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
+
   react-hook-form@7.59.0:
     resolution: {integrity: sha512-kmkek2/8grqarTJExFNjy+RXDIP8yM+QTl3QL6m6Q8b2bih4ltmiXxH7T9n+yXNK477xPh5yZT/6vD8sYGzJTA==}
     engines: {node: '>=18.0.0'}
@@ -10296,12 +10308,10 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  react-player@3.2.1:
-    resolution: {integrity: sha512-M48FXqaYLW1foYy99+TZuBF2NPaicfcH3Juj0usE28QBUkLGaG5pqoKe9b1SwJgz918vB9OC/p25QhmzdFAOuA==}
+  react-player@2.16.0:
+    resolution: {integrity: sha512-mAIPHfioD7yxO0GNYVFD1303QFtI3lyyQZLY229UEAp/a10cSW+hPcakg0Keq8uWJxT2OiT/4Gt+Lc9bD6bJmQ==}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18 || ^19
-      react: ^17.0.2 || ^18 || ^19
-      react-dom: ^17.0.2 || ^18 || ^19
+      react: '>=16.6.0'
 
   react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
@@ -10640,9 +10650,6 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sax@1.2.1:
-    resolution: {integrity: sha512-8I2a3LovHTOpm7NV5yOyO8IHqgVsfK4+UuySrXU8YXkSRX7k6hCV9b3HrkKCr3nMpgj+0bmocaJJWpvp1oc7ZA==}
-
   scheduler@0.26.0:
     resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
 
@@ -10886,9 +10893,6 @@ packages:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
     engines: {node: '>= 10.x'}
 
-  spotify-audio-element@1.0.2:
-    resolution: {integrity: sha512-YEovyyeJTJMzdSVqFw/Fx19e1gdcD4bmZZ/fWS0Ji58KTpvAT2rophgK87ocqpy6eJNSmIHikhgbRjGWumgZew==}
-
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
@@ -11037,9 +11041,6 @@ packages:
 
   stylis@4.3.6:
     resolution: {integrity: sha512-yQ3rwFWRfwNUY7H5vpU0wfdkNSnvnJinhF9830Swlaxl03zsOjCfmX0ugac+3LtK0lYSgwL/KXc8oYL3mG4YFQ==}
-
-  super-media-element@1.4.2:
-    resolution: {integrity: sha512-9pP/CVNp4NF2MNlRzLwQkjiTgKKe9WYXrLh9+8QokWmMxz+zt2mf1utkWLco26IuA3AfVcTb//qtlTIjY3VHxA==}
 
   superagent@8.1.2:
     resolution: {integrity: sha512-6WTxW1EB6yCxV5VFOIPQruWGHqc3yI7hEmZK6h+pyk69Lk/Ut7rLUY6W/ONF2MjBuGjvmMiIpsrVJ2vjrHlslA==}
@@ -11388,9 +11389,6 @@ packages:
   tw-animate-css@1.3.4:
     resolution: {integrity: sha512-dd1Ht6/YQHcNbq0znIT6dG8uhO7Ce+VIIhZUhjsryXsMPJQz3bZg7Q2eNzLwipb25bRZslGb2myio5mScd1TFg==}
 
-  twitch-video-element@0.1.2:
-    resolution: {integrity: sha512-/up4KiWiTYiav+CUo+/DbV8JhP4COwEKSo8h1H/Zft/5NzZ/ZiIQ48h7erFKvwzalN0GfkEGGIfwIzAO0h7FHQ==}
-
   twoslash-protocol@0.2.12:
     resolution: {integrity: sha512-5qZLXVYfZ9ABdjqbvPc4RWMr7PrpPaaDSeaYY55vl/w1j6H6kzsWK/urAEIXlzYlyrFmyz1UbwIt+AA0ck+wbg==}
 
@@ -11512,10 +11510,6 @@ packages:
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
     engines: {node: '>=14.17'}
-    hasBin: true
-
-  ua-parser-js@1.0.40:
-    resolution: {integrity: sha512-z6PJ8Lml+v3ichVojCiB8toQJBuwR42ySM4ezjXIqXK3M0HczmKQ3LF4rhU55PfD99KEEXQG6yb7iOMyvYuHew==}
     hasBin: true
 
   uc.micro@2.1.0:
@@ -11800,9 +11794,6 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vimeo-video-element@1.5.2:
-    resolution: {integrity: sha512-ws/CN1vJdvgmBHkudn8k4uBYx7nYEBUxml86X6TVMvFFHoXn41sPCVIKq0osN3/7bNygn+fjMxraqK1+Z8T90w==}
-
   vite-node@3.2.4:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -11965,10 +11956,6 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
-  weakmap-polyfill@2.0.4:
-    resolution: {integrity: sha512-ZzxBf288iALJseijWelmECm/1x7ZwQn3sMYIkDr2VvZp7r6SEKuT8D0O9Wiq6L9Nl5mazrOMcmiZE/2NCenaxw==}
-    engines: {node: '>=8.10.0'}
-
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
 
@@ -12080,9 +12067,6 @@ packages:
   widest-line@3.1.0:
     resolution: {integrity: sha512-NsmoXalsWVDMGupxZ5R08ka9flZjjiLvHVAWYOKtiKM8ujtZWr9cRffak+uSE48+Ob8ObalXpwyeUiyDD6QFgg==}
     engines: {node: '>=8'}
-
-  wistia-video-element@1.3.3:
-    resolution: {integrity: sha512-ZVC8HH8uV3mQGcSz10MACLDalao/0YdVverNN4GNFsOXiumfqSiZnRVc8WZEywgVckBkR7+yerQYESYPDzvTfQ==}
 
   with@7.0.2:
     resolution: {integrity: sha512-RNGKj82nUPg3g5ygxkQl0R937xLyho1J24ItRCBTr/m1YnZkzJy1hUiHUJrc/VlsDQzsCnInEGSg3bci0Lmd4w==}
@@ -12208,9 +12192,6 @@ packages:
   yocto-queue@1.2.1:
     resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
     engines: {node: '>=12.20'}
-
-  youtube-video-element@1.6.1:
-    resolution: {integrity: sha512-FDRgXlPxpe1bh6HlhL6GfJVcvVNaZKCcLEZ90X1G3Iu+z2g2cIhm2OWj9abPZq1Zqit6SY7Gwh13H9g7acoBnQ==}
 
   zod-to-json-schema@3.24.6:
     resolution: {integrity: sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg==}
@@ -14703,43 +14684,6 @@ snapshots:
   '@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3':
     optional: true
 
-  '@mux/mux-data-google-ima@0.2.8':
-    dependencies:
-      mux-embed: 5.9.0
-
-  '@mux/mux-player-react@3.5.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@mux/mux-player': 3.5.1(react@19.1.0)
-      '@mux/playback-core': 0.30.1
-      prop-types: 15.8.1
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-    optionalDependencies:
-      '@types/react': 19.1.8
-      '@types/react-dom': 19.1.6(@types/react@19.1.8)
-
-  '@mux/mux-player@3.5.1(react@19.1.0)':
-    dependencies:
-      '@mux/mux-video': 0.26.1
-      '@mux/playback-core': 0.30.1
-      media-chrome: 4.11.1(react@19.1.0)
-      player.style: 0.1.9(react@19.1.0)
-    transitivePeerDependencies:
-      - react
-
-  '@mux/mux-video@0.26.1':
-    dependencies:
-      '@mux/mux-data-google-ima': 0.2.8
-      '@mux/playback-core': 0.30.1
-      castable-video: 1.1.10
-      custom-media-element: 1.4.5
-      media-tracks: 0.3.3
-
-  '@mux/playback-core@0.30.1':
-    dependencies:
-      hls.js: 1.6.7
-      mux-embed: 5.11.0
-
   '@napi-rs/simple-git-android-arm-eabi@0.1.19':
     optional: true
 
@@ -15485,6 +15429,22 @@ snapshots:
       '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.1.8)(react@19.1.0)
       '@radix-ui/react-use-previous': 1.1.1(@types/react@19.1.8)(react@19.1.0)
       '@radix-ui/react-use-size': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.8
+      '@types/react-dom': 19.1.6(@types/react@19.1.8)
+
+  '@radix-ui/react-collapsible@1.1.11(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/primitive': 1.1.2
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-id': 1.1.1(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-presence': 1.1.4(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.1.8)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.1.8)(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
     optionalDependencies:
@@ -16831,8 +16791,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@svta/common-media-library@0.12.4': {}
-
   '@swc/core-darwin-arm64@1.12.6':
     optional: true
 
@@ -17923,13 +17881,6 @@ snapshots:
       effect: 3.14.21
       sqids: 0.3.0
 
-  '@vercel/edge@1.2.2': {}
-
-  '@vimeo/player@2.29.0':
-    dependencies:
-      native-promise-only: 0.8.1
-      weakmap-polyfill: 2.0.4
-
   '@vitejs/plugin-react-swc@3.10.2(@swc/helpers@0.5.17)(vite@7.0.0(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.11
@@ -18496,19 +18447,6 @@ snapshots:
 
   batch@0.6.1: {}
 
-  bcp-47-match@2.0.3: {}
-
-  bcp-47-normalize@2.3.0:
-    dependencies:
-      bcp-47: 2.1.0
-      bcp-47-match: 2.0.3
-
-  bcp-47@2.1.0:
-    dependencies:
-      is-alphabetical: 2.0.1
-      is-alphanumerical: 2.0.1
-      is-decimal: 2.0.1
-
   bcrypt@6.0.0:
     dependencies:
       node-addon-api: 8.4.0
@@ -18660,15 +18598,7 @@ snapshots:
 
   caniuse-lite@1.0.30001724: {}
 
-  castable-video@1.1.10:
-    dependencies:
-      custom-media-element: 1.4.5
-
   ccount@2.0.1: {}
-
-  ce-la-react@0.3.0(react@19.1.0):
-    dependencies:
-      react: 19.1.0
 
   chai@5.2.0:
     dependencies:
@@ -18832,8 +18762,6 @@ snapshots:
 
   clone@1.0.4: {}
 
-  cloudflare-video-element@1.3.3: {}
-
   clsx@2.1.1: {}
 
   cmdk@1.1.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
@@ -18849,8 +18777,6 @@ snapshots:
       - '@types/react-dom'
 
   co@4.6.0: {}
-
-  codem-isoboxer@0.3.10: {}
 
   collapse-white-space@2.1.0: {}
 
@@ -19132,8 +19058,6 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  custom-media-element@1.4.5: {}
-
   cytoscape-cose-bilkent@4.1.0(cytoscape@3.32.0):
     dependencies:
       cose-base: 1.0.3
@@ -19317,24 +19241,6 @@ snapshots:
     dependencies:
       d3: 7.9.0
       lodash-es: 4.17.21
-
-  dash-video-element@0.1.6:
-    dependencies:
-      custom-media-element: 1.4.5
-      dashjs: 5.0.3
-
-  dashjs@5.0.3:
-    dependencies:
-      '@svta/common-media-library': 0.12.4
-      bcp-47-match: 2.0.3
-      bcp-47-normalize: 2.3.0
-      codem-isoboxer: 0.3.10
-      fast-deep-equal: 3.1.3
-      html-entities: 2.6.0
-      imsc: 1.1.5
-      localforage: 1.10.0
-      path-browserify: 1.0.1
-      ua-parser-js: 1.0.40
 
   date-fns-jalali@4.1.0-0: {}
 
@@ -20635,14 +20541,6 @@ snapshots:
 
   highlight.js@11.11.1: {}
 
-  hls-video-element@1.5.6:
-    dependencies:
-      custom-media-element: 1.4.5
-      hls.js: 1.6.7
-      media-tracks: 0.3.3
-
-  hls.js@1.6.7: {}
-
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
@@ -20795,8 +20693,6 @@ snapshots:
 
   ignore@7.0.5: {}
 
-  immediate@3.0.6: {}
-
   immer@10.1.1: {}
 
   import-fresh@3.3.1:
@@ -20810,10 +20706,6 @@ snapshots:
     dependencies:
       pkg-dir: 4.2.0
       resolve-cwd: 3.0.0
-
-  imsc@1.1.5:
-    dependencies:
-      sax: 1.2.1
 
   imurmurhash@0.1.4: {}
 
@@ -21695,10 +21587,6 @@ snapshots:
   libqp@2.1.1:
     optional: true
 
-  lie@3.1.1:
-    dependencies:
-      immediate: 3.0.6
-
   lightningcss-darwin-arm64@1.30.1:
     optional: true
 
@@ -21756,6 +21644,8 @@ snapshots:
       commander: 10.0.1
     optional: true
 
+  load-script@1.0.0: {}
+
   loader-runner@4.3.0: {}
 
   local-pkg@1.1.1:
@@ -21763,10 +21653,6 @@ snapshots:
       mlly: 1.7.4
       pkg-types: 2.1.0
       quansync: 0.2.10
-
-  localforage@1.10.0:
-    dependencies:
-      lie: 3.1.1
 
   locate-path@5.0.0:
     dependencies:
@@ -22114,15 +22000,6 @@ snapshots:
 
   mdn-data@2.0.30: {}
 
-  media-chrome@4.11.1(react@19.1.0):
-    dependencies:
-      '@vercel/edge': 1.2.2
-      ce-la-react: 0.3.0(react@19.1.0)
-    transitivePeerDependencies:
-      - react
-
-  media-tracks@0.3.3: {}
-
   media-typer@0.3.0: {}
 
   memfs@3.5.3:
@@ -22135,6 +22012,8 @@ snapshots:
       '@jsonjoy.com/util': 1.6.0(tslib@2.8.1)
       tree-dump: 1.0.3(tslib@2.8.1)
       tslib: 2.8.1
+
+  memoize-one@5.2.1: {}
 
   mensch@0.3.4: {}
 
@@ -22931,15 +22810,9 @@ snapshots:
 
   mute-stream@1.0.0: {}
 
-  mux-embed@5.11.0: {}
-
-  mux-embed@5.9.0: {}
-
   nanoid@3.3.11: {}
 
   nanoid@5.1.5: {}
-
-  native-promise-only@0.8.1: {}
 
   natural-compare@1.4.0: {}
 
@@ -23461,12 +23334,6 @@ snapshots:
       - slate-dom
       - use-sync-external-store
 
-  player.style@0.1.9(react@19.1.0):
-    dependencies:
-      media-chrome: 4.11.1(react@19.1.0)
-    transitivePeerDependencies:
-      - react
-
   playwright-core@1.53.1: {}
 
   playwright@1.53.1:
@@ -23787,6 +23654,8 @@ snapshots:
       react: 19.1.0
       scheduler: 0.26.0
 
+  react-fast-compare@3.2.2: {}
+
   react-hook-form@7.59.0(react@19.1.0):
     dependencies:
       react: 19.1.0
@@ -23807,23 +23676,14 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  react-player@3.2.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-player@2.16.0(react@19.1.0):
     dependencies:
-      '@mux/mux-player-react': 3.5.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@types/react': 19.1.8
-      cloudflare-video-element: 1.3.3
-      dash-video-element: 0.1.6
       deepmerge: 4.3.1
-      hls-video-element: 1.5.6
+      load-script: 1.0.0
+      memoize-one: 5.2.1
+      prop-types: 15.8.1
       react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      spotify-audio-element: 1.0.2
-      twitch-video-element: 0.1.2
-      vimeo-video-element: 1.5.2
-      wistia-video-element: 1.3.3
-      youtube-video-element: 1.6.1
-    transitivePeerDependencies:
-      - '@types/react-dom'
+      react-fast-compare: 3.2.2
 
   react-refresh@0.14.2: {}
 
@@ -24271,8 +24131,6 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sax@1.2.1: {}
-
   scheduler@0.26.0: {}
 
   schema-utils@3.3.0:
@@ -24626,8 +24484,6 @@ snapshots:
 
   split2@4.2.0: {}
 
-  spotify-audio-element@1.0.2: {}
-
   sprintf-js@1.0.3: {}
 
   sqids@0.3.0: {}
@@ -24767,8 +24623,6 @@ snapshots:
       react: 19.1.0
 
   stylis@4.3.6: {}
-
-  super-media-element@1.4.2: {}
 
   superagent@8.1.2:
     dependencies:
@@ -25132,8 +24986,6 @@ snapshots:
 
   tw-animate-css@1.3.4: {}
 
-  twitch-video-element@0.1.2: {}
-
   twoslash-protocol@0.2.12: {}
 
   twoslash@0.2.12(typescript@5.8.3):
@@ -25223,8 +25075,6 @@ snapshots:
   typescript@5.8.2: {}
 
   typescript@5.8.3: {}
-
-  ua-parser-js@1.0.40: {}
 
   uc.micro@2.1.0:
     optional: true
@@ -25478,10 +25328,6 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vimeo-video-element@1.5.2:
-    dependencies:
-      '@vimeo/player': 2.29.0
-
   vite-node@3.2.4(@types/node@24.0.8)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0):
     dependencies:
       cac: 6.7.14
@@ -25536,6 +25382,25 @@ snapshots:
       typescript: 5.8.3
     optionalDependencies:
       vite: 7.0.0(@types/node@24.0.8)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0)
+    transitivePeerDependencies:
+      - '@types/node'
+      - rollup
+      - supports-color
+
+  vite-plugin-dts@4.5.4(@types/node@24.0.8)(rollup@4.44.0)(typescript@5.8.3)(vite@7.0.4(@types/node@24.0.8)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0)):
+    dependencies:
+      '@microsoft/api-extractor': 7.52.8(@types/node@24.0.8)
+      '@rollup/pluginutils': 5.2.0(rollup@4.44.0)
+      '@volar/typescript': 2.4.15
+      '@vue/language-core': 2.2.0(typescript@5.8.3)
+      compare-versions: 6.1.1
+      debug: 4.4.1
+      kolorist: 1.8.0
+      local-pkg: 1.1.1
+      magic-string: 0.30.17
+      typescript: 5.8.3
+    optionalDependencies:
+      vite: 7.0.4(@types/node@24.0.8)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(yaml@2.8.0)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -25670,8 +25535,6 @@ snapshots:
   wcwidth@1.0.1:
     dependencies:
       defaults: 1.0.4
-
-  weakmap-polyfill@2.0.4: {}
 
   web-namespaces@2.0.1: {}
 
@@ -25868,10 +25731,6 @@ snapshots:
     dependencies:
       string-width: 4.2.3
 
-  wistia-video-element@1.3.3:
-    dependencies:
-      super-media-element: 1.4.2
-
   with@7.0.2:
     dependencies:
       '@babel/parser': 7.27.5
@@ -25949,8 +25808,6 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.2.1: {}
-
-  youtube-video-element@1.6.1: {}
 
   zod-to-json-schema@3.24.6(zod@3.25.67):
     dependencies:

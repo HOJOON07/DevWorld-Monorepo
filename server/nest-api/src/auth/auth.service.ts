@@ -116,8 +116,7 @@ export class AuthService {
 
     response.cookie('access_token', tokens.accessToken, {
       ...cookieOptions,
-      // maxAge: 15 * 60 * 1000, // 15분
-      maxAge: 5000, // 1초
+      maxAge: 15 * 60 * 1000, // 15분
     });
 
     response.cookie('refresh_token', tokens.refreshToken, {

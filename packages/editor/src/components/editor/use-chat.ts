@@ -1,10 +1,9 @@
 'use client';
 
-import * as React from 'react';
-
 import { useChat as useBaseChat } from '@ai-sdk/react';
 import { faker } from '@faker-js/faker';
 import { usePluginOption } from 'platejs/react';
+import * as React from 'react';
 
 import { aiChatPlugin } from '@/components/editor/plugins/ai-kit';
 
@@ -30,9 +29,7 @@ export const useChat = () => {
         let sample: 'markdown' | 'mdx' | null = null;
 
         try {
-          const content = JSON.parse(init?.body as string).messages.at(
-            -1
-          ).content;
+          const content = JSON.parse(init?.body as string).messages.at(-1).content;
 
           if (content.includes('Generate a markdown sample')) {
             sample = 'markdown';
@@ -131,9 +128,7 @@ const fakeStreamText = ({
           if (streamProtocol === 'text') {
             controller.enqueue(encoder.encode(chunk.texts));
           } else {
-            controller.enqueue(
-              encoder.encode(`0:${JSON.stringify(chunk.texts)}\n`)
-            );
+            controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk.texts)}\n`));
           }
         }
 
@@ -151,8 +146,8 @@ const fakeStreamText = ({
         controller.enqueue(
           `d:{"finishReason":"stop","usage":{"promptTokens":0,"completionTokens":${blocks.reduce(
             (sum, block) => sum + block.length,
-            0
-          )}}}\n`
+            0,
+          )}}}\n`,
         );
       }
 
@@ -1195,8 +1190,7 @@ const mdxChunks = [
     },
     {
       delay,
-      texts:
-        'src="https://samplelib.com/lib/preview/mp3/sample-3s.mp3" width="80%" />\n\n',
+      texts: 'src="https://samplelib.com/lib/preview/mp3/sample-3s.mp3" width="80%" />\n\n',
     },
     {
       delay,

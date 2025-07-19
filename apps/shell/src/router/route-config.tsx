@@ -2,7 +2,8 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import AppAuth from '../components/app-auth';
 import AppFeed from '../components/app-feed';
-import { appAuthBaseName, appFeedBaseName } from '../constants/prefix';
+import AppWorkspace from '../components/app-workspace';
+import { appAuthBaseName, appFeedBaseName, appWorkspaceBaseName } from '../constants/prefix';
 
 export enum RouteType {
   PUBLIC = 'public',
@@ -34,8 +35,14 @@ export const routeConfig: RouteConfig[] = [
     redirect: RouteRedirectUrl.GUEST,
   },
   {
+    path: `${appFeedBaseName}/*`,
     element: <AppFeed />,
     type: RouteType.PUBLIC,
-    path: `${appFeedBaseName}/*`,
+  },
+  {
+    path: `${appWorkspaceBaseName}/*`,
+    element: <AppWorkspace />,
+    type: RouteType.PRIVATE,
+    redirect: RouteRedirectUrl.PRIVATE,
   },
 ];

@@ -3,7 +3,7 @@ import CompactNavigation from './CompactNavigation';
 import HeaderTitle from './HeaderTitle';
 import StatusIndicator from './StatusIndicator';
 
-type SidebarMode = 'preview' | 'workspace' | 'notifications' | 'profile';
+type SidebarMode = 'preview' | 'profile';
 
 interface Props {
   activeMode: SidebarMode;

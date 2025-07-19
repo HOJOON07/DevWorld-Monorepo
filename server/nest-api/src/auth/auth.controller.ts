@@ -118,9 +118,10 @@ export class AuthController {
   @IsPublic()
   async postRegisterEmail(@Body() body: RegisterUserDto, @Res() res: Response) {
     const tokens = await this.authService.registerWithEmail(body);
+
     this.authService.setTokenCookies(res, tokens);
 
-    res.json({
+    res.send({
       message: 'Registration successful',
     });
   }

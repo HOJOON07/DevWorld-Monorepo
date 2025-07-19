@@ -182,10 +182,10 @@ export * from './components/ui/tooltip';
 export * from './components/ui/turn-into-toolbar-button';
 
 // Hooks
-// Hooks
 export * from './hooks/use-debounce';
 export * from './hooks/use-is-touch-device';
 export * from './hooks/use-mounted';
+export * from './hooks/use-editable-editor';
 // export * from './hooks/use-upload-file'; // 타입 에러로 인해 제외
 
 // Lib

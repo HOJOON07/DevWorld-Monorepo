@@ -1,12 +1,5 @@
-'use client';
-
+import { type BaseCommentConfig, BaseCommentPlugin, getDraftCommentKey } from '@platejs/comment';
 import type { ExtendConfig, Path } from 'platejs';
-
-import {
-  type BaseCommentConfig,
-  BaseCommentPlugin,
-  getDraftCommentKey,
-} from '@platejs/comment';
 import { isSlateString } from 'platejs';
 import { toTPlatePlugin } from 'platejs/react';
 
@@ -85,7 +78,7 @@ export const commentPlugin = toTPlatePlugin<CommentConfig>(BaseCommentPlugin, {
         setOption('activeId', getDraftCommentKey());
         setOption('commentingBlock', editor.selection!.focus.path.slice(0, 1));
       },
-    })
+    }),
   )
   .configure({
     node: { component: CommentLeaf },

@@ -16,7 +16,7 @@ export const useSignUp = () => {
         title: 'Sign Up Success',
         description: 'You have successfully signed up. Enjoy your journey with us!',
       });
-      globalNavigate('/feed');
+      globalNavigate('/workspace');
     },
     onError: () => {
       toast({
