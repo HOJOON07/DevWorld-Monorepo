@@ -1,9 +1,13 @@
 import { useEditableEditor } from '@devworld/editor';
 
 export default function WorkspacePage() {
-  const editor = useEditableEditor(value);
+  const { Editor, getValue } = useEditableEditor(value);
 
-  return <div onClick={() => console.log(editor.getValue())}>{editor.component}</div>;
+  return (
+    <div className='min-w-0 flex-1 overflow-hidden'>
+      <Editor className='h-full w-full overflow-x-hidden px-6 py-4 [&_*]:max-w-full [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:overflow-x-auto' />
+    </div>
+  );
 }
 
 const value = [

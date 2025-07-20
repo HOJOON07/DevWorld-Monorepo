@@ -15,7 +15,7 @@ const EditorAPI = forwardRef<MyEditor>((props, ref) => {
 EditorAPI.displayName = 'EditorAPI';
 
 interface UseEditableEditorReturn {
-  component: React.ReactElement;
+  Editor: React.ComponentType<{ className?: string; [key: string]: any }>;
   children: TElement[] | undefined;
   api: MyEditor['api'] | undefined;
   tf: MyEditor['tf'] | undefined;
@@ -32,17 +32,17 @@ export function useEditableEditor(initialValue?: TElement[]): UseEditableEditorR
   });
   const apiRef = useRef<MyEditor | null>(null);
 
-  const component = (
+  const EditorComponent = ({ className, ...props }: { className?: string; [key: string]: any }) => (
     <Plate editor={plateEditor}>
       <EditorContainer>
-        <Editor variant='default' />
+        <Editor className={className} {...props} variant='none' />
       </EditorContainer>
       <EditorAPI ref={apiRef} />
     </Plate>
   );
 
   return {
-    component,
+    Editor: EditorComponent,
     get children() {
       return apiRef.current?.children;
     },

@@ -11,6 +11,11 @@
       "outputs": ["dist/**", "!.env*", "!**/*.stories.{tsx,jsx,mdx}"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "!**/*.stories.{tsx,jsx,mdx}"]
     },
+    "build:watch": {
+      "cache": false,
+      "persistent": true,
+      "outputs": ["dist/**", "!.env*", "!**/*.stories.{tsx,jsx,mdx}"]
+    },
     "build:styles": {
       "outputs": ["dist/**"]
     },

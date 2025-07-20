@@ -1,9 +1,9 @@
 import { useEditableEditor } from './hooks/use-editable-editor';
 
 function App() {
-  const editor = useEditableEditor(value);
+  const { Editor, getValue } = useEditableEditor(value);
 
-  return <div>{editor.component}</div>;
+  return <Editor className='w-full' />;
 }
 
 export default App;

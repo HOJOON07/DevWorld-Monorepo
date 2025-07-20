@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run start",
+    "dev:packages": "turbo run build:watch --filter=@devworld/shell-router --filter=@devworld/ui --filter=@devworld/axios-client --filter=@devworld/editor --filter=@devworld/tanstack-query-client --filter=@devworld/event-bus",
+    "dev:apps": "turbo run start",
+    "dev:all": "concurrently \"pnpm dev:packages\" \"pnpm dev:apps\"",
     "build": "turbo run build",
-    "build:packages": "turbo run build --filter=@devworld/shell-router --filter=@devworld/ui --filter=@devworld/axios-client",
+    "build:packages": "turbo run build --filter=@devworld/shell-router --filter=@devworld/ui --filter=@devworld/axios-client --filter=@devworld/editor --filter=@devworld/tanstack-query-client --filter=@devworld/event-bus",
     "build:ui": "turbo run build --filter=@devworld/ui",
     "serve": "turbo run build:start",
     "lint:check": "biome check .",
@@ -18,6 +21,7 @@
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
+    "concurrently": "^9.2.0",
     "lefthook": "^1.11.14",
     "turbo": "^2.5.4"
   }

@@ -1,10 +1,8 @@
-'use client';
-
 import { Plate, usePlateEditor } from 'platejs/react';
 
 import { EditorKit } from '@/components/editor/editor-kit';
 import { SettingsDialog } from '@/components/editor/settings-dialog';
-import { EditorContainer } from '@/components/ui/editor';
+import { Editor, EditorContainer } from '@/components/ui/editor';
 
 export function PlateEditor() {
   const editor = usePlateEditor({
@@ -15,9 +13,8 @@ export function PlateEditor() {
   return (
     <Plate editor={editor}>
       <EditorContainer>
-        <EditorContainer variant='demo' />
+        <Editor />
       </EditorContainer>
-
       <SettingsDialog />
     </Plate>
   );
