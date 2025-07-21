@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getToday } from '../../lib/get-today';
 import { useEditorStore } from '../../stores/editor-store';
+import PublishDialog from '../publish-dialog/Dialog';
 
 export function NavActions() {
   const { pathname } = useLocation();
@@ -27,7 +28,6 @@ export function NavActions() {
       const value = editorMethods.getValue();
       console.log('Publishing content:', value);
 
-      // TODO: 실제 퍼블리시 API 호출
       await new Promise((resolve) => setTimeout(resolve, 1000)); // 임시 딜레이
 
       console.log('Published successfully!');
@@ -41,18 +41,11 @@ export function NavActions() {
   return (
     <div className='flex items-center gap-2 text-sm'>
       <div className='hidden font-medium text-muted-foreground md:inline-block'>Edit {today}</div>
-      <Button variant='ghost' size='icon' className='h-7 w-7'>
-        <Save />
-      </Button>
-      <Button
-        variant='ghost'
-        size='icon'
-        className='h-7 w-7 data-[state=open]:bg-accent'
-        onClick={handlePublish}
-        disabled={isPublishing}
-      >
-        <Printer />
-      </Button>
+      <PublishDialog>
+        <Button variant='ghost' size='icon' className='h-7 w-7'>
+          <Save />
+        </Button>
+      </PublishDialog>
     </div>
   );
 }

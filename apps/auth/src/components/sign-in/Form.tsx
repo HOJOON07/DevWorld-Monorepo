@@ -43,7 +43,7 @@ export default function SignInForm() {
                   type='email'
                   placeholder='devworld@example.com'
                   required
-                ></Input>
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -60,7 +60,7 @@ export default function SignInForm() {
                     Forgot your password?
                   </a>
                 </div>
-                <Input {...field} id='password' type='password' required></Input>
+                <Input {...field} id='password' type='password' required />
                 <FormMessage />
                 <FormDescription />
               </FormItem>

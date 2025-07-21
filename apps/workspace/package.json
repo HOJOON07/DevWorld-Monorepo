@@ -34,6 +34,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.6.2",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "react-hook-form": "^7.59.0",
+    "zod": "^3.25.67",
+    "@hookform/resolvers": "^5.1.1"
   }
 }
