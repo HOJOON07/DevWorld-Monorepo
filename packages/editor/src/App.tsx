@@ -88,19 +88,15 @@ const value = [
       },
       { text: '. Discuss changes using ' },
       {
-        children: [{ comment: true, comment_discussion1: true, text: 'comments' }],
+        children: [{ text: 'comments' }],
         type: 'a',
         url: '/docs/comment',
       },
       {
-        comment: true,
-        comment_discussion1: true,
         text: ' on many text segments',
       },
       { text: '. You can even have ' },
       {
-        comment: true,
-        comment_discussion2: true,
         suggestion: true,
         suggestion_playground3: {
           id: 'playground3',

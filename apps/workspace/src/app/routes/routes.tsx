@@ -1,8 +1,9 @@
 import { AppRoutingManager } from '@devworld/shell-router';
 import { QueryProvider } from '@devworld/tanstack-query-client';
-import { type RouteObject } from 'react-router-dom';
-import Page from '../../components/Sidebar';
-import WorkspacePage from '../../pages/WorkspacePage';
+import { Navigate, type RouteObject } from 'react-router-dom';
+import { WorkspaceLayout } from '../../layouts/workspace-layout';
+import Docs from '../../pages/Docs';
+import Write from '../../pages/Write';
 
 export const routes: RouteObject[] = [
   {
@@ -14,12 +15,22 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
-        index: true,
-        element: <WorkspacePage />,
-      },
-      {
-        path: '/sidebar',
-        element: <Page />,
+        path: '',
+        element: <WorkspaceLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to='/docs' />,
+          },
+          {
+            path: 'docs',
+            element: <Docs />,
+          },
+          {
+            path: 'write',
+            element: <Write />,
+          },
+        ],
       },
     ],
   },
