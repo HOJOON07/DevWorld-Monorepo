@@ -1,11 +1,8 @@
-import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
-import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
-import {
-  ArticlePrivateStateEnums,
-  ArticlePublishStateEnums,
-} from '../const/article-state';
 import { PickType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
+import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
+import { ArticlePrivateStateEnums, ArticlePublishStateEnums } from '../const/article-state';
 
 export class PaginateUserPublicArticleDto extends PickType(BasePaginationDto, [
   'order__createdAt',
@@ -32,10 +29,6 @@ export class PaginateUserPublicArticleDto extends PickType(BasePaginationDto, [
   @IsString()
   @IsOptional()
   where__isPrivate: ArticlePrivateStateEnums = ArticlePrivateStateEnums.Open;
-
-  @IsString()
-  @IsOptional()
-  where__isPublish: ArticlePublishStateEnums = ArticlePublishStateEnums.Publish;
 
   @IsNumber()
   @Type(() => Number)

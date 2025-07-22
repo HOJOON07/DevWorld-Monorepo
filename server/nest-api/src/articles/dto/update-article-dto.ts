@@ -1,12 +1,11 @@
 import { PartialType, PickType } from '@nestjs/mapped-types';
-import { CreateArticleDto } from './create-article-dto';
 import { IsOptional, IsString } from 'class-validator';
+import { CreateArticleDto } from './create-article-dto';
 
 class PickDto extends PickType(CreateArticleDto, [
   'title',
   'contents',
   'description',
-  'isPublish',
   'isPrivate',
 ]) {}
 

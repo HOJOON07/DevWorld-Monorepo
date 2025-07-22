@@ -16,12 +16,14 @@ import {
 } from '@devworld/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useCreateDocs } from '../../app/api/query-hooks/use-create-docs';
 import { PublishSchema, PublishType } from '../../lib/publish-form-schema';
 import { useEditorStore } from '../../stores/editor-store';
 import Thumbnails from './Thumbnails';
 
 export default function PublishDialog({ children }: { children: React.ReactNode }) {
   const { editorMethods } = useEditorStore();
+  const createDocsMutaion = useCreateDocs();
 
   const form = useForm<PublishType>({
     resolver: zodResolver(PublishSchema),
@@ -40,7 +42,9 @@ export default function PublishDialog({ children }: { children: React.ReactNode 
         ...values,
         contents: editorContent,
       };
-      console.log('Publishing:', publishData);
+
+      console.log(publishData);
+      createDocsMutaion.mutate(publishData);
     }
   };
   return (

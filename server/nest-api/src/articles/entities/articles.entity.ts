@@ -1,20 +1,20 @@
+import { IsArray, IsEnum, IsNumber, IsString } from 'class-validator';
 import { BaseModel } from 'src/common/entities/base.entity';
+import { ImageModel } from 'src/common/entities/image.entity';
 import { UserModel } from 'src/users/entities/users.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import {
-  ArticlePrivateStateEnums,
-  ArticlePublishStateEnums,
-} from '../const/article-state';
-import { IsArray, IsEnum, IsNumber, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { ImageModel } from 'src/common/entities/image.entity';
 import { CommentsModel } from '../comments/entities/comment.entity';
+import { ArticlePrivateStateEnums } from '../const/article-state';
 
 @Entity()
 export class ArticlesModel extends BaseModel {
-  @ManyToOne(() => UserModel, (user) => user.articles, {
-    nullable: false,
-  })
+  @ManyToOne(
+    () => UserModel,
+    (user) => user.articles,
+    {
+      nullable: false,
+    },
+  )
   author: UserModel;
 
   // @Column({ nullable: true })
@@ -22,7 +22,10 @@ export class ArticlesModel extends BaseModel {
   //   ({ value }) => value && `/${join(ARTICLES_PUBLIC_IMAGE_PATH, value)}`,
   // )
   @IsString()
-  @OneToMany((type) => ImageModel, (image) => image.article)
+  @OneToMany(
+    (type) => ImageModel,
+    (image) => image.article,
+  )
   thumbnails: ImageModel[];
 
   @Column()
@@ -66,15 +69,9 @@ export class ArticlesModel extends BaseModel {
   @IsString()
   isPrivate: ArticlePrivateStateEnums;
 
-  @Column({
-    type: 'enum',
-    enum: Object.values(ArticlePublishStateEnums),
-    default: ArticlePublishStateEnums.Temporary,
-  })
-  @IsEnum(ArticlePublishStateEnums)
-  @IsString()
-  isPublish: ArticlePublishStateEnums;
-
-  @OneToMany(() => CommentsModel, (comments) => comments.article)
+  @OneToMany(
+    () => CommentsModel,
+    (comments) => comments.article,
+  )
   comments: CommentsModel[];
 }

@@ -7,11 +7,7 @@ interface SidebarHeaderProps {
 }
 
 function SidebarHeaderRoot({ children }: SidebarHeaderProps) {
-  return (
-    <div className='self-start' onClick={() => globalNavigate('/workspace')}>
-      {children}
-    </div>
-  );
+  return <div className='self-start'>{children}</div>;
 }
 
 const SidebarHeader = Object.assign(SidebarHeaderRoot, {

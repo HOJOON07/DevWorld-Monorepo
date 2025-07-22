@@ -1,6 +1,5 @@
-import { IsOptional, IsString } from 'class-validator';
-
 import { PickType } from '@nestjs/mapped-types';
+import { IsOptional, IsString } from 'class-validator';
 import { ArticlesModel } from '../entities/articles.entity';
 
 export class CreateArticleDto extends PickType(ArticlesModel, [
@@ -8,7 +7,6 @@ export class CreateArticleDto extends PickType(ArticlesModel, [
   'description',
   'contents',
   'isPrivate',
-  'isPublish',
 ]) {
   @IsString({
     each: true,

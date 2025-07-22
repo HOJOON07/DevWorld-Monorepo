@@ -10,7 +10,7 @@ export default function FeedSidebar() {
       </Sidebar.Header>
 
       <Sidebar.Content>
-        <Sidebar.Item id='feed'>
+        <Sidebar.Item id='feed' routePath='#'>
           <Sidebar.Item.Indicator />
           <div className='flex items-center space-x-2'>
             <Sidebar.Item.Icon>
@@ -20,7 +20,7 @@ export default function FeedSidebar() {
           </div>
         </Sidebar.Item>
 
-        <Sidebar.Item id='workspace'>
+        <Sidebar.Item id='workspace' routePath='/workspace'>
           <Sidebar.Item.Indicator />
           <div className='flex items-center space-x-2'>
             <Sidebar.Item.Icon>

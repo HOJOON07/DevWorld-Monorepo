@@ -4,7 +4,7 @@ import { CommonService } from 'src/common/common.service';
 import { ImageModel } from 'src/common/entities/image.entity';
 import { UserModel } from 'src/users/entities/users.entity';
 import { QueryRunner, Repository } from 'typeorm';
-import { ArticlePrivateStateEnums, ArticlePublishStateEnums } from './const/article-state';
+import { ArticlePrivateStateEnums } from './const/article-state';
 import { DEFAULT_ARTICLES_FIND_OPTIONS } from './const/default-article-find-options';
 import { CreateArticleDto } from './dto/create-article-dto';
 import { PaginateArticleDto } from './dto/paginate-article.dto';
@@ -138,7 +138,6 @@ export class ArticlesService {
         // 입력받은 id가 데이터베이스에 있는 id와 같은 값인지.
         id,
         isPrivate: ArticlePrivateStateEnums.Open,
-        isPublish: ArticlePublishStateEnums.Publish,
       },
       // author의 대한 정보도 같이
     });
@@ -232,7 +231,7 @@ export class ArticlesService {
     if (article == undefined) {
       throw new NotFoundException();
     }
-    const { title, contents, description, isPrivate, isPublish, articleImage } = updateArticleDto;
+    const { title, contents, description, isPrivate, articleImage } = updateArticleDto;
     if (title) {
       article.title = title;
     }
@@ -244,9 +243,6 @@ export class ArticlesService {
     }
     if (isPrivate) {
       article.isPrivate = isPrivate;
-    }
-    if (isPublish) {
-      article.isPublish = isPublish;
     }
 
     if (articleImage) {

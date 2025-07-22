@@ -1,9 +1,6 @@
 import { FindManyOptions } from 'typeorm';
 import { ArticlesModel } from '../entities/articles.entity';
-import {
-  ArticlePrivateStateEnums,
-  ArticlePublishStateEnums,
-} from './article-state';
+import { ArticlePrivateStateEnums, ArticlePublishStateEnums } from './article-state';
 
 export const DEFAULT_ARTICLES_FIND_OPTIONS: FindManyOptions<ArticlesModel> = {
   // relations: ['author', 'thumbnails'],
@@ -34,6 +31,5 @@ export const PAGINATE_ARTICLES_OPTIONS: FindManyOptions<ArticlesModel> = {
   },
   where: {
     isPrivate: ArticlePrivateStateEnums.Open,
-    isPublish: ArticlePublishStateEnums.Publish,
   },
 };

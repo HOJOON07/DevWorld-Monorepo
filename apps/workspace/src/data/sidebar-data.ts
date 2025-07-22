@@ -16,8 +16,8 @@ import {
   LayoutList,
   LineChart,
   Link,
+  LogOut,
   type LucideIcon,
-  MessageCircleQuestion,
   Search,
   Settings2,
   Sparkles,
@@ -140,9 +140,9 @@ export const sidebarData: SidebarData = {
       icon: Trash2,
     },
     {
-      title: 'Help',
-      url: '#',
-      icon: MessageCircleQuestion,
+      title: 'Exit',
+      url: '/feed',
+      icon: LogOut,
     },
   ],
   favorites: [

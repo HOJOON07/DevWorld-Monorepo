@@ -1,5 +1,6 @@
 import { cn } from '@devworld/ui';
 import { createContext, ReactNode, useContext } from 'react';
+import { globalNavigate } from '../../app/lib/global-navigate';
 import { useSidebar } from './context';
 
 // SidebarItem 내부 context
@@ -23,9 +24,10 @@ interface SidebarItemProps {
   children: ReactNode;
   isActive?: boolean;
   className?: string;
+  routePath: string;
 }
 
-function SidebarItemRoot({ id, children, isActive, className }: SidebarItemProps) {
+function SidebarItemRoot({ id, children, isActive, className, routePath }: SidebarItemProps) {
   const { hoveredItem, setHoveredItem, activeItem } = useSidebar();
 
   const isItemActive = isActive ?? (hoveredItem ? hoveredItem === id : activeItem === id);
@@ -52,6 +54,7 @@ function SidebarItemRoot({ id, children, isActive, className }: SidebarItemProps
         )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onClick={() => globalNavigate(routePath)}
       >
         {children}
       </div>

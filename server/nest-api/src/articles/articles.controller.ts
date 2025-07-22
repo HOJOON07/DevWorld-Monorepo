@@ -16,7 +16,6 @@ import {
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { ImageModelType } from 'src/common/entities/image.entity';
-import { HttpExceptionFilter } from 'src/common/exception-filter/http-exception-filter';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { RolesEnum } from 'src/users/const/roles.const';
@@ -39,8 +38,6 @@ export class ArticlesController {
     private readonly dataSource: DataSource,
     private readonly articlesThumbnailService: ArticlesThumbnailService,
   ) {}
-  // 1) GET / articles
-  //    모든 articles를 다 가져온다.
 
   @Get('author/:id')
   @UseInterceptors(LogInterceptor)
@@ -87,25 +84,6 @@ export class ArticlesController {
     return this.articlesService.getWorkspaceArticleById(id);
   }
 
-  // @Post('random')
-  // async postPostArticles(@User() user: UserModel) {
-  //   await this.articlesService.generateArticles(user.id);
-
-  //   return true;
-  // }
-  // POST /articles
-
-  // POST API -> A모델을 정의하고 ,B모델을 저장한다.
-  // await 1
-  // await 2
-
-  // 만약에 1을 하다가 실패하면 b를 저장하면 안될 경우 -> 안전 장치가 필요하다.
-  // 트랜잭션이란 all or nothing
-
-  // transaction
-  // start -> 시작
-  // commit -> 저장
-  // rollback -> 원상 복구
   @Post()
   @UseInterceptors(TransactionInterceptor)
   async postCreateArticle(
