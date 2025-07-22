@@ -19,7 +19,7 @@ export type getDocsResponseType = {
 export const getDocs = async (url: string): Promise<getDocsResponseType> => {
   const api = APIBuilder.get(url).withCredentials(true).build();
 
-  const { data } = await api.call();
+  const { data } = await api.call<getDocsResponseType>();
 
-  return data as getDocsResponseType;
+  return data;
 };

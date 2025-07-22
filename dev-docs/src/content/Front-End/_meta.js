@@ -5,6 +5,7 @@ const meta = {
   'funnel-dynamic-rendering-refactoring': '',
   funnel: '',
   'global-navigate': '',
+  'infinite-scroll-refactoring': '',
   oauth: '',
   'oauth-dynamic-routing': '',
   'react-hook-form-context': '',

@@ -2,6 +2,7 @@ import { AppRoutingManager } from '@devworld/shell-router';
 import { QueryProvider } from '@devworld/tanstack-query-client';
 import { Navigate, type RouteObject } from 'react-router-dom';
 import { WorkspaceLayout } from '../../layouts/workspace-layout';
+import Detail from '../../pages/Detail';
 import Docs from '../../pages/Docs';
 import Write from '../../pages/Write';
 
@@ -28,7 +29,16 @@ export const routes: RouteObject[] = [
           },
           {
             path: 'write',
-            element: <Write />,
+            children: [
+              {
+                index: true,
+                element: <Write />,
+              },
+              {
+                path: ':id',
+                element: <Detail />,
+              },
+            ],
           },
         ],
       },
