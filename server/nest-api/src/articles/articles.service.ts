@@ -50,6 +50,7 @@ export class ArticlesService {
             position: true,
             location: true,
             image: true,
+            bio: true,
           },
           commentCount: true,
           createdAt: true,

@@ -21,7 +21,7 @@ export default function SidePannel() {
   };
 
   return (
-    <div className='flex h-screen w-full max-w-md flex-col border-gray-200 border-l bg-white '>
+    <div className='flex h-screen w-full max-w-[480px] flex-col border-gray-200 border-l bg-white '>
       <SidePannelHeader activeMode={activeMode} setActiveMode={setActiveMode} />
       <ScrollArea className='flex-1'>
         <div className='p-6'>{renderModeContent()}</div>

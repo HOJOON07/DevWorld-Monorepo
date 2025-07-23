@@ -18,10 +18,7 @@ export function DocsTableItem({ id, title, createdAt, updatedAt }: DocsItemProps
 
   const handleClick = (doc: NavigateDocType) => {
     const { id, title } = doc;
-    console.log('DocsTableItem: handleClick called with', { id, title });
-    console.log('DocsTableItem: calling setRoute with title:', title);
     setRoute(title);
-    console.log('DocsTableItem: calling navigate to:', `/write/${id}`);
     navigate(`/write/${id}`);
   };
 

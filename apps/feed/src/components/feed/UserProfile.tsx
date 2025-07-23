@@ -4,12 +4,13 @@ interface UserProfileProps {
   user: {
     name: string;
     avatar: string;
-    title: string;
-    isVerified: boolean;
+    position: string;
+    location?: string;
   };
 }
 
 export default function UserProfile({ user }: UserProfileProps) {
+  console.log(user);
   return (
     <div className='flex w-full cursor-pointer items-start gap-3'>
       <div className='relative'>
@@ -26,18 +27,16 @@ export default function UserProfile({ user }: UserProfileProps) {
       </div>
       <div className='min-w-0 flex-1'>
         <div className='flex flex-wrap items-center gap-1.5'>
-          <h3 className='font-semibold text-gray-900 text-sm'>{user.name}</h3>
-          {user.isVerified && (
-            <Badge
-              variant='secondary'
-              className='bg-blue-50 px-1.5 py-0.5 text-blue-700 text-xs hover:bg-blue-100'
-            >
-              <TrendingUp className='mr-0.5 h-2.5 w-2.5' />
-              Top Voice
-            </Badge>
-          )}
+          <h3 className='font-semibold text-gray-900 text-sm'>{user.name}name</h3>
+          <Badge
+            variant='secondary'
+            className='bg-blue-50 px-1.5 py-0.5 text-blue-700 text-xs hover:bg-blue-100'
+          >
+            <TrendingUp className='mr-0.5 h-2.5 w-2.5' />
+            Top Voice
+          </Badge>
         </div>
-        <p className='mt-0.5 text-muted-foreground text-xs'>{user.title}</p>
+        <p className='mt-0.5 text-muted-foreground text-xs'>{user.position}position</p>
       </div>
     </div>
   );
