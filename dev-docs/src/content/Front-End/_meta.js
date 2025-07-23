@@ -1,6 +1,8 @@
 const meta = {
   auth: '',
+  'breadcrumb-architecture-analysis': '',
   'centralized-route-management': '',
+  'editor-architecture-pattern': '',
   'feed-card-refactoring': '',
   'funnel-dynamic-rendering-refactoring': '',
   funnel: '',

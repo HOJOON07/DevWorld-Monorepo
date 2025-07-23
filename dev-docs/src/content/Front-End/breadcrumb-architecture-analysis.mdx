@@ -1,0 +1,230 @@
+# Breadcrumb Architecture Analysis
+
+## 개요
+
+현재 프로젝트의 breadcrumb 시스템은 커스텀 훅과 Zustand를 활용한 계층화 아키텍처를 사용합니다. UI 컴포넌트, 상태 관리, 비즈니스 로직의 관심사를 명확히 분리한 구조입니다.
+
+## 아키텍처 구성
+
+### 1. 상태 관리 레이어 (Zustand Store)
+**파일**: `apps/workspace/src/stores/breadcrumb-store.ts`
+
+```typescript
+interface State {
+  route: string;
+}
+
+interface Action {
+  setRoute: (route: string) => void;
+  clearRoute: () => void;
+}
+```
+
+**특징**:
+- 최소한의 API로 간단한 상태 관리
+- TypeScript 타입 안정성 보장
+- Redux 대비 적은 보일러플레이트
+
+### 2. 비즈니스 로직 레이어 (Custom Hook)
+**파일**: `apps/workspace/src/hooks/use-breadcrumb-items.tsx`
+
+```typescript
+export function useBreadcrumbItems(): BreadcrumbItem[] {
+  const { pathname } = useLocation();
+  const { route } = useBreadcrumbStore();
+  
+  // 경로 기반 breadcrumb 아이템 생성 로직
+}
+```
+
+**역할**:
+- React Router와 연동한 경로 인식
+- 동적 breadcrumb 아이템 생성
+- Zustand 스토어와 연결
+
+### 3. UI 컴포넌트 레이어
+**파일**: `packages/ui/src/components/ui/breadcrumb.tsx`
+
+- 재사용 가능한 컴포넌트 집합
+- 접근성 고려 (ARIA 속성)
+- Radix UI Slot을 활용한 polymorphic 컴포넌트
+
+### 4. 통합 레이어
+**파일**: `apps/workspace/src/components/common/workspace-breadcrumb.tsx`
+
+- 비즈니스 로직과 UI 컴포넌트 연결
+- 네비게이션 이벤트 처리
+
+## 장점 분석
+
+### 🟢 관심사 분리 (Separation of Concerns)
+- **상태 관리**: Zustand로 중앙화된 상태
+- **비즈니스 로직**: 커스텀 훅으로 캡슐화
+- **UI 로직**: 재사용 가능한 컴포넌트
+- **통합 로직**: 별도 컴포넌트로 분리
+
+### 🟢 타입 안정성
+```typescript
+export interface BreadcrumbItem {
+  label: string;
+  url?: string;
+  isCurrentPage?: boolean;
+}
+```
+전체 시스템에서 강력한 TypeScript 지원
+
+### 🟢 성능 최적화
+- Zustand의 선택적 구독으로 불필요한 리렌더링 방지
+- 가벼운 상태 관리 라이브러리 사용
+
+### 🟢 테스트 용이성
+각 레이어가 독립적으로 테스트 가능
+
+## 단점 분석
+
+### 🔴 확장성 문제
+```typescript
+if (pathSegments.includes('docs')) {
+  return [...baseItems, { label: 'docs', isCurrentPage: true }];
+}
+
+if (pathSegments.includes('write')) {
+  const items: BreadcrumbItem[] = [...baseItems, { label: 'write', url: '/write' }];
+  // 하드코딩된 조건부 로직
+}
+```
+- 새로운 라우트 추가 시 코드 수정 필요
+- 복잡한 조건부 로직으로 유지보수 어려움
+
+### 🔴 상태 관리 한계
+```typescript
+export const useBreadcrumbStore = create<State & Action>((set) => ({
+  route: '',
+  setRoute: (route: string) => { set({ route }); },
+  clearRoute: () => set({ route: '' }),
+}));
+```
+
+**문제점**:
+- 단일 `route` 문자열만 저장 (확장성 제한)
+- 페이지 새로고침 시 상태 손실
+- 입력 값 검증 없음
+- `clearRoute()` 호출하는 곳이 없어 메모리 누수 가능성
+
+### 🔴 컴포넌트 오용
+```typescript
+// 잘못된 사용 - 클릭 가능한 아이템에 BreadcrumbPage 사용
+<BreadcrumbPage
+  onClick={() => handleNavigate(item.url!)}
+  className='cursor-pointer text-muted-foreground hover:text-foreground'
+>
+  {item.label}
+</BreadcrumbPage>
+```
+
+**올바른 사용**:
+```typescript
+<BreadcrumbLink asChild>
+  <button onClick={() => handleNavigate(item.url!)}>
+    {item.label}
+  </button>
+</BreadcrumbLink>
+```
+
+## 현재 구현의 주요 이슈
+
+### 1. 상태 불일치
+- docs-table-item에서 클릭할 때만 `setRoute()` 호출
+- 직접 URL 접근 시 breadcrumb 정보 누락
+- 네비게이션 시 상태 정리 로직 없음
+
+### 2. 접근성 문제
+- `BreadcrumbPage`는 `aria-disabled='true'` 속성을 가짐
+- 클릭 가능한 아이템에 사용 시 스크린 리더 혼란
+
+### 3. 타입 안전성
+```typescript
+onClick={() => handleNavigate(item.url!)}  // Non-null assertion 사용
+```
+
+## 개선 방안
+
+### 즉시 수정 사항
+1. **컴포넌트 올바른 사용**: `BreadcrumbLink` 활용
+2. **상태 정리 로직 추가**: 적절한 시점에 `clearRoute()` 호출
+3. **타입 안전성 개선**: Non-null assertion 제거
+
+### 아키텍처 개선
+#### 1. 설정 기반 접근법
+```typescript
+interface BreadcrumbConfig {
+  path: string;
+  label: string | ((params: any) => string);
+  parent?: string;
+}
+
+const breadcrumbConfig: BreadcrumbConfig[] = [
+  { path: '/docs', label: 'docs', parent: 'workspace' },
+  { path: '/write/:id', label: (params) => params.title, parent: 'write' }
+];
+```
+
+#### 2. 라우트 메타데이터 통합
+```typescript
+const routes = [
+  {
+    path: '/write/:id',
+    element: <WriteComponent />,
+    breadcrumb: (params) => params.title
+  }
+];
+```
+
+#### 3. 상태 지속성
+- localStorage 또는 URL 기반 상태 유지
+- 페이지 새로고침 시에도 breadcrumb 정보 보존
+
+## 대안 아키텍처
+
+### Context API 기반
+```typescript
+const BreadcrumbContext = createContext<{
+  items: BreadcrumbItem[];
+  setRoute: (route: string) => void;
+  clearRoute: () => void;
+}>();
+```
+
+**장점**: React 생태계와 더 자연스러운 통합
+**단점**: 성능상 Zustand보다 불리할 수 있음
+
+### React Router 통합
+```typescript
+// react-router-dom v6.4+의 loader 활용
+export const writeDetailLoader = ({ params }) => {
+  return {
+    breadcrumb: params.title
+  };
+};
+```
+
+## 결론
+
+현재 breadcrumb 아키텍처는:
+
+### ✅ 강점
+- 명확한 관심사 분리
+- 현대적인 React 패턴 활용
+- 좋은 타입 안전성 기반
+
+### ❌ 개선 필요사항
+- 확장성 부족 (하드코딩된 로직)
+- 상태 관리 불완전성
+- 컴포넌트 API 오용
+
+### 🎯 권장사항
+1. **단기**: 컴포넌트 올바른 사용, 상태 정리 로직 추가
+2. **중기**: 설정 기반 breadcrumb 시스템으로 리팩토링
+3. **장기**: React Router와의 더 깊은 통합 고려
+
+이 아키텍처는 좋은 기초를 제공하지만, 유지보수성과 확장성을 위해 설정 기반 접근법으로의 전환을 고려해볼 필요가 있습니다.

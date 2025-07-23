@@ -8,18 +8,18 @@ export function NavActions() {
 
   const today = getToday();
 
-  if (pathname !== '/write') {
-    return null;
+  if (pathname.includes('write')) {
+    return (
+      <div className='flex items-center gap-2 text-sm'>
+        <div className='hidden font-medium text-muted-foreground md:inline-block'>Edit {today}</div>
+        <PublishDialog>
+          <Button variant='ghost' size='icon' className='h-7 w-7'>
+            <Save />
+          </Button>
+        </PublishDialog>
+      </div>
+    );
   }
 
-  return (
-    <div className='flex items-center gap-2 text-sm'>
-      <div className='hidden font-medium text-muted-foreground md:inline-block'>Edit {today}</div>
-      <PublishDialog>
-        <Button variant='ghost' size='icon' className='h-7 w-7'>
-          <Save />
-        </Button>
-      </PublishDialog>
-    </div>
-  );
+  return null;
 }

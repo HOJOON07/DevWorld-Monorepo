@@ -1,3 +1,4 @@
+import { useEditorRef } from '@devworld/editor';
 import {
   Button,
   Dialog,
@@ -18,13 +19,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useCreateDocs } from '../../app/api/query-hooks/use-create-docs';
 import { PublishSchema, PublishType } from '../../lib/publish-form-schema';
-import { useEditorStore } from '../../stores/editor-store';
 import Thumbnails from './Thumbnails';
 
 export default function PublishDialog({ children }: { children: React.ReactNode }) {
-  const { editorMethods } = useEditorStore();
+  const editor = useEditorRef();
   const createDocsMutaion = useCreateDocs();
-
   const form = useForm<PublishType>({
     resolver: zodResolver(PublishSchema),
     defaultValues: {
@@ -36,16 +35,11 @@ export default function PublishDialog({ children }: { children: React.ReactNode 
   });
 
   const onSubmit = (values: PublishType) => {
-    if (editorMethods) {
-      const editorContent = editorMethods.getValue();
-      const publishData = {
-        ...values,
-        contents: editorContent,
-      };
-
-      console.log(publishData);
-      createDocsMutaion.mutate(publishData);
-    }
+    const publishData = {
+      ...values,
+      contents: editor.children,
+    };
+    createDocsMutaion.mutate(publishData);
   };
   return (
     <Dialog>

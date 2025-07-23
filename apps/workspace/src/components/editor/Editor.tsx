@@ -1,18 +1,24 @@
-import { useEditableEditor } from '@devworld/editor';
+import {
+  Editor,
+  EditorContainer,
+  EditorKit,
+  Plate,
+  SettingsDialog,
+  usePlateEditor,
+} from '@devworld/editor';
+export default function WorkspaceEditor({ value }: { value: any }) {
+  const editor = usePlateEditor({
+    plugins: EditorKit,
+    value,
+    autoSelect: 'end',
+  });
 
-export default function Editor() {
-  const { Editor, getValue } = useEditableEditor(Placeholder);
-
-  return <Editor className='min-w-0 overflow-hidden px-20' />;
+  return (
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor variant='none' className='min-w-0 overflow-hidden px-20' />
+      </EditorContainer>
+      <SettingsDialog />
+    </Plate>
+  );
 }
-
-const Placeholder = [
-  {
-    children: [{ text: 'Title' }],
-    type: 'h1',
-  },
-  {
-    children: [{ text: '' }],
-    type: 'hr',
-  },
-];

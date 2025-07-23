@@ -1,12 +1,36 @@
-import { useEditableEditor } from './hooks/use-editable-editor';
+import { Plate, usePlateEditor } from 'platejs/react';
+import { EditorKit } from './components/editor/editor-kit';
+import { SettingsDialog } from './components/editor/settings-dialog';
+import { Editor, EditorContainer } from './components/ui/editor';
 
 function App() {
-  const { Editor, getValue } = useEditableEditor(value);
+  const editor = usePlateEditor({
+    plugins: EditorKit,
+    value: Placeholder,
+  });
 
-  return <Editor className='w-full' />;
+  return (
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor variant='none' className='min-w-0 overflow-hidden px-20' readOnly />
+      </EditorContainer>
+      <SettingsDialog />
+    </Plate>
+  );
 }
 
 export default App;
+
+const Placeholder = [
+  {
+    children: [{ text: 'Title' }],
+    type: 'h1',
+  },
+  {
+    children: [{ text: '' }],
+    type: 'hr',
+  },
+];
 
 const value = [
   {

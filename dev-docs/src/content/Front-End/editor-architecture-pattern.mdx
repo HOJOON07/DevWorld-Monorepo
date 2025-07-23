@@ -1,0 +1,313 @@
+# Editor 아키텍처 패턴: Hooks + useImperativeHandle + Zustand
+
+## 개요
+
+microfrontend 환경에서 PlateJS 기반 에디터를 패키지로 분리하면서, 복잡한 에디터 상태와 API를 외부 컴포넌트에 노출하기 위해 설계한 아키텍처 패턴입니다. **Hook 패턴**, **useImperativeHandle**, **Zustand 상태 관리**를 조합하여 깔끔한 API를 제공합니다.
+
+## 아키텍처 구조
+
+```
+@devworld/editor (Package)
+├── useEditableEditor (Hook)
+│   ├── EditorComponent (UI)
+│   └── EditorAPI (useImperativeHandle)
+└── Export Methods (getValue, setValue, etc.)
+
+Workspace App
+├── Write.tsx (새 문서 작성)
+├── Detail.tsx (문서 보기/편집)  
+├── PublishDialog (발행 기능)
+└── EditorStore (Zustand - 크로스 컴포넌트 상태)
+```
+
+## 핵심 패턴 분석
+
+### 1. Hook 패턴으로 UI와 로직 분리
+
+**문제**: PlateJS는 복잡한 에디터 API와 상태를 가지고 있어서, 이를 패키지로 분리하면서도 외부에서 쉽게 사용할 수 있게 해야 함.
+
+**해결**: `useEditableEditor` 훅으로 UI 컴포넌트와 API 메서드를 함께 제공
+
+```tsx
+// packages/editor/src/hooks/use-editable-editor.tsx
+export function useEditableEditor(initialValue?: TElement[]): UseEditableEditorReturn {
+  const plateEditor = usePlateEditor({
+    plugins: EditorKit,
+    value: initialValue,
+  });
+  const apiRef = useRef<MyEditor | null>(null);
+
+  // UI 컴포넌트 생성
+  const EditorComponent = ({ className, ...props }) => (
+    <Plate editor={plateEditor}>
+      <EditorContainer>
+        <Editor className={className} {...props} variant='none' />
+      </EditorContainer>
+      <EditorAPI ref={apiRef} /> {/* useImperativeHandle로 API 노출 */}
+    </Plate>
+  );
+
+  return {
+    Editor: EditorComponent,    // UI 컴포넌트
+    getValue: () => apiRef.current?.children, // API 메서드들
+    setValue: (value) => apiRef.current?.tf?.setValue?.(value),
+    // ... 기타 API들
+  };
+}
+```
+
+**장점**:
+- 한 번의 훅 호출로 UI와 API를 모두 제공
+- 에디터 내부 복잡성을 캡슐화
+- 타입 안전성 보장
+
+### 2. useImperativeHandle로 Ref API 노출
+
+**문제**: 자식 컴포넌트(Plate Editor)의 복잡한 API를 부모에서 접근해야 함.
+
+**해결**: `useImperativeHandle`로 선별적 API 노출
+
+```tsx
+// EditorAPI 컴포넌트
+const EditorAPI = forwardRef<MyEditor>((props, ref) => {
+  const editor = useEditorRef<MyEditor>(); // PlateJS 에디터 참조
+
+  useImperativeHandle(ref, () => editor, [editor]); // 에디터 인스턴스 노출
+  return null; // UI는 렌더링하지 않음
+});
+
+// useEditableEditor에서 사용
+const apiRef = useRef<MyEditor | null>(null);
+
+return {
+  getValue: () => apiRef.current?.children, // ref를 통해 에디터 값 접근
+  setValue: (value) => apiRef.current?.tf?.setValue?.(value), // ref를 통해 값 설정
+};
+```
+
+**장점**:
+- 복잡한 PlateJS API를 깔끔하게 추상화
+- 타입 안전성 유지
+- 성능상 문제 없음 (렌더링되지 않는 컴포넌트)
+
+### 3. Zustand를 통한 크로스 컴포넌트 상태 관리
+
+**문제**: 에디터가 있는 컴포넌트(Write.tsx)와 발행 버튼이 있는 컴포넌트(NavActions)가 분리되어 있어 에디터 값에 접근할 수 없음.
+
+**해결**: Zustand로 에디터 메서드를 전역 상태로 관리
+
+```tsx
+// stores/editor-store.ts
+interface EditorMethods {
+  getValue: () => any;
+}
+
+interface EditorStore {
+  editorMethods: EditorMethods | null;
+  setEditorMethods: (methods: EditorMethods) => void;
+  clearEditorMethods: () => void;
+}
+
+export const useEditorStore = create<EditorStore>((set) => ({
+  editorMethods: null,
+  setEditorMethods: (methods) => set({ editorMethods: methods }),
+  clearEditorMethods: () => set({ editorMethods: null }),
+}));
+```
+
+### 4. 실제 사용 패턴들
+
+#### A. 새 문서 작성 (Write.tsx)
+```tsx
+export default function Write() {
+  const { Editor, getValue } = useEditableEditor(Placeholder);
+  const { setEditorMethods, clearEditorMethods } = useEditorStore();
+
+  const getValueRef = useRef(getValue);
+
+  // getValue 변경을 감지하여 ref 업데이트
+  useEffect(() => {
+    getValueRef.current = getValue;
+  }, [getValue]);
+
+  // Zustand에 에디터 메서드 등록
+  useEffect(() => {
+    setEditorMethods({
+      getValue: () => getValueRef.current(),
+    });
+    return () => clearEditorMethods();
+  }, []);
+
+  return <Editor className='min-w-0 overflow-hidden px-20' />;
+}
+```
+
+**핵심 포인트**:
+- `useRef`로 `getValue` 함수의 안정적인 참조 유지
+- 컴포넌트 언마운트 시 Zustand 상태 정리
+
+#### B. 문서 상세보기/편집 (Detail.tsx)
+```tsx
+export default function Detail() {
+  const { id } = useParams();
+  const { data } = useGetDocsDetail({ id });
+  const { Editor, setValue } = useEditableEditor();
+
+  // API 데이터가 로드되면 에디터에 값 설정
+  useEffect(() => {
+    if (data?.contents) {
+      setValue(data.contents);
+    }
+  }, [data?.contents, setValue]);
+
+  return <Editor className='min-w-0 overflow-hidden px-20' />;
+}
+```
+
+**핵심 포인트**:
+- 비동기 데이터 로딩 후 `setValue`로 에디터 값 동적 설정
+- `useEffect`를 통한 데이터 변경 감지 및 에디터 동기화
+
+#### C. 발행 기능 (PublishDialog + NavActions)
+```tsx
+// NavActions.tsx
+export function NavActions() {
+  const { editorMethods } = useEditorStore(); // Zustand에서 에디터 메서드 가져오기
+
+  return (
+    <PublishDialog>
+      <Button variant='ghost' size='icon'>
+        <Save />
+      </Button>
+    </PublishDialog>
+  );
+}
+
+// PublishDialog.tsx
+export default function PublishDialog() {
+  const { editorMethods } = useEditorStore();
+  
+  const onSubmit = (values: PublishType) => {
+    if (editorMethods) {
+      const editorContent = editorMethods.getValue(); // 에디터 값 추출
+      const publishData = {
+        ...values,
+        contents: editorContent,
+      };
+      console.log('Publishing:', publishData);
+    }
+  };
+  
+  return (
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      {/* 폼 UI */}
+    </form>
+  );
+}
+```
+
+**핵심 포인트**:
+- Zustand를 통해 분리된 컴포넌트에서 에디터 값에 접근
+- 폼 데이터와 에디터 데이터를 합쳐서 최종 발행 데이터 생성
+
+## 패턴의 장점
+
+### 1. **깔끔한 API**
+```tsx
+// 한 줄로 에디터와 모든 기능 사용 가능
+const { Editor, getValue, setValue } = useEditableEditor();
+```
+
+### 2. **타입 안전성**
+- TypeScript를 통해 모든 API의 타입 보장
+- PlateJS의 복잡한 타입을 추상화하여 사용하기 쉽게 제공
+
+### 3. **유연성**
+- 초기값 있는 에디터: `useEditableEditor(initialData)`
+- 빈 에디터: `useEditableEditor()`
+- 런타임에 값 변경: `setValue(newData)`
+
+### 4. **성능**
+- useImperativeHandle을 통한 효율적인 API 접근
+- 불필요한 리렌더링 방지
+- ref 패턴으로 안정적인 함수 참조
+
+### 5. **재사용성**
+- 어떤 컴포넌트에서든 동일한 방식으로 에디터 사용 가능
+- 상태 관리 로직의 중복 제거
+
+## 주의사항 및 베스트 프랙티스
+
+### 1. **Hook 규칙 준수**
+```tsx
+// ❌ 조건부 Hook 호출
+if (hasData) {
+  const { Editor } = useEditableEditor(data);
+}
+
+// ✅ 항상 Hook 호출
+const { Editor } = useEditableEditor(hasData ? data : undefined);
+```
+
+### 2. **useRef를 통한 안정적인 함수 참조**
+```tsx
+// ❌ 직접 함수 전달 (infinite loop 위험)
+useEffect(() => {
+  setEditorMethods({ getValue });
+}, [getValue]); // getValue가 계속 변경됨
+
+// ✅ useRef로 안정적인 참조 유지
+const getValueRef = useRef(getValue);
+useEffect(() => {
+  getValueRef.current = getValue;
+}, [getValue]);
+
+useEffect(() => {
+  setEditorMethods({
+    getValue: () => getValueRef.current(),
+  });
+}, []); // 한 번만 실행
+```
+
+### 3. **메모리 누수 방지**
+```tsx
+useEffect(() => {
+  setEditorMethods(methods);
+  return () => clearEditorMethods(); // 클린업 필수
+}, []);
+```
+
+## 확장 가능성
+
+### 1. **추가 API 메서드**
+```tsx
+return {
+  Editor: EditorComponent,
+  getValue: () => apiRef.current?.children,
+  setValue: (value) => apiRef.current?.tf?.setValue?.(value),
+  // 새로운 메서드들 추가 가능
+  insertText: (text) => apiRef.current?.api?.insertText?.(text),
+  focus: () => apiRef.current?.focus?.(),
+  blur: () => apiRef.current?.blur?.(),
+};
+```
+
+### 2. **다양한 에디터 모드**
+```tsx
+const { Editor } = useEditableEditor(data, {
+  readOnly: true,
+  plugins: customPlugins,
+  theme: 'dark'
+});
+```
+
+### 3. **실시간 협업 지원**
+Zustand 스토어에 실시간 상태 추가하여 협업 기능 확장 가능
+
+## 결론
+
+이 아키텍처 패턴은 **복잡한 에디터 시스템을 패키지로 분리**하면서도 **사용하기 쉬운 API**를 제공하는 데 성공했습니다. 
+
+특히 **useImperativeHandle + Hook 패턴**으로 UI와 로직을 깔끔하게 분리하고, **Zustand**로 크로스 컴포넌트 상태 관리를 해결한 것이 핵심입니다.
+
+이 패턴은 다른 복잡한 UI 라이브러리를 패키지로 분리할 때도 적용할 수 있는 범용적인 접근법으로, **microfrontend 환경에서의 컴포넌트 설계**에 좋은 참고가 될 것입니다.
