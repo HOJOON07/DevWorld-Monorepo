@@ -15,10 +15,6 @@ export const useGetFeeds = () => {
     queryFn: ({ pageParam }) => getFeeds(pageParam as string),
     initialPageParam: api_uri,
     getNextPageParam: (lastpage) => {
-      console.log('API Response:', lastpage);
-      console.log('Next value:', lastpage.next);
-      console.log('Next type:', typeof lastpage.next);
-
       return lastpage.next || undefined;
     },
   });

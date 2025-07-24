@@ -53,7 +53,7 @@ export const useInfiniteScroll = <T extends InfiniteScrollData>(
 
   // 데이터 플래튼
   const allData = useMemo(() => {
-    return data?.pages?.flatMap((page) => page.data) ?? [];
+    return data?.pages?.flatMap((page: any) => page.data) ?? [];
   }, [data]);
 
   const fetchNext = useCallback(async () => {

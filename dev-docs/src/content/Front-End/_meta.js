@@ -13,6 +13,7 @@ const meta = {
   'react-hook-form-context': '',
   'shell-router-architecture': '',
   'shell-routing-root-redirect': '',
+  'side-panel-refactoring-analysis': '',
   'sidebar-compound-component': '',
   'tanstack-query-mfa': '',
 };

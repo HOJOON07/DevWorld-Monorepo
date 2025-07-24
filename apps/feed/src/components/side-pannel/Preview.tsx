@@ -12,6 +12,7 @@ import {
   Users,
 } from '@devworld/ui';
 import { sampleArticle } from '../../mock/mock-data';
+import StaticEditor from '../static-editor/Editor';
 
 export default function Preview() {
   const formatDate = (dateString: string) => {

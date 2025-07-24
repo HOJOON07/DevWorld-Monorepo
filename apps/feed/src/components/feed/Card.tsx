@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader } from '@devworld/ui';
 import { Feed } from '../../api/get-feeds';
+import { useSidePanelStore } from '../../stores/side-panel-store';
 import BookmarkButton from './BookmarkButton';
 import CommentButton from './CommentButton';
 import LikeButton from './LikeButton';
@@ -8,6 +9,7 @@ import UserProfileHover from './UserProfileHover';
 
 export default function FeedCard(props: Feed) {
   const { author, title, description, likeCount, commentCount, id, articleImage } = props;
+  const { setSelectedArticle } = useSidePanelStore();
 
   const userForProfile = {
     name: author.devName,
@@ -39,7 +41,7 @@ export default function FeedCard(props: Feed) {
             <h3 className='mb-1 font-semibold text-gray-900 text-sm'>{title}</h3>
             <p className='text-gray-800 text-sm leading-relaxed'>{description}</p>
             <button
-              onClick={() => {}}
+              onClick={() => setSelectedArticle(id.toString())}
               className='mt-1.5 font-medium text-blue-600 text-xs transition-colors duration-200 hover:text-blue-700 hover:underline'
             >
               Read more

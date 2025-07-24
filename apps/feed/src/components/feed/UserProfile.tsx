@@ -10,7 +10,6 @@ interface UserProfileProps {
 }
 
 export default function UserProfile({ user }: UserProfileProps) {
-  console.log(user);
   return (
     <div className='flex w-full cursor-pointer items-start gap-3'>
       <div className='relative'>

@@ -1,5 +1,6 @@
 import Feeds from '../components/feed/Feeds';
 import SearchBar from '../components/feed/SearchBar';
+import SidePanel from '../components/side-pannel/SidePanel';
 import SidePannel from '../components/side-pannel/SidePannel';
 import FeedSidebar from '../components/sidebar';
 
@@ -12,8 +13,9 @@ export default function MainPage() {
           <SearchBar />
           <Feeds />
         </main>
-        <aside className='sticky top-0 h-screen w-96 flex-shrink-0 overflow-y-auto'>
-          <SidePannel />
+        <aside className='sticky top-0 h-screen w-[440px] flex-shrink-0 overflow-y-auto'>
+          <SidePanel />
+          {/* <SidePannel /> */}
         </aside>
       </div>
     </div>

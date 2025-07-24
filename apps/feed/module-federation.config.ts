@@ -32,5 +32,8 @@ export const mfConfig = {
     '@devworld/tanstack-query-client': {
       singleton: true,
     },
+    '@devworld/editor': {
+      singleton: true,
+    },
   },
 };

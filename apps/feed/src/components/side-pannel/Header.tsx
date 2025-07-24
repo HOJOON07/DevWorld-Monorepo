@@ -1,5 +1,5 @@
 import { sampleArticle } from '../../mock/mock-data';
-import CompactNavigation from './CompactNavigation';
+import CompactNavigation from './Header/CompactNavigation';
 import HeaderTitle from './HeaderTitle';
 import StatusIndicator from './StatusIndicator';
 
@@ -15,7 +15,7 @@ export default function SidePannelHeader({ activeMode, setActiveMode }: Props) {
     <div className='border-gray-100 border-b bg-gradient-to-r from-blue-50 to-purple-50 p-4'>
       <div className='mb-4 flex items-center justify-between'>
         <StatusIndicator label='Multi Panel' />
-        <CompactNavigation activeMode={activeMode} onModeChange={setActiveMode} />
+        <CompactNavigation />
       </div>
 
       {activeMode === 'preview' && (

@@ -29,6 +29,8 @@
     "@devworld/tailwind-config": "workspace:*",
     "@devworld/tanstack-query-client": "workspace:*",
     "@devworld/ui": "workspace:*",
+    "@devworld/editor": "workspace:*",
+    "zustand": "^5.0.6",
     "@module-federation/enhanced": "^0.8.9",
     "motion": "^12.23.5",
     "react": "^19.0.0",
