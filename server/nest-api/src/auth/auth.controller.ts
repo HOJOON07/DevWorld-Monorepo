@@ -52,7 +52,6 @@ export class AuthController {
   }
 
   @Post('token/access')
-  @IsPublic()
   @UseGuards(RefreshTokenGuard)
   postTokenAccess(@Request() req, @Res() res: Response) {
     const token = req.token;

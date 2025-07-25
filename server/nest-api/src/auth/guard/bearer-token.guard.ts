@@ -18,23 +18,54 @@ export class BearerTokenGuard implements CanActivate {
     ]);
 
     const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
 
     if (isPublic) {
       request.isRoutePublic = true;
       return true;
     }
 
-    const token = this.authService.extractTokenFromCookies(request, 'access');
+    // 쿠키에서 토큰들 추출 (없어도 undefined로 처리)
+    const accessToken = request.cookies?.access_token;
+    const refreshToken = request.cookies?.refresh_token;
 
-    const result = await this.authService.verifyToken(token);
+    try {
+      // validateAuthTokens 로직을 사용하여 토큰 검증 및 자동 갱신
+      this.authService.validateAuthTokens(accessToken, refreshToken, response);
+      
+      // 토큰 검증 후 현재 유효한 access token 가져오기 (재발급되었을 수도 있음)
+      const currentAccessToken = request.cookies?.access_token || accessToken;
+      
+      // 토큰이 재발급된 경우 새로운 토큰을 사용
+      let tokenToVerify = currentAccessToken;
+      
+      // 만약 응답에 새로운 쿠키가 설정되었다면, 그 토큰을 사용
+      const setCookieHeader = response.getHeaders()['set-cookie'];
+      if (setCookieHeader) {
+        const newAccessTokenCookie = Array.isArray(setCookieHeader) 
+          ? setCookieHeader.find(cookie => cookie.includes('access_token='))
+          : setCookieHeader.includes('access_token=') ? setCookieHeader : null;
+        
+        if (newAccessTokenCookie) {
+          const match = newAccessTokenCookie.match(/access_token=([^;]+)/);
+          if (match) {
+            tokenToVerify = match[1];
+          }
+        }
+      }
 
-    const user = await this.usersService.getUserByEmail(result.email);
+      const result = this.authService.verifyToken(tokenToVerify);
+      const user = await this.usersService.getUserByEmail(result.email);
 
-    request.user = user;
-    request.token = token;
-    request.tokenType = result.type;
+      request.user = user;
+      request.token = tokenToVerify;
+      request.tokenType = result.type;
 
-    return true;
+      return true;
+    } catch (error) {
+      // validateAuthTokens에서 발생한 에러를 그대로 전달
+      throw error;
+    }
   }
 }
 
