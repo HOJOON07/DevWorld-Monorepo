@@ -52,7 +52,7 @@ export default function SignUpEmailSentForm() {
               <FormItem className='space-y-0.5'>
                 <FormLabel htmlFor='email'>Email Address</FormLabel>
                 <div className='relative'>
-                  <Mail className='absolute left-3 top-3 h-4 w-4 text-muted-foreground' />
+                  <Mail className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
                   <Input
                     {...field}
                     id='email'
@@ -63,7 +63,7 @@ export default function SignUpEmailSentForm() {
                   />
                 </div>
                 <FormMessage />
-                <FormDescription className='text-sm text-muted-foreground'>
+                <FormDescription className='text-muted-foreground text-sm'>
                   We'll send a verification code to this email address
                 </FormDescription>
               </FormItem>
@@ -72,7 +72,7 @@ export default function SignUpEmailSentForm() {
           <Button type='submit' className='w-full' disabled={isLoading}>
             {isLoading ? (
               <>
-                <Loader className='animate-spin w-4 h-4' />
+                <Loader className='h-4 w-4 animate-spin' />
                 Sending Code...
               </>
             ) : (
@@ -84,9 +84,9 @@ export default function SignUpEmailSentForm() {
           </Button>
         </form>
       </Form>
-      <div className='text-sm text-center flex gap-2 justify-center'>
+      <div className='flex justify-center gap-2 text-center text-sm'>
         <p className='text-muted-foreground'>Already have an account?</p>
-        <Link to='/signin' className='text-primary hover:underline font-medium'>
+        <Link to='/signin' className='font-medium text-primary hover:underline'>
           Sign In
         </Link>
       </div>

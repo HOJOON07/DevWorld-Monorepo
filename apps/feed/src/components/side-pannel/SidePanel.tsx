@@ -22,7 +22,7 @@ export default function SidePanel() {
     <div className='flex h-screen w-full max-w-[480px] flex-col border-gray-200 border-l bg-white'>
       <SidePanelHeader />
       <ScrollArea className='flex-1'>
-        <div className='p-6'>{renderModeContent()}</div>
+        <div className='px-6 py-4'>{renderModeContent()}</div>
       </ScrollArea>
     </div>
   );

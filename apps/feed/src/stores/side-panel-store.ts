@@ -14,11 +14,9 @@ interface SidePanelActions {
 }
 
 export const useSidePanelStore = create<SidePanelState & SidePanelActions>((set) => ({
-  // State
-  activeMode: 'Preview',
+  activeMode: 'My Profile',
   selectedArticleId: null,
 
-  // Actions
   setActiveMode: (mode) => set({ activeMode: mode }),
 
   setSelectedArticle: (articleId) =>

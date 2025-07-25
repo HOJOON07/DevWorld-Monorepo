@@ -343,6 +343,6 @@ export class ArticlesService {
     if (!articlesAuthor) {
       throw new NotFoundException('아티클을 찾을 수 없습니다.');
     }
-    return { author: articlesAuthor, articles };
+    return { author: articlesAuthor.author, articles };
   }
 }

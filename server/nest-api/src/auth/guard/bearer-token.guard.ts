@@ -62,23 +62,19 @@ export class RefreshTokenGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-    private readonly reflector: Reflector,
+    // private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    // const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
+    //   context.getHandler(),
+    //   context.getClass(),
+    // ]);
 
     const request = context.switchToHttp().getRequest();
 
-    if (isPublic) {
-      request.isRoutePublic = true;
-      return true;
-    }
-
     const token = this.authService.extractTokenFromCookies(request, 'refresh');
+
     const result = await this.authService.verifyToken(token);
     const user = await this.usersService.getUserByEmail(result.email);
 

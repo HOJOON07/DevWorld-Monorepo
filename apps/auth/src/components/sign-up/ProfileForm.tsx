@@ -63,21 +63,21 @@ export default function SignUpProfileForm() {
           <EmailInput form={form} />
           <UsernameInput form={form} />
           <PasswordInput form={form} />
-          <div className='pt-4 space-y-3'>
+          <div className='space-y-3 pt-4'>
             <SubmitButton form={form} />
             <BackButton form={form} />
           </div>
         </form>
       </Form>
 
-      <div className='text-center space-y-2'>
-        <p className='text-xs text-muted-foreground'>
+      <div className='space-y-2 text-center'>
+        <p className='text-muted-foreground text-xs'>
           By creating an account, you agree to our{' '}
-          <a href='#' className='text-primary hover:underline font-medium'>
+          <a href='#' className='font-medium text-primary hover:underline'>
             Terms of Service
           </a>{' '}
           and{' '}
-          <a href='#' className='text-primary hover:underline font-medium'>
+          <a href='#' className='font-medium text-primary hover:underline'>
             Privacy Policy
           </a>
         </p>

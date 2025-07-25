@@ -1,6 +1,6 @@
 import { Button, cn } from '@devworld/ui';
 import { ReactNode } from 'react';
-import { useSidePanelStore } from '../../stores/side-panel-store';
+import { useSidePanelStore } from '../../../stores/side-panel-store';
 
 export type SidebarMode = 'Preview' | 'My Profile';
 

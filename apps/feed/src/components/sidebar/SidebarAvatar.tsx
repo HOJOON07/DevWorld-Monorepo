@@ -1,5 +1,6 @@
 import { AvatarFallback, AvatarImage, Avatar as AvatarUI, cn } from '@devworld/ui';
 import { useState } from 'react';
+import { useMyInfoState } from '../../stores/my-info-state';
 
 interface SidebarAvatarProps {
   src?: string;
@@ -17,6 +18,8 @@ export default function SidebarAvatar({
   className,
 }: SidebarAvatarProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  const { data } = useMyInfoState();
 
   return (
     <div
@@ -45,7 +48,7 @@ export default function SidebarAvatar({
           isHovered ? 'text-primary' : 'text-text-secondary',
         )}
       >
-        {user}
+        {data?.devName}
       </div>
     </div>
   );

@@ -1,56 +1,69 @@
+import { Avatar, AvatarFallback, AvatarImage, Calendar, TrendingUp, Users } from '@devworld/ui';
 import { GetArticleDetailResponseType } from '../../../api/get-article-detail';
+import { useGetAuthor } from '../../../api/query-hooks/use-get-author';
 import StaticEditor from '../../static-editor/Editor';
 
 interface ArticleContentProps {
   article: GetArticleDetailResponseType;
 }
 
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
+const formatNumber = (num: number) => {
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toString();
+};
+
 export default function ArticleContent({ article }: ArticleContentProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+  const { data } = useGetAuthor();
 
   return (
     <div className='space-y-6'>
-      {/* Article Header */}
-      <div className='space-y-4'>
-        <h1 className='font-bold text-gray-900 text-xl leading-tight'>{article.title}</h1>
-
-        <div className='flex items-center justify-between text-gray-500 text-sm'>
-          <span>{formatDate(article.createdAt)}</span>
-          <div className='flex items-center space-x-4'>
-            <span className='flex items-center'>
-              <svg className='mr-1 h-4 w-4' fill='currentColor' viewBox='0 0 20 20'>
-                <path
-                  fillRule='evenodd'
-                  d='M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z'
-                  clipRule='evenodd'
-                />
-              </svg>
-              {article.likeCount}
-            </span>
-            <span className='flex items-center'>
-              <svg className='mr-1 h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
-                />
-              </svg>
-              {article.commentCount}
-            </span>
+      <div className='flex items-center space-x-3 rounded-xl bg-gray-50 p-4'>
+        <Avatar className='h-12 w-12 ring-2 ring-white'>
+          <AvatarImage src={'/placeholder.svg'} />
+          <AvatarFallback className='bg-gradient-to-r from-blue-500 to-purple-500 text-white'>
+            author name
+          </AvatarFallback>
+        </Avatar>
+        <div className='flex-1'>
+          <div className='flex items-center space-x-1'>
+            <h4 className='font-semibold text-gray-900'>{data?.author.devName}</h4>
+          </div>
+          <p className='text-gray-600 text-sm'>{data?.author.position || 'FrontEnd Engineer'}</p>
+          <div className='mt-1 flex items-center space-x-3'>
+            <p className='text-gray-500 text-xs'>{data?.author.location || 'Seoul'}</p>
+            <div className='flex items-center gap-1'>
+              <Users className='h-3 w-3 text-gray-400' />
+              <span className='text-gray-500 text-xs'>
+                {data?.author.followerCount || '10k'} followers
+              </span>
+            </div>
           </div>
         </div>
-
-        {article.description && (
-          <p className='text-gray-600 leading-relaxed'>{article.description}</p>
-        )}
       </div>
+
+      <div className='space-y-3'>
+        <div className='flex items-center justify-between text-gray-600 text-sm'>
+          <div className='flex items-center space-x-1'>
+            <Calendar className='h-4 w-4' />
+            <span>Published {formatDate(article.createdAt)}</span>
+          </div>
+          <div className='flex items-center space-x-1'>
+            <TrendingUp className='h-4 w-4 text-green-600' />
+            <span className='font-medium text-green-600'>Trending</span>
+          </div>
+        </div>
+      </div>
+
       <StaticEditor contents={article.contents} />
     </div>
   );

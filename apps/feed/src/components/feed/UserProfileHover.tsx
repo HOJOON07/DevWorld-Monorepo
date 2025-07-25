@@ -20,7 +20,7 @@ interface UserProfileHoverProps {
 
 export default function UserProfileHover({ user }: UserProfileHoverProps) {
   return (
-    <HoverCard openDelay={200} closeDelay={100}>
+    <HoverCard openDelay={150} closeDelay={50}>
       <HoverCardTrigger>
         <UserProfile user={user} />
       </HoverCardTrigger>

@@ -1,5 +1,5 @@
 import { FileText, User } from '@devworld/ui';
-import TabButton from '../TabButton';
+import TabButton from './TabButton';
 
 const tabs = [
   {

@@ -81,20 +81,20 @@ export default function UsernameInput({ form }: UsernameInputProps) {
       name='devName'
       render={({ field }) => (
         <FormItem>
-          <FormLabel className='text-sm font-medium'>DevWorld Username</FormLabel>
+          <FormLabel className='font-medium text-sm'>DevWorld Username</FormLabel>
           <div className='flex space-x-2'>
             <div className='relative flex-1'>
-              <User className='absolute left-3 top-3 h-4 w-4 text-muted-foreground' />
+              <User className='absolute top-3 left-3 h-4 w-4 text-muted-foreground' />
               <Input
                 {...field}
                 type='text'
                 placeholder='Choose your unique username'
-                className={`pl-10 pr-10 ${
+                className={`pr-10 pl-10 ${
                   usernameCheckStatus === 'available' ? 'border-green-500' : ''
                 }`}
                 disabled={disabled}
               />
-              <div className='absolute right-3 top-3'>{getUsernameStatusIcon()}</div>
+              <div className='absolute top-3 right-3'>{getUsernameStatusIcon()}</div>
             </div>
             <Button
               type='button'
@@ -106,11 +106,11 @@ export default function UsernameInput({ form }: UsernameInputProps) {
                 field.value.length < 3 ||
                 disabled
               }
-              className='px-4 whitespace-nowrap bg-transparent'
+              className='whitespace-nowrap bg-transparent px-4'
             >
               {checkDuplicatedMutation.isPending ? (
                 <>
-                  <Loader2 className='w-4 h-4 mr-1 animate-spin' />
+                  <Loader2 className='mr-1 h-4 w-4 animate-spin' />
                   Checking
                 </>
               ) : (
@@ -120,12 +120,12 @@ export default function UsernameInput({ form }: UsernameInputProps) {
           </div>
           <FormMessage />
           {usernameCheckStatus === 'available' && (
-            <p className='text-xs text-green-600 flex items-center'>
-              <Check className='w-3 h-3 mr-1' />
+            <p className='flex items-center text-green-600 text-xs'>
+              <Check className='mr-1 h-3 w-3' />
               Username is available!
             </p>
           )}
-          <p className='text-xs text-muted-foreground'>
+          <p className='text-muted-foreground text-xs'>
             3-20 characters, letters, numbers, and underscores only
           </p>
         </FormItem>

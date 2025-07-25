@@ -22,22 +22,22 @@ export default function SignInCard({ className, ...props }: ComponentProps) {
               <OAuthButton iconName='github' label='Login with Github' provider='github' />
               <OAuthButton iconName='google' label='Login with Google' provider='google' />
             </div>
-            <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
-              <span className='bg-card text-muted-foreground relative z-10 px-2'>
+            <div className='relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t'>
+              <span className='relative z-10 bg-card px-2 text-muted-foreground'>
                 Or continue with
               </span>
             </div>
             <SignInForm />
-            <div className='text-center text-sm flex gap-2 justify-center'>
+            <div className='flex justify-center gap-2 text-center text-sm'>
               <p>Don't have an account?</p>
-              <Link className='text-primary hover:underline font-medium' to='/signup' replace>
+              <Link className='font-medium text-primary hover:underline' to='/signup' replace>
                 Sign Up
               </Link>
             </div>
           </div>
         </CardContent>
       </Card>
-      <div className='text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4'>
+      <div className='text-balance text-center text-muted-foreground text-xs *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary'>
         By clicking continue, you agree to our <a href='#'>Terms of Service</a> and
         <a href='#'>Privacy Policy</a>.
       </div>
