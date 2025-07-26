@@ -14,7 +14,7 @@ import { useAvatarPreview } from '../../../hooks/use-avatar-preview';
 interface ProfileAvatarProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
-  currentImageUrl?: string;
+  currentImageUrl?: string | null;
   userName?: string;
 }
 
@@ -75,7 +75,7 @@ export default function ProfileAvatar<T extends FieldValues>({
                 className='h-16 w-16 cursor-pointer shadow-md ring-2 ring-white transition-opacity hover:opacity-80'
                 onClick={handleAvatarClick}
               >
-                <AvatarImage src={displayUrl} alt='Profile' />
+                <AvatarImage src={displayUrl as string} alt='Profile' />
                 <AvatarFallback className='bg-gradient-to-r from-blue-500 to-purple-500 text-lg text-white'>
                   {userInitials}
                 </AvatarFallback>

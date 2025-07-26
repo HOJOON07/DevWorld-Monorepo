@@ -25,6 +25,8 @@ class APIBuilder {
 
   static delete = (url: string) => new APIBuilder('DELETE', url);
 
+  static patch = (url: string, data: unknown) => new APIBuilder('PATCH', url, data);
+
   baseURL(value: string): APIBuilder {
     this._instance.baseURL = value;
     return this;

@@ -1,15 +1,20 @@
 import { Button, Form, LinkIcon, Mail, MapPin } from '@devworld/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-
+import { useEditProfile } from '../../../api/query-hooks/use-edit-profile';
+import { convertNullToUndefined } from '../../../lib/convert-null-to-undefined';
 import { ProfileEditSchema, ProfileEditType } from '../../../lib/profile-edit-schema';
+import { UserProfileType } from '../../../stores/my-info-state';
 import ProfileAvatar from './Avatar';
 import { FormInput, FormTextarea } from './FormInput';
 
-export default function ProfileContents({ user }: { user: ProfileEditType }) {
+type Props = Partial<UserProfileType>;
+
+export default function ProfileContents({ user }: { user: Props }) {
+  const editProfileMutation = useEditProfile();
   const form = useForm<ProfileEditType>({
     resolver: zodResolver(ProfileEditSchema),
-    defaultValues: {
+    defaultValues: convertNullToUndefined({
       devName: user?.devName,
       bio: user?.bio,
       position: user?.position,
@@ -20,7 +25,7 @@ export default function ProfileContents({ user }: { user: ProfileEditType }) {
       instagram: user?.instagram,
       socialEtc: user?.socialEtc,
       image: user?.image,
-    },
+    }),
   });
 
   const {
@@ -29,10 +34,11 @@ export default function ProfileContents({ user }: { user: ProfileEditType }) {
     handleSubmit,
   } = form;
 
-  console.log(form);
-
   const onSubmit = async (values: ProfileEditType) => {
-    console.log('Profile form submitted:', values);
+    editProfileMutation.mutate({
+      userId: user.id as number,
+      profileEditData: values,
+    });
   };
 
   return (
