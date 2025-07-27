@@ -62,7 +62,6 @@ function SidebarItemRoot({ id, children, isActive, className, routePath }: Sideb
   );
 }
 
-// Sub Components
 interface SidebarItemIndicatorProps {
   className?: string;
 }
