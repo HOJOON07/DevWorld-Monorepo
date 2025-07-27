@@ -1,4 +1,4 @@
-import { House, Pencil } from '@devworld/ui';
+import { House, LogOut, Pencil } from '@devworld/ui';
 import DevWorldLogo from '../../assets/logo-image/DevWorldLogo.png';
 import Sidebar from './Sidebar';
 
@@ -27,6 +27,16 @@ export default function FeedSidebar() {
               <Pencil />
             </Sidebar.Item.Icon>
             <Sidebar.Item.Text>Workspace</Sidebar.Item.Text>
+          </div>
+        </Sidebar.Item>
+
+        <Sidebar.Item id='logout' routePath='#'>
+          <Sidebar.Item.Indicator />
+          <div className='flex items-center space-x-2'>
+            <Sidebar.Item.Icon>
+              <LogOut />
+            </Sidebar.Item.Icon>
+            <Sidebar.Item.Text>Logout</Sidebar.Item.Text>
           </div>
         </Sidebar.Item>
       </Sidebar.Content>
