@@ -1,6 +1,7 @@
 import { House, LogOut, Pencil } from '@devworld/ui';
 import DevWorldLogo from '../../assets/logo-image/DevWorldLogo.png';
 import Sidebar from './Sidebar';
+// todo side bar handler props
 
 export default function FeedSidebar() {
   return (
