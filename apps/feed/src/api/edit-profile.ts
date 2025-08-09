@@ -6,15 +6,15 @@ export interface EditProfileRequest {
   profileEditData: ProfileEditType;
 }
 
-export type EditProfieResponse = ProfileEditType;
+export type EditProfileResponse = ProfileEditType;
 
 export const EditProfile = async ({
   userId,
   profileEditData,
-}: EditProfileRequest): Promise<EditProfieResponse> => {
+}: EditProfileRequest): Promise<EditProfileResponse> => {
   const api = APIBuilder.patch(`/users/edit/${userId}`, profileEditData)
     .withCredentials(true)
     .build();
-  const { data } = await api.call<EditProfieResponse>();
+  const { data } = await api.call<EditProfileResponse>();
   return data;
 };
