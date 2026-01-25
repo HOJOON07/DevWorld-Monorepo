@@ -1,13 +1,8 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
+import { RolesEnum } from 'src/users/const/roles.const';
 import { UserModel } from 'src/users/entities/users.entity';
 import { CommentsService } from '../comments.service';
-import { RolesEnum } from 'src/users/const/roles.const';
 @Injectable()
 export class isCommentMineOrAdminGuaer implements CanActivate {
   constructor(private readonly commentsService: CommentsService) {}
@@ -28,10 +23,7 @@ export class isCommentMineOrAdminGuaer implements CanActivate {
 
     const commentId = request.params.commentId;
 
-    const isOk = await this.commentsService.isCommentsMine(
-      user.id,
-      parseInt(commentId),
-    );
+    const isOk = await this.commentsService.isCommentsMine(user.id, parseInt(commentId));
 
     if (!isOk) {
       throw new UnauthorizedException('댓글을 삭제할 권한이 없습니다.');

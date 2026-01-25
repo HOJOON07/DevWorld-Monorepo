@@ -5,7 +5,7 @@ export default function VerifyButton({ isVerifying }: { isVerifying: boolean }) 
     <Button type='submit' className='w-full' disabled={isVerifying}>
       {isVerifying ? (
         <>
-          <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2' />
+          <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
           Verifying...
         </>
       ) : (

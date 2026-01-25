@@ -67,11 +67,6 @@ export class CommonService {
     );
 
     mergeWithFindOptions.where = this.transformWhereToArray(mergeWithFindOptions.where);
-
-    // const [data, count] = await repository.findAndCount({
-    //   ...findOptions,
-    //   ...overrideFindOptions,
-    // });
     const [data, count] = await repository.findAndCount({
       ...mergeWithFindOptions,
     });
@@ -88,12 +83,6 @@ export class CommonService {
     overrideFindOptions: FindManyOptions<T> = {},
     path: string,
   ) {
-    /** 덮어 쓰기 위한다면 이 코드를.
-     *const results = await repository.find({
-      ...findOptions,
-      ...overrideFindOptions,
-    })
-    */
     const findOptions = this.composeFindOptions<T>(dto);
     const mergeWithFindOptions = mergeWith(
       {},
@@ -192,8 +181,6 @@ export class CommonService {
       options[field] = value;
     } else {
       const [_, field, operator] = split;
-
-      // const values = value.toString().split(',');
       if (operator === 'i_like') {
         options[field] = FILTER_MAPPER[operator](`%${value}%`);
       } else {
@@ -206,10 +193,6 @@ export class CommonService {
 
   private parseOrderFilter<T extends BaseModel>(key: string, value: any): FindOptionsOrder<T> {
     const order: FindOptionsOrder<T> = {};
-
-    /**
-     * order는 무조건 두개로
-     */
 
     const split = key.split('__');
 

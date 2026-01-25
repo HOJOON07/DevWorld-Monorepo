@@ -7,7 +7,7 @@ type ProgressBarProps = {
 function ProgressBar({ value }: ProgressBarProps) {
   return (
     <div className='space-y-2'>
-      <div className='flex justify-between text-sm text-muted-foreground'>
+      <div className='flex justify-between text-muted-foreground text-sm'>
         <span>Progress</span>
         <span>{Math.round(value)}%</span>
       </div>

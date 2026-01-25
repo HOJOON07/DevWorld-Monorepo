@@ -23,10 +23,10 @@ export default function SubmitButton({ form }: SubmitButtonProps) {
   };
 
   return (
-    <Button type='submit' className='w-full h-11' disabled={isDisabled}>
+    <Button type='submit' className='h-11 w-full' disabled={isDisabled}>
       {isSubmitting ? (
         <>
-          <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+          <Loader2 className='mr-2 h-4 w-4 animate-spin' />
           Creating Account...
         </>
       ) : (

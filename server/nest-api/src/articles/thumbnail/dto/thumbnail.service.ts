@@ -1,15 +1,12 @@
+import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { promises } from 'fs';
+import { basename, join } from 'path';
 import { ArticlesModel } from 'src/articles/entities/articles.entity';
+import { ARTCILES_IMAGE_PATH, TEMP_FOLDER_PATH } from 'src/common/const/path.const';
 import { ImageModel } from 'src/common/entities/image.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { CreateArticleThumbnailDto } from './create-thumbnail.dto';
-import {
-  ARTCILES_IMAGE_PATH,
-  TEMP_FOLDER_PATH,
-} from 'src/common/const/path.const';
-import { promises } from 'fs';
-import { BadRequestException } from '@nestjs/common';
-import { basename, join } from 'path';
 
 export class ArticlesThumbnailService {
   constructor(
@@ -18,15 +15,10 @@ export class ArticlesThumbnailService {
   ) {}
 
   getRepository(qr?: QueryRunner) {
-    return qr
-      ? qr.manager.getRepository<ImageModel>(ImageModel)
-      : this.thumbnailRepository;
+    return qr ? qr.manager.getRepository<ImageModel>(ImageModel) : this.thumbnailRepository;
   }
 
-  async createArticleThumbnail(
-    dto: CreateArticleThumbnailDto,
-    qr?: QueryRunner,
-  ) {
+  async createArticleThumbnail(dto: CreateArticleThumbnailDto, qr?: QueryRunner) {
     const repository = this.getRepository(qr);
     const tempFilePath = join(TEMP_FOLDER_PATH, dto.path);
 

@@ -52,7 +52,7 @@ function StepsIndicator({ steps, currentStep }: StepsIndicatorProps) {
               </div>
               <span className={stepLabel({ variant })}>{stepItem.name}</span>
             </div>
-            {index < steps.length - 1 && <div className='flex-1 h-px bg-muted mx-4'></div>}
+            {index < steps.length - 1 && <div className='mx-4 h-px flex-1 bg-muted'></div>}
           </React.Fragment>
         );
       })}

@@ -6,17 +6,14 @@ import {
   InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, catchError, tap } from 'rxjs';
+import { catchError, Observable, tap } from 'rxjs';
 import { DataSource } from 'typeorm';
 
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
   constructor(private readonly dataSource: DataSource) {}
 
-  async intercept(
-    context: ExecutionContext,
-    next: CallHandler<any>,
-  ): Promise<Observable<any>> {
+  async intercept(context: ExecutionContext, next: CallHandler<any>): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
 
     // 트랜잭션과 관련되 모든 쿼리를 담당할
