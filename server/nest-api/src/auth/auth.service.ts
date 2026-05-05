@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -180,21 +180,14 @@ export class AuthService {
   }
 
   async registerWithEmail(user: RegisterUserDto) {
-    const hash_rounds = parseInt(this.configService.get<string>(ENV_JWT_HASH_ROUNDS));
-    const hashPassword = await bcrypt.hash(user.password, hash_rounds);
-    const hashConfirmPassword = await bcrypt.hash(user.passwordConfirm, hash_rounds);
+    const hashRounds = parseInt(this.configService.get<string>(ENV_JWT_HASH_ROUNDS));
+    const hashedPassword = await bcrypt.hash(user.password, hashRounds);
 
-    const confirmPass = await bcrypt.compare(user.passwordConfirm, hashPassword);
-
-    const confirmPass2 = await bcrypt.compare(user.password, hashConfirmPassword);
-
-    if (!confirmPass && !confirmPass2) {
-      throw new BadRequestException(
-        '사용자가 입력한 비밀번호와 확인 비밀번호가 일치하지 않습니다.',
-      );
-    }
-
-    const newUser = await this.userService.createUser(user.email, hashPassword, user.devName);
+    const newUser = await this.userService.createUser(
+      user.email,
+      hashedPassword,
+      user.devName,
+    );
 
     return this.loginUser(newUser);
   }
