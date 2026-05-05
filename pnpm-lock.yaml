@@ -26,6 +26,9 @@ importers:
       '@devworld/axios-client':
         specifier: workspace:*
         version: link:../../packages/axios-client
+      '@devworld/event-bus':
+        specifier: workspace:*
+        version: link:../../packages/event-bus
       '@devworld/shell-router':
         specifier: workspace:*
         version: link:../../packages/shell-router
@@ -120,6 +123,9 @@ importers:
       '@devworld/editor':
         specifier: workspace:*
         version: link:../../packages/editor
+      '@devworld/event-bus':
+        specifier: workspace:*
+        version: link:../../packages/event-bus
       '@devworld/shell-router':
         specifier: workspace:*
         version: link:../../packages/shell-router
@@ -384,6 +390,9 @@ importers:
       '@devworld/editor':
         specifier: workspace:*
         version: link:../../packages/editor
+      '@devworld/event-bus':
+        specifier: workspace:*
+        version: link:../../packages/event-bus
       '@devworld/shell-router':
         specifier: workspace:*
         version: link:../../packages/shell-router
@@ -819,6 +828,10 @@ importers:
         version: 5.8.3
 
   packages/shell-router:
+    dependencies:
+      '@devworld/event-bus':
+        specifier: workspace:*
+        version: link:../event-bus
     devDependencies:
       '@eslint/js':
         specifier: ^9.29.0

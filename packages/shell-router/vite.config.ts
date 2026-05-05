@@ -12,12 +12,13 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react-router-dom'],
+      external: ['react', 'react-dom', 'react-router-dom', '@devworld/event-bus'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
           'react-router-dom': 'ReactRouterDOM',
+          '@devworld/event-bus': 'devworldEventBus',
         },
       },
     },

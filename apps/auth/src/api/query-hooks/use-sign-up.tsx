@@ -1,7 +1,7 @@
+import { globalNavigate } from '@devworld/event-bus';
 import { useMutation } from '@devworld/tanstack-query-client';
 import { useToast } from '@devworld/ui';
 import { SignUpType } from '../../lib/form-validation';
-import { globalNavigate } from '../../lib/global-navigate';
 import { emailRegister } from '../email-register';
 
 export const useSignUp = () => {

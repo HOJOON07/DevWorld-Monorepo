@@ -1,5 +1,5 @@
+import { globalNavigate } from '@devworld/event-bus';
 import { ReactNode } from 'react';
-import { globalNavigate } from '../../app/lib/global-navigate';
 import SidebarLogo from './SidebarLogo';
 
 interface SidebarHeaderProps {

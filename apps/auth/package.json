@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@devworld/axios-client": "workspace:*",
+    "@devworld/event-bus": "workspace:*",
     "@devworld/shell-router": "workspace:*",
     "@devworld/tailwind-config": "workspace:*",
     "@devworld/tanstack-query-client": "workspace:*",

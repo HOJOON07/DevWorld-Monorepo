@@ -26,6 +26,9 @@ export const mfConfig = {
     '@devworld/shell-router': {
       singleton: true,
     },
+    '@devworld/event-bus': {
+      singleton: true,
+    },
     '@devworld/axios-client': {
       singleton: true,
     },

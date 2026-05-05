@@ -1,35 +1,22 @@
+import { emit, on, type MFEAppType } from '@devworld/event-bus';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function useShellEvent(type: string, basename: string) {
+export default function useShellEvent(type: MFEAppType, basename: string) {
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const appNavigationEventHandler = (event: Event) => {
-      const pathname = (event as CustomEvent<string>).detail;
+    return on(`[${type}] navigated`, (pathname) => {
       const newPathname = pathname === '/' ? basename : `${basename}${pathname}`;
-
-      if (newPathname === location.pathname) {
-        return;
-      }
-
+      if (newPathname === location.pathname) return;
       navigate(newPathname);
-    };
-    window.addEventListener(`[${type}] navigated`, appNavigationEventHandler);
-
-    return () => {
-      window.removeEventListener(`[${type}] navigated`, appNavigationEventHandler);
-    };
-  }, [basename, location, navigate, type]);
+    });
+  }, [basename, location.pathname, navigate, type]);
 
   useEffect(() => {
     if (location.pathname.startsWith(basename)) {
-      window.dispatchEvent(
-        new CustomEvent('[app-shell] navigated', {
-          detail: location.pathname.replace(basename, ''),
-        }),
-      );
+      emit('[app-shell] navigated', location.pathname.replace(basename, ''));
     }
-  }, [basename, location]);
+  }, [basename, location.pathname]);
 }

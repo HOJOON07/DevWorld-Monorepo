@@ -1,6 +1,6 @@
+import { globalNavigate } from '@devworld/event-bus';
 import { cn } from '@devworld/ui';
 import { createContext, ReactNode, useContext } from 'react';
-import { globalNavigate } from '../../app/lib/global-navigate';
 import { useSidebar } from './context';
 
 // SidebarItem 내부 context
