@@ -1,14 +1,15 @@
 import axios, { AxiosPromise } from 'axios';
 import { setupAuthInterceptors } from './interceptors';
 
-// 임시 타이핑
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export type HTTPHeaders = any;
 
 export type HTTPParams = unknown;
 
-//
+const httpClient = axios.create();
+setupAuthInterceptors(httpClient);
+
 class API {
   readonly method: HTTPMethod;
 
@@ -32,12 +33,7 @@ class API {
   }
 
   call<T>(): AxiosPromise<T> {
-    const http = axios.create();
-    if (this.withCredentials) {
-      setupAuthInterceptors(http);
-    }
-
-    return http.request({ ...this });
+    return httpClient.request({ ...this });
   }
 }
 

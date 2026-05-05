@@ -1,6 +1,7 @@
 import API from './api';
 import APIBuilder from './api-builder';
 
-export { rotateAccessToken, rotateRefreshToken, setupAuthInterceptors } from './interceptors';
+export type { AuthFailureHandler } from './interceptors';
+export { setAuthFailureHandler } from './interceptors';
 
 export { API, APIBuilder };

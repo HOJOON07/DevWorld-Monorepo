@@ -1,65 +1,60 @@
-import axios, { AxiosInstance } from 'axios';
-import { BASE_URL } from './config';
+import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { rotateAccessToken } from './auth-api';
 
-export const rotateAccessToken = async () => {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/auth/token/access`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
+declare module 'axios' {
+  export interface InternalAxiosRequestConfig {
+    _retry?: boolean;
   }
+}
+
+const AUTH_ENDPOINT_PATTERNS = ['/auth/login', '/auth/register', '/auth/token', '/auth/oauth'];
+
+const isAuthEndpoint = (url?: string) =>
+  !!url && AUTH_ENDPOINT_PATTERNS.some((pattern) => url.includes(pattern));
+
+let refreshPromise: Promise<void> | null = null;
+
+const ensureRefresh = (): Promise<void> => {
+  if (!refreshPromise) {
+    refreshPromise = rotateAccessToken()
+      .then(() => undefined)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
 };
 
-export const rotateRefreshToken = async () => {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/auth/token/refresh`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+export type AuthFailureHandler = () => void;
+
+let authFailureHandler: AuthFailureHandler | null = null;
+
+export const setAuthFailureHandler = (handler: AuthFailureHandler | null) => {
+  authFailureHandler = handler;
 };
+
+const shouldAttemptRefresh = (config: InternalAxiosRequestConfig | undefined) =>
+  !!config &&
+  config.withCredentials === true &&
+  !config._retry &&
+  !isAuthEndpoint(config.url);
 
 export const setupAuthInterceptors = (instance: AxiosInstance) => {
-  instance.interceptors.request.use(
-    (config) => {
-      return config;
-    },
-    (error) => {
+  instance.interceptors.response.use(undefined, async (error: AxiosError) => {
+    const originalConfig = error.config as InternalAxiosRequestConfig | undefined;
+
+    if (error.response?.status !== 401 || !shouldAttemptRefresh(originalConfig)) {
       return Promise.reject(error);
-    },
-  );
+    }
 
-  instance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    async (error) => {
-      const originalConfig = error.config;
+    originalConfig!._retry = true;
 
-      if (error.response && error.response.status === 401 && !originalConfig._retry) {
-        originalConfig._retry = true;
-
-        try {
-          await rotateAccessToken();
-          return instance(originalConfig);
-        } catch (err) {
-          return Promise.reject(err);
-        }
-      }
-
-      return Promise.reject(error);
-    },
-  );
+    try {
+      await ensureRefresh();
+      return instance(originalConfig!);
+    } catch (refreshError) {
+      authFailureHandler?.();
+      return Promise.reject(refreshError);
+    }
+  });
 };
