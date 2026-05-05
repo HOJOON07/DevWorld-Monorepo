@@ -6,8 +6,12 @@ import { Response } from 'express';
 import { DuplicateDevNameDto } from 'src/users/dto/duplicate-devname.dto';
 import { UserModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
-import { ENV_JWT_HASH_ROUNDS, ENV_JWT_SECRET } from './../common/const/env-keys.const';
-import { JWT_Expires_Time } from './const/auth.const';
+import {
+  ENV_JWT_HASH_ROUNDS,
+  ENV_JWT_SECRET,
+  ENV_NODE_ENV,
+} from './../common/const/env-keys.const';
+import { COOKIE_MAX_AGE, JWT_Expires_Time, REFRESH_COOKIE_PATH } from './const/auth.const';
 import { OAuthUserInfoDto } from './dto/oauth.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
@@ -107,40 +111,37 @@ export class AuthService {
     };
   }
 
-  setTokenCookies(response: any, tokens: { accessToken: string; refreshToken: string }) {
-    const cookieOptions = {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax' as const,
+  private getCookieOptions() {
+    const isProduction = this.configService.get<string>(ENV_NODE_ENV) === 'production';
+    return {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
     };
-
-    response.cookie('access_token', tokens.accessToken, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000, // 15분
-    });
-
-    response.cookie('refresh_token', tokens.refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-    });
   }
 
-  setAccessTokenCookie(response: any, accessToken: string) {
+  setAccessTokenCookie(response: Response, accessToken: string) {
     response.cookie('access_token', accessToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax' as const,
-      maxAge: 15 * 60 * 1000, // 15분
+      ...this.getCookieOptions(),
+      maxAge: COOKIE_MAX_AGE.access,
+      path: '/',
     });
   }
 
-  setRefreshTokenCookie(response: any, refreshToken: string) {
+  setRefreshTokenCookie(response: Response, refreshToken: string) {
     response.cookie('refresh_token', refreshToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax' as const,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+      ...this.getCookieOptions(),
+      maxAge: COOKIE_MAX_AGE.refresh,
+      path: REFRESH_COOKIE_PATH,
     });
+  }
+
+  setTokenCookies(
+    response: Response,
+    tokens: { accessToken: string; refreshToken: string },
+  ) {
+    this.setAccessTokenCookie(response, tokens.accessToken);
+    this.setRefreshTokenCookie(response, tokens.refreshToken);
   }
 
   async authenticateWithEmailForOAuth(userInfo: OAuthUserInfoDto) {
@@ -200,7 +201,7 @@ export class AuthService {
   validateAuthTokens(
     accessToken: string | undefined,
     refreshToken: string | undefined,
-    response: any,
+    response: Response,
   ) {
     // Case 1: 둘 다 있는 정상적인 경우
     if (accessToken && refreshToken) {
@@ -235,7 +236,7 @@ export class AuthService {
 
     // Case 3: access_token만 있는 경우 (비정상!)
     if (accessToken && !refreshToken) {
-      response.clearCookie('access_token');
+      response.clearCookie('access_token', { ...this.getCookieOptions(), path: '/' });
       throw new UnauthorizedException('Refresh token이 없습니다. 재로그인이 필요합니다.');
     }
 
@@ -244,18 +245,10 @@ export class AuthService {
   }
 
   clearAuthCookies(response: Response) {
-    response.clearCookie('access_token', {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-
+    response.clearCookie('access_token', { ...this.getCookieOptions(), path: '/' });
     response.clearCookie('refresh_token', {
-      httpOnly: false,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
+      ...this.getCookieOptions(),
+      path: REFRESH_COOKIE_PATH,
     });
   }
 }

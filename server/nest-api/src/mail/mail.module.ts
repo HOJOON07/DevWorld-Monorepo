@@ -1,6 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  ENV_MAIL_FROM,
+  ENV_MAIL_HOST,
+  ENV_MAIL_PASS,
+  ENV_MAIL_PORT,
+  ENV_MAIL_USER,
+} from 'src/common/const/env-keys.const';
 import { UsersModule } from 'src/users/users.module';
 import { AuthMailModel } from './entities/auth-email';
 import { MailController } from './mail.controller';
@@ -11,17 +19,19 @@ import { MailService } from './mail.service';
     TypeOrmModule.forFeature([AuthMailModel]),
     UsersModule,
     MailerModule.forRootAsync({
-      useFactory: () => ({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         transport: {
-          host: 'smtp.gmail.com',
-          port: 587,
+          host: configService.get<string>(ENV_MAIL_HOST),
+          port: parseInt(configService.get<string>(ENV_MAIL_PORT)),
+          secure: false,
           auth: {
-            user: 'ghwns5909@gmail.com',
-            pass: 'mczz hqco pemn bvoh',
+            user: configService.get<string>(ENV_MAIL_USER),
+            pass: configService.get<string>(ENV_MAIL_PASS),
           },
         },
         defaults: {
-          from: 'DevWorld_NoReply@devworld.com',
+          from: configService.get<string>(ENV_MAIL_FROM),
         },
       }),
     }),

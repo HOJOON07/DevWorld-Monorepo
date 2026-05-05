@@ -1,3 +1,5 @@
+export const ENV_NODE_ENV = 'NODE_ENV';
+
 export const ENV_JWT_SECRET = 'JWT_SECRET';
 export const ENV_JWT_HASH_ROUNDS = 'JWT_HASH_ROUNDS';
 
@@ -15,3 +17,9 @@ export const ENV_GITHUB_CLIENT_SECRET = 'GITHUB_CLIENT_SECRET';
 
 export const ENV_GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID';
 export const ENV_GOOGLE_CLIENT_SECRET = 'GOOGLE_CLIENT_SECRET';
+
+export const ENV_MAIL_HOST = 'MAIL_HOST';
+export const ENV_MAIL_PORT = 'MAIL_PORT';
+export const ENV_MAIL_USER = 'MAIL_USER';
+export const ENV_MAIL_PASS = 'MAIL_PASS';
+export const ENV_MAIL_FROM = 'MAIL_FROM';
